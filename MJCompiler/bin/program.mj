@@ -1,29 +1,25 @@
-program Program
-class A{int x[],y[];}
-const int pi = 3, e = 2;
-class B extends A {
-int i;
+class P
+const int size = 10;
+int pos[];
 {
-int getValue(int a) int b; bool c;{ return this.i + this.x[0] + a; }
-void m(){}
-}
-}
-class C extends B{A theA;int a;}
-{
-void main() A a; C c; int i; int x[]; char ch; {
-a = new A;
-a.x = new int[5]; a.y = new int[5];
-c = new C;
-c.theA = a; c.x = new int[5];
-x = new int[3];
-read(c.i);
+void main()
+int x, i;
+char x;
+{ //---------- Initialize val
+x.i=1;
+pos = new int[size];
 i = 0;
-do{
-read(c.x[i]); read(c.theA.x[i]);
+while (i < size) {
+pos[i] = 0;
 i++;
-9/13
-}while(i<5);
-print(c.getValue(c.theA.x[0]));
-c.m();
+}
+//---------- Read values
+read(x);
+while (x >= 0) {
+if (x < size) {
+pos[x]++;
+}
+read(x);
+}
 }
 }
