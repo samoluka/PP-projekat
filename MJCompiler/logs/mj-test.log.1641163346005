@@ -1,0 +1,26 @@
+INFO  23:41:50,156 - Compiling source file: C:\Users\Luka\Desktop\projekat pp\MJCompiler\test\program.mj
+INFO  23:41:50,159 - #1 program
+INFO  23:41:50,159 - #4 MJProgram
+INFO  23:41:50,159 - #4 int
+INFO  23:41:50,159 - #4 x
+INFO  23:41:50,159 - #10 ,
+INFO  23:41:50,160 - #4 y
+INFO  23:41:50,160 - #11 ;
+INFO  23:41:50,160 - #4 char
+INFO  23:41:50,160 - #4 c
+INFO  23:41:50,160 - #9 =
+INFO  23:41:50,160 - #4 C
+INFO  23:41:50,160 - #11 ;
+INFO  23:41:50,160 - #4 bool
+INFO  23:41:50,160 - #4 b
+INFO  23:41:50,160 - #9 =
+INFO  23:41:50,160 - #7 false
+INFO  23:41:50,160 - #11 ;
+INFO  23:41:50,160 - #14 {
+INFO  23:41:50,160 - #17 void
+INFO  23:41:50,160 - #4 main
+INFO  23:41:50,160 - #12 (
+INFO  23:41:50,161 - #13 )
+INFO  23:41:50,161 - #14 {
+INFO  23:41:50,161 - #15 }
+INFO  23:41:50,161 - #15 }
