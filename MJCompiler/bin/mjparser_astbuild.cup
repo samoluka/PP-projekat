@@ -70,6 +70,11 @@ nonterminal VarDeclDefinition VarDeclDefinition;
 nonterminal RecordDecl RecordDecl;
 nonterminal RecordDeclItemList RecordDeclItemList;
 nonterminal RecordDeclItem RecordDeclItem;
+nonterminal ClassDecl ClassDecl;
+nonterminal ClassExtends ClassExtends;
+nonterminal ClassVarDeclItemList ClassVarDeclItemList;
+nonterminal ClassMethodDeclItemList ClassMethodDeclItemList;
+nonterminal ClassDeclItem ClassDeclItem;
 nonterminal MethodDeclList MethodDeclList;
 nonterminal Type Type;
 nonterminal MethodDecl MethodDecl;
@@ -101,6 +106,8 @@ DeclItem ::= (ConstDeclartionItem) ConstDecl:C1 {: RESULT=new ConstDeclartionIte
 		(VarDeclarationItem) VarDecl:V1 {: RESULT=new VarDeclarationItem(V1); RESULT.setLine(V1left); :}
 		|
 		(RecordDeclarationItem) RecordDecl:R1 {: RESULT=new RecordDeclarationItem(R1); RESULT.setLine(R1left); :}
+		|
+		(ClassDeclarationItem) ClassDecl:C1 {: RESULT=new ClassDeclarationItem(C1); RESULT.setLine(C1left); :}
 		;
 
 /* ʺconstʺ Type identʺ=ʺ(numConst | charConst | boolConst) {, ident ʺ=ʺ (numConst |charConst | boolConst)} ʺ;ʺ.*/
@@ -137,12 +144,33 @@ VarDeclDefinition ::= (Definition) IDENT:name {: RESULT=new Definition(name); RE
        				;
 
 /* ʺrecordʺ ident ʺ{ʺ {VarDecl} ʺ}ʺ.  */
+
 RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE RecordDeclItemList:R1 RBRACE {: RESULT=new RecordDeclarations(name, R1); RESULT.setLine(nameleft); :};
 RecordDeclItemList ::= (RecordDeclarationsItemList) RecordDeclItemList:R1 RecordDeclItem:R2 {: RESULT=new RecordDeclarationsItemList(R1, R2); RESULT.setLine(R1left); :}
                     |    
                     (NoRecordDeclItemList) {: RESULT=new NoRecordDeclItemList(); :} /* epsilon */
                     ;
 RecordDeclItem ::= (RecordDeclItem) VarDecl:V1 {: RESULT=new RecordDeclItem(V1); RESULT.setLine(V1left); :};
+
+
+/* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
+
+ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends:C1 LBRACE ClassVarDeclItemList:C2 ClassMethodDeclItemList:C3 RBRACE {: RESULT=new ClassDeclarations(className, C1, C2, C3); RESULT.setLine(classNameleft); :};
+ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassDeclarationsExtends(T1); RESULT.setLine(T1left); :}
+			|
+			(NoClassExtends) {: RESULT=new NoClassExtends(); :} /* epsilon */
+			;
+ClassVarDeclItemList ::= (ClassDeclarationsItemList) ClassVarDeclItemList:C1 ClassDeclItem:C2 {: RESULT=new ClassDeclarationsItemList(C1, C2); RESULT.setLine(C1left); :}
+                    |    
+                    (NoClassVarDeclItemList) {: RESULT=new NoClassVarDeclItemList(); :} /* epsilon */
+                    ;
+ClassDeclItem ::= (ClassDeclItem) VarDecl:V1 {: RESULT=new ClassDeclItem(V1); RESULT.setLine(V1left); :};
+ClassMethodDeclItemList ::= LBRACE RBRACE {: RESULT=new ClassMethodDeclItemListDerived1(); :}
+						|
+						(NoClassMethodDeclItemList) {: RESULT=new NoClassMethodDeclItemList(); :} /* epsilon */
+						;
+
+
 
 Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
 

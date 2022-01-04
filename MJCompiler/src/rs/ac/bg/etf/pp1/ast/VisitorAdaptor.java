@@ -1,34 +1,38 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 22:48:8
+// 4/0/2022 23:6:39
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
-    public void visit(VarDeclDefinition VarDeclDefinition) { }
-    public void visit(ActualParamList ActualParamList) { }
-    public void visit(RecordDeclItemList RecordDeclItemList) { }
-    public void visit(VarDeclItemList VarDeclItemList) { }
-    public void visit(Expr Expr) { }
-    public void visit(Const Const) { }
-    public void visit(FormalParamList FormalParamList) { }
-    public void visit(FormPars FormPars) { }
-    public void visit(RecordDecl RecordDecl) { }
-    public void visit(VarDeclList VarDeclList) { }
-    public void visit(ConstDeclItemList ConstDeclItemList) { }
-    public void visit(VarDecl VarDecl) { }
     public void visit(Unmatched Unmatched) { }
-    public void visit(FormalParamDecl FormalParamDecl) { }
-    public void visit(MethodDeclList MethodDeclList) { }
-    public void visit(DeclList DeclList) { }
-    public void visit(Statement Statement) { }
-    public void visit(DeclItem DeclItem) { }
-    public void visit(AssignmentDecl AssignmentDecl) { }
-    public void visit(StatementList StatementList) { }
     public void visit(Matched Matched) { }
+    public void visit(VarDeclDefinition VarDeclDefinition) { }
+    public void visit(FormalParamDecl FormalParamDecl) { }
+    public void visit(VarDeclItemList VarDeclItemList) { }
+    public void visit(StatementList StatementList) { }
+    public void visit(RecordDecl RecordDecl) { }
+    public void visit(DeclList DeclList) { }
+    public void visit(DeclItem DeclItem) { }
+    public void visit(ActualParamList ActualParamList) { }
+    public void visit(ClassExtends ClassExtends) { }
+    public void visit(AssignmentDecl AssignmentDecl) { }
+    public void visit(VarDeclList VarDeclList) { }
+    public void visit(FormalParamList FormalParamList) { }
+    public void visit(Expr Expr) { }
+    public void visit(ClassVarDeclItemList ClassVarDeclItemList) { }
+    public void visit(RecordDeclItemList RecordDeclItemList) { }
     public void visit(ActualPars ActualPars) { }
+    public void visit(Const Const) { }
+    public void visit(Statement Statement) { }
+    public void visit(VarDecl VarDecl) { }
+    public void visit(ClassMethodDeclItemList ClassMethodDeclItemList) { }
+    public void visit(ConstDeclItemList ConstDeclItemList) { }
+    public void visit(ClassDecl ClassDecl) { }
+    public void visit(MethodDeclList MethodDeclList) { }
+    public void visit(FormPars FormPars) { }
     public void visit(Addop Addop) { visit(); }
     public void visit(Designator Designator) { visit(); }
     public void visit(ActualParam ActualParam) { visit(); }
@@ -62,6 +66,14 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NoMethodDecl NoMethodDecl) { visit(); }
     public void visit(MethodDeclarations MethodDeclarations) { visit(); }
     public void visit(Type Type) { visit(); }
+    public void visit(NoClassMethodDeclItemList NoClassMethodDeclItemList) { visit(); }
+    public void visit(ClassMethodDeclItemListDerived1 ClassMethodDeclItemListDerived1) { visit(); }
+    public void visit(ClassDeclItem ClassDeclItem) { visit(); }
+    public void visit(NoClassVarDeclItemList NoClassVarDeclItemList) { visit(); }
+    public void visit(ClassDeclarationsItemList ClassDeclarationsItemList) { visit(); }
+    public void visit(NoClassExtends NoClassExtends) { visit(); }
+    public void visit(ClassDeclarationsExtends ClassDeclarationsExtends) { visit(); }
+    public void visit(ClassDeclarations ClassDeclarations) { visit(); }
     public void visit(RecordDeclItem RecordDeclItem) { visit(); }
     public void visit(NoRecordDeclItemList NoRecordDeclItemList) { visit(); }
     public void visit(RecordDeclarationsItemList RecordDeclarationsItemList) { visit(); }
@@ -77,6 +89,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstDeclSingleItemList ConstDeclSingleItemList) { visit(); }
     public void visit(ConstDeclMultiItemList ConstDeclMultiItemList) { visit(); }
     public void visit(ConstDecl ConstDecl) { visit(); }
+    public void visit(ClassDeclarationItem ClassDeclarationItem) { visit(); }
     public void visit(RecordDeclarationItem RecordDeclarationItem) { visit(); }
     public void visit(VarDeclarationItem VarDeclarationItem) { visit(); }
     public void visit(ConstDeclartionItem ConstDeclartionItem) { visit(); }

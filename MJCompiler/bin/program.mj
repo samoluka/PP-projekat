@@ -6,6 +6,11 @@ program MJProgram
 		int x, y;
 		int d;
 	}
+	class B extends B{
+		int x, y;
+		int d;
+		{}
+	}
 {
 
 }
