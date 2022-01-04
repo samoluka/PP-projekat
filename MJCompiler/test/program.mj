@@ -1,25 +1,11 @@
-class P
-const int size = 10;
-int pos[];
+program MJProgram
+	int x; int y;
 {
-void main()
-int x, i;
-char x;
-{ //---------- Initialize val
-x.i=1;
-pos = new int[size];
-i = 0;
-while (i < size) {
-pos[i] = 0;
-i++;
-}
-//---------- Read values
-read(x);
-while (x >= 0) {
-if (x < size) {
-pos[x]++;
-}
-read(x);
-}
-}
+	int main() {
+		
+		print(1);
+	
+		
+		print(2);
+	}
 }
