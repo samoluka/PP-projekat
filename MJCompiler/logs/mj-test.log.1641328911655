@@ -1,0 +1,32 @@
+INFO  21:40:37,749 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
+INFO  21:40:37,765 - #2 program
+INFO  21:40:37,765 - #25 MJProgram
+INFO  21:40:37,765 - #9 const
+INFO  21:40:37,766 - #25 int
+INFO  21:40:37,766 - #25 x
+INFO  21:40:37,766 - #36 =
+INFO  21:40:37,766 - #22 10
+INFO  21:40:37,767 - #42 ,
+INFO  21:40:37,767 - #25 y
+INFO  21:40:37,767 - #36 =
+INFO  21:40:37,767 - #22 20
+INFO  21:40:37,767 - #39 ;
+INFO  21:40:37,767 - #9 const
+INFO  21:40:37,768 - #25 bool
+INFO  21:40:37,768 - #25 y
+INFO  21:40:37,768 - #36 =
+INFO  21:40:37,768 - #23 0
+INFO  21:40:37,768 - #39 ;
+INFO  21:40:37,768 - #25 int
+INFO  21:40:37,769 - #25 k
+INFO  21:40:37,769 - #36 =
+INFO  21:40:37,769 - #22 10
+INFO  21:40:37,769 - #42 ,
+INFO  21:40:37,769 - #25 j
+INFO  21:40:37,769 - #22 19
+ERROR 21:40:37,769 - 
+Sintaksna greska na liniji 4
+INFO  21:40:37,769 - #39 ;
+INFO  21:40:37,769 - #47 {
+INFO  21:40:37,769 - #48 }
+ERROR 21:40:37,770 - Fatalna greska, parsiranje se ne moze nastaviti token je: #0 na liniji 6

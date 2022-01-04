@@ -1,0 +1,38 @@
+INFO  21:00:58,952 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
+INFO  21:00:58,968 - #2 program
+INFO  21:00:58,968 - #25 MJProgram
+INFO  21:00:58,968 - #9 const
+INFO  21:00:58,970 - #25 int
+INFO  21:00:58,970 - #25 x
+INFO  21:00:58,970 - #36 =
+INFO  21:00:58,971 - #22 10
+INFO  21:00:58,971 - #39 ;
+INFO  21:00:58,971 - #47 {
+INFO  21:00:58,972 - #48 }
+INFO  21:00:58,973 - Program(
+ MJProgram
+  DeclarationsList(
+    NoDeclList(
+    ) [NoDeclList]
+    DeclartionItem(
+      ConstDecl(
+        Type(
+         int
+        ) [Type]
+        ConstDeclSingleItemList(
+          ConstDeclItem(
+           x
+            NumberConst(
+             10
+            ) [NumberConst]
+          ) [ConstDeclItem]
+        ) [ConstDeclSingleItemList]
+      ) [ConstDecl]
+    ) [DeclartionItem]
+  ) [DeclarationsList]
+  NoMethodDecl(
+  ) [NoMethodDecl]
+) [Program]
+INFO  21:00:58,973 - ===================================
+INFO  21:00:58,975 -  Print count calls = 0
+INFO  21:00:58,975 -  Deklarisanih promenljivih ima = 0

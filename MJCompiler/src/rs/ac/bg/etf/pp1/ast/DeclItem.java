@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 15:55:38
+// 4/0/2022 22:48:8
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class Factor implements SyntaxNode {
+public abstract class DeclItem implements SyntaxNode {
 
     private SyntaxNode parent;
 

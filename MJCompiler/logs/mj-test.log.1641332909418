@@ -1,0 +1,118 @@
+INFO  22:47:46,960 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
+INFO  22:47:46,982 - #2 program
+INFO  22:47:46,982 - #25 MJProgram
+INFO  22:47:46,982 - #9 const
+INFO  22:47:46,982 - #25 int
+INFO  22:47:46,982 - #25 x
+INFO  22:47:46,983 - #36 =
+INFO  22:47:46,983 - #22 10
+INFO  22:47:46,983 - #42 ,
+INFO  22:47:46,983 - #25 y
+INFO  22:47:46,983 - #36 =
+INFO  22:47:46,983 - #22 20
+INFO  22:47:46,983 - #39 ;
+INFO  22:47:46,983 - #9 const
+INFO  22:47:46,984 - #25 bool
+INFO  22:47:46,984 - #25 y
+INFO  22:47:46,984 - #36 =
+INFO  22:47:46,984 - #23 0
+INFO  22:47:46,984 - #39 ;
+INFO  22:47:46,985 - #25 int
+INFO  22:47:46,985 - #25 k
+INFO  22:47:46,985 - #39 ;
+INFO  22:47:46,985 - #20 record
+INFO  22:47:46,985 - #25 A
+INFO  22:47:46,985 - #47 {
+INFO  22:47:46,985 - #25 int
+INFO  22:47:46,986 - #25 x
+INFO  22:47:46,986 - #39 ;
+INFO  22:47:46,986 - #48 }
+INFO  22:47:46,986 - #47 {
+INFO  22:47:46,986 - #48 }
+INFO  22:47:46,988 - Program(
+ MJProgram
+  DeclarationsList(
+    DeclarationsList(
+      DeclarationsList(
+        DeclarationsList(
+          NoDeclList(
+          ) [NoDeclList]
+          ConstDeclartionItem(
+            ConstDecl(
+              Type(
+               int
+              ) [Type]
+              ConstDeclMultiItemList(
+                ConstDeclSingleItemList(
+                  AssignmentDeclaration(
+                   x
+                    NumberConst(
+                     10
+                    ) [NumberConst]
+                  ) [AssignmentDeclaration]
+                ) [ConstDeclSingleItemList]
+                AssignmentDeclaration(
+                 y
+                  NumberConst(
+                   20
+                  ) [NumberConst]
+                ) [AssignmentDeclaration]
+              ) [ConstDeclMultiItemList]
+            ) [ConstDecl]
+          ) [ConstDeclartionItem]
+        ) [DeclarationsList]
+        ConstDeclartionItem(
+          ConstDecl(
+            Type(
+             bool
+            ) [Type]
+            ConstDeclSingleItemList(
+              AssignmentDeclaration(
+               y
+                BoolConst(
+                 0
+                ) [BoolConst]
+              ) [AssignmentDeclaration]
+            ) [ConstDeclSingleItemList]
+          ) [ConstDecl]
+        ) [ConstDeclartionItem]
+      ) [DeclarationsList]
+      VarDeclarationItem(
+        VarDeclarations(
+          Type(
+           int
+          ) [Type]
+          VarDeclSinglItemList(
+            Definition(
+             k
+            ) [Definition]
+          ) [VarDeclSinglItemList]
+        ) [VarDeclarations]
+      ) [VarDeclarationItem]
+    ) [DeclarationsList]
+    RecordDeclarationItem(
+      RecordDeclarations(
+       A
+        RecordDeclarationsItemList(
+          NoRecordDeclItemList(
+          ) [NoRecordDeclItemList]
+          VarDeclarations(
+            Type(
+             int
+            ) [Type]
+            VarDeclSinglItemList(
+              Definition(
+               x
+              ) [Definition]
+            ) [VarDeclSinglItemList]
+          ) [VarDeclarations]
+        ) [RecordDeclarationsItemList]
+      ) [RecordDeclarations]
+    ) [RecordDeclarationItem]
+  ) [DeclarationsList]
+  NoMethodDecl(
+  ) [NoMethodDecl]
+) [Program]
+INFO  22:47:46,988 - ===================================
+INFO  22:47:46,989 -  Print count calls = 0
+INFO  22:47:46,989 -  Deklarisanih promenljivih ima = 0

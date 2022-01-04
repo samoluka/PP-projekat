@@ -1,11 +1,11 @@
 program MJProgram
-	int x; int y;
-{
-	int main() {
-		
-		print(1);
-	
-		
-		print(2);
+	const int x = 10, y = 20;
+	const bool y = false;
+	int k;
+	record A{
+		int x, y;
+		int d;
 	}
+{
+
 }

@@ -1,22 +1,31 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 15:55:38
+// 4/0/2022 22:48:8
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public interface Visitor { 
 
-    public void visit(Factor Factor);
+    public void visit(VarDeclDefinition VarDeclDefinition);
     public void visit(ActualParamList ActualParamList);
+    public void visit(RecordDeclItemList RecordDeclItemList);
+    public void visit(VarDeclItemList VarDeclItemList);
     public void visit(Expr Expr);
+    public void visit(Const Const);
     public void visit(FormalParamList FormalParamList);
     public void visit(FormPars FormPars);
+    public void visit(RecordDecl RecordDecl);
     public void visit(VarDeclList VarDeclList);
+    public void visit(ConstDeclItemList ConstDeclItemList);
+    public void visit(VarDecl VarDecl);
     public void visit(Unmatched Unmatched);
     public void visit(FormalParamDecl FormalParamDecl);
     public void visit(MethodDeclList MethodDeclList);
+    public void visit(DeclList DeclList);
     public void visit(Statement Statement);
+    public void visit(DeclItem DeclItem);
+    public void visit(AssignmentDecl AssignmentDecl);
     public void visit(StatementList StatementList);
     public void visit(Matched Matched);
     public void visit(ActualPars ActualPars);
@@ -26,9 +35,9 @@ public interface Visitor {
     public void visit(ActualParams ActualParams);
     public void visit(NoActuals NoActuals);
     public void visit(Actuals Actuals);
-    public void visit(FuncCall FuncCall);
-    public void visit(Var Var);
-    public void visit(Const Const);
+    public void visit(CharConst CharConst);
+    public void visit(BoolConst BoolConst);
+    public void visit(NumberConst NumberConst);
     public void visit(Term Term);
     public void visit(TermExpr TermExpr);
     public void visit(AddExpr AddExpr);
@@ -46,15 +55,33 @@ public interface Visitor {
     public void visit(Statements Statements);
     public void visit(SingleFormalParamDecl SingleFormalParamDecl);
     public void visit(FormalParamDecls FormalParamDecls);
+    public void visit(ErrorStmtFormParam ErrorStmtFormParam);
     public void visit(NoFormParam NoFormParam);
     public void visit(FormParams FormParams);
     public void visit(MethodDecl MethodDecl);
     public void visit(NoMethodDecl NoMethodDecl);
     public void visit(MethodDeclarations MethodDeclarations);
     public void visit(Type Type);
-    public void visit(VarDecl VarDecl);
-    public void visit(NoVarDecl NoVarDecl);
+    public void visit(RecordDeclItem RecordDeclItem);
+    public void visit(NoRecordDeclItemList NoRecordDeclItemList);
+    public void visit(RecordDeclarationsItemList RecordDeclarationsItemList);
+    public void visit(RecordDeclarations RecordDeclarations);
+    public void visit(DefinitionArray DefinitionArray);
+    public void visit(Definition Definition);
+    public void visit(VarDeclItemListError VarDeclItemListError);
+    public void visit(VarDeclSinglItemList VarDeclSinglItemList);
+    public void visit(VarDeclMultiItemList VarDeclMultiItemList);
+    public void visit(VarDeclError VarDeclError);
     public void visit(VarDeclarations VarDeclarations);
+    public void visit(AssignmentDeclaration AssignmentDeclaration);
+    public void visit(ConstDeclSingleItemList ConstDeclSingleItemList);
+    public void visit(ConstDeclMultiItemList ConstDeclMultiItemList);
+    public void visit(ConstDecl ConstDecl);
+    public void visit(RecordDeclarationItem RecordDeclarationItem);
+    public void visit(VarDeclarationItem VarDeclarationItem);
+    public void visit(ConstDeclartionItem ConstDeclartionItem);
+    public void visit(NoDeclList NoDeclList);
+    public void visit(DeclarationsList DeclarationsList);
     public void visit(Program Program);
 
 }

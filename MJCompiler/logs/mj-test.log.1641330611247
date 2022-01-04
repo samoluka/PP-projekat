@@ -1,0 +1,69 @@
+INFO  22:05:01,912 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
+INFO  22:05:01,929 - #2 program
+INFO  22:05:01,929 - #25 MJProgram
+INFO  22:05:01,929 - #9 const
+INFO  22:05:01,929 - #25 int
+INFO  22:05:01,929 - #25 x
+INFO  22:05:01,929 - #36 =
+INFO  22:05:01,929 - #22 10
+INFO  22:05:01,929 - #42 ,
+INFO  22:05:01,930 - #25 y
+INFO  22:05:01,930 - #36 =
+INFO  22:05:01,930 - #22 20
+INFO  22:05:01,930 - #39 ;
+INFO  22:05:01,930 - #9 const
+INFO  22:05:01,931 - #25 bool
+INFO  22:05:01,931 - #25 y
+INFO  22:05:01,931 - #36 =
+INFO  22:05:01,931 - #23 0
+INFO  22:05:01,931 - #39 ;
+INFO  22:05:01,931 - #22 48948
+ERROR 22:05:01,932 - 
+Sintaksna greska na liniji 4
+INFO  22:05:01,932 - #25 k
+INFO  22:05:01,932 - #22 1010
+INFO  22:05:01,932 - #39 ;
+INFO  22:05:01,932 - #47 {
+INFO  22:05:01,933 - #48 }
+ERROR 22:05:01,933 - Uspesan oporavak od greske na liniji 8 pri definisanju globalne promenljive do ;
+INFO  22:05:01,935 - Program(
+ MJProgram
+  DeclarationsList(
+    DeclarationsList(
+      NoDeclList(
+      ) [NoDeclList]
+      ConstDeclartionItem(
+        ConstDecl(
+          Type(
+           int
+          ) [Type]
+          ConstDeclMultiItemList(
+            ConstDeclSingleItemList(
+              ConstDeclAssignment(
+               x
+                NumberConst(
+                 10
+                ) [NumberConst]
+              ) [ConstDeclAssignment]
+            ) [ConstDeclSingleItemList]
+            ConstDeclAssignment(
+             y
+              NumberConst(
+               20
+              ) [NumberConst]
+            ) [ConstDeclAssignment]
+          ) [ConstDeclMultiItemList]
+        ) [ConstDecl]
+      ) [ConstDeclartionItem]
+    ) [DeclarationsList]
+    VarDeclarationItem(
+      VarDeclError(
+      ) [VarDeclError]
+    ) [VarDeclarationItem]
+  ) [DeclarationsList]
+  NoMethodDecl(
+  ) [NoMethodDecl]
+) [Program]
+INFO  22:05:01,936 - ===================================
+INFO  22:05:01,937 -  Print count calls = 0
+INFO  22:05:01,937 -  Deklarisanih promenljivih ima = 0

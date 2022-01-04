@@ -23,7 +23,7 @@ parser code {:
     }
   
     public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
-        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti token je: " + cur_token.toString(), cur_token);
     }
 
     public void report_error(String message, Object info) {
@@ -50,26 +50,74 @@ terminal PROG,PRINT,RETURN,BREAK,CLASS,ENUM,ELSE,CONST,IF,DO,WHILE,NEW,READ,EXTE
 
 /* Identifiers and Constants*/
 terminal Integer NUMBER;
+terminal Integer BOOLEAN;
+terminal Character CHARACTER;
 terminal String IDENT;
-terminal Boolean BOOLEAN;
-terminal Char CHARACTER;
+
 
 /* Operators */
 terminal PLUS,MINUS,MULTIPLY,DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
 
-nonterminal Program, VarDeclList, MethodDeclList, VarDecl, Type, MethodDecl;
+nonterminal Program, DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, RecordDeclItemList, RecordDeclItem;
+nonterminal MethodDeclList, Type, MethodDecl, VarDeclList;
 nonterminal FormPars, StatementList, FormalParamList, FormalParamDecl, Statement;
-nonterminal Designator, Expr, Term, Addop, Factor, ActualPars, ActualParamList;
+nonterminal Designator, Expr, Term, Addop, Const, ActualPars, ActualParamList;
 nonterminal Matched, Unmatched;
 
-Program ::= (Program) PROG IDENT VarDeclList LBRACE MethodDeclList RBRACE;
+/* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {MethodDecl} ʺ}ʺ. */
+Program ::= (Program) PROG IDENT:programName DeclList LBRACE MethodDeclList RBRACE;
 
-VarDeclList ::= (VarDeclarations) VarDeclList VarDecl
+DeclList ::= (DeclarationsList) DeclList DeclItem
 			|
-			(NoVarDecl) /* epsilon */
+			(NoDeclList) /* epsilon */
 			;
+DeclItem ::= (ConstDeclartionItem) ConstDecl
+		|
+		(VarDeclarationItem) VarDecl
+		|
+		(RecordDeclarationItem) RecordDecl
+		;
 
-VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI;
+/* ʺconstʺ Type identʺ=ʺ(numConst | charConst | boolConst) {, ident ʺ=ʺ (numConst |charConst | boolConst)} ʺ;ʺ.*/
+
+ConstDecl ::=(ConstDecl) CONST Type ConstDeclItemList SEMI;
+
+ConstDeclItemList ::= (ConstDeclMultiItemList) ConstDeclItemList COMMA AssignmentDecl
+				|
+				(ConstDeclSingleItemList) AssignmentDecl
+				;
+AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Const;
+			
+/* varDecl = Type ident [ʺ[ʺ ʺ]ʺ] {ʺ,ʺ ident [ʺ[ʺ ʺ]ʺ]} ʺ; */	
+VarDecl ::= (VarDeclarations) Type VarDeclItemList SEMI
+		|  
+		(VarDeclError) error:e SEMI
+        {:
+        	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do ;", null);
+        :}
+        ;
+VarDeclItemList ::= (VarDeclMultiItemList) VarDeclItemList COMMA VarDeclDefinition
+                    |    
+                    (VarDeclSinglItemList) VarDeclDefinition
+                    |    
+                    (VarDeclItemListError) error:e
+                    {:
+                    	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do , ili ;", null);
+                    :}
+                    ;
+
+VarDeclDefinition ::= (Definition) IDENT:name
+   					|   
+       				(DefinitionArray) IDENT:name LBRACKET RBRACKET
+       				;
+
+/* ʺrecordʺ ident ʺ{ʺ {VarDecl} ʺ}ʺ.  */
+RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE RecordDeclItemList RBRACE;
+RecordDeclItemList ::= (RecordDeclarationsItemList) RecordDeclItemList RecordDeclItem
+                    |    
+                    (NoRecordDeclItemList) /* epsilon */
+                    ;
+RecordDeclItem ::= (RecordDeclItem) VarDecl;
 
 Type ::= (Type) IDENT:typeName;
 
@@ -84,6 +132,9 @@ MethodDecl ::= (MethodDecl) Type:retType IDENT:methName LPAREN FormPars RPAREN V
 FormPars ::= (FormParams) FormalParamList
 		  |
 		  (NoFormParam) /* epsilon */
+		  |
+		  (ErrorStmtFormParam) error RPAREN:l
+		  {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
 		  ;
 		  
 FormalParamList ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
@@ -126,13 +177,13 @@ Expr ::= (AddExpr) Expr:te Addop Term:t
 	 (TermExpr) Term:t
 	 ;
 
-Term ::= (Term) Factor:t;
+Term ::= (Term) Const:t;
 
-Factor ::= (Const) NUMBER
+Const ::= (NumberConst) NUMBER:val
 		|
-		(Var) Designator:d
-		| 
-		(FuncCall) Designator:func LPAREN ActualPars RPAREN
+		(BoolConst) BOOLEAN:val
+		|
+		(CharConst) CHARACTER:val
 		;
 		
 ActualPars ::= (Actuals) ActualParamList

@@ -1,0 +1,110 @@
+INFO  21:57:26,211 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
+INFO  21:57:26,229 - #2 program
+INFO  21:57:26,229 - #25 MJProgram
+INFO  21:57:26,229 - #9 const
+INFO  21:57:26,230 - #25 int
+INFO  21:57:26,230 - #25 x
+INFO  21:57:26,230 - #36 =
+INFO  21:57:26,230 - #22 10
+INFO  21:57:26,230 - #42 ,
+INFO  21:57:26,231 - #25 y
+INFO  21:57:26,231 - #36 =
+INFO  21:57:26,231 - #22 20
+INFO  21:57:26,231 - #39 ;
+INFO  21:57:26,231 - #9 const
+INFO  21:57:26,232 - #25 bool
+INFO  21:57:26,232 - #25 y
+INFO  21:57:26,232 - #36 =
+INFO  21:57:26,232 - #23 0
+INFO  21:57:26,232 - #39 ;
+INFO  21:57:26,232 - #25 int
+INFO  21:57:26,232 - #25 k
+INFO  21:57:26,233 - #42 ,
+INFO  21:57:26,233 - #39 ;
+ERROR 21:57:26,233 - 
+Sintaksna greska na liniji 4
+INFO  21:57:26,233 - #25 int
+INFO  21:57:26,233 - #25 cjsia
+INFO  21:57:26,233 - #36 =
+ERROR 21:57:26,234 - Uspesan oporavak od greske na liniji 4 pri deklarisanju varijable do , ili ;
+ERROR 21:57:26,236 - 
+Sintaksna greska na liniji 5
+INFO  21:57:26,236 - #22 10
+INFO  21:57:26,236 - #39 ;
+INFO  21:57:26,236 - #47 {
+INFO  21:57:26,236 - #48 }
+ERROR 21:57:26,236 - Uspesan oporavak od greske na liniji 5 pri deklarisanju varijable do , ili ;
+INFO  21:57:26,237 - Program(
+ MJProgram
+  DeclarationsList(
+    DeclarationsList(
+      DeclarationsList(
+        DeclarationsList(
+          NoDeclList(
+          ) [NoDeclList]
+          ConstDeclartionItem(
+            ConstDecl(
+              Type(
+               int
+              ) [Type]
+              ConstDeclMultiItemList(
+                ConstDeclSingleItemList(
+                  ConstDeclAssignment(
+                   x
+                    NumberConst(
+                     10
+                    ) [NumberConst]
+                  ) [ConstDeclAssignment]
+                ) [ConstDeclSingleItemList]
+                ConstDeclAssignment(
+                 y
+                  NumberConst(
+                   20
+                  ) [NumberConst]
+                ) [ConstDeclAssignment]
+              ) [ConstDeclMultiItemList]
+            ) [ConstDecl]
+          ) [ConstDeclartionItem]
+        ) [DeclarationsList]
+        ConstDeclartionItem(
+          ConstDecl(
+            Type(
+             bool
+            ) [Type]
+            ConstDeclSingleItemList(
+              ConstDeclAssignment(
+               y
+                BoolConst(
+                 0
+                ) [BoolConst]
+              ) [ConstDeclAssignment]
+            ) [ConstDeclSingleItemList]
+          ) [ConstDecl]
+        ) [ConstDeclartionItem]
+      ) [DeclarationsList]
+      VarDeclarationItem(
+        VarDecl(
+          Type(
+           int
+          ) [Type]
+          VarDeclError(
+          ) [VarDeclError]
+        ) [VarDecl]
+      ) [VarDeclarationItem]
+    ) [DeclarationsList]
+    VarDeclarationItem(
+      VarDecl(
+        Type(
+         int
+        ) [Type]
+        VarDeclError(
+        ) [VarDeclError]
+      ) [VarDecl]
+    ) [VarDeclarationItem]
+  ) [DeclarationsList]
+  NoMethodDecl(
+  ) [NoMethodDecl]
+) [Program]
+INFO  21:57:26,237 - ===================================
+INFO  21:57:26,239 -  Print count calls = 0
+INFO  21:57:26,239 -  Deklarisanih promenljivih ima = 0

@@ -1,0 +1,73 @@
+INFO  21:06:18,553 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
+INFO  21:06:18,569 - #2 program
+INFO  21:06:18,569 - #25 MJProgram
+INFO  21:06:18,569 - #9 const
+INFO  21:06:18,570 - #25 int
+INFO  21:06:18,570 - #25 x
+INFO  21:06:18,570 - #36 =
+INFO  21:06:18,570 - #22 10
+INFO  21:06:18,570 - #42 ,
+INFO  21:06:18,571 - #25 y
+INFO  21:06:18,571 - #36 =
+INFO  21:06:18,571 - #22 20
+INFO  21:06:18,571 - #39 ;
+INFO  21:06:18,571 - #9 const
+INFO  21:06:18,572 - #25 bool
+INFO  21:06:18,572 - #25 y
+INFO  21:06:18,572 - #36 =
+INFO  21:06:18,572 - #23 0
+INFO  21:06:18,572 - #39 ;
+INFO  21:06:18,572 - #47 {
+INFO  21:06:18,572 - #48 }
+INFO  21:06:18,573 - Program(
+ MJProgram
+  DeclarationsList(
+    DeclarationsList(
+      NoDeclList(
+      ) [NoDeclList]
+      DeclartionItem(
+        ConstDecl(
+          Type(
+           int
+          ) [Type]
+          ConstDeclMultiItemList(
+            ConstDeclSingleItemList(
+              ConstDeclItem(
+               x
+                NumberConst(
+                 10
+                ) [NumberConst]
+              ) [ConstDeclItem]
+            ) [ConstDeclSingleItemList]
+            ConstDeclItem(
+             y
+              NumberConst(
+               20
+              ) [NumberConst]
+            ) [ConstDeclItem]
+          ) [ConstDeclMultiItemList]
+        ) [ConstDecl]
+      ) [DeclartionItem]
+    ) [DeclarationsList]
+    DeclartionItem(
+      ConstDecl(
+        Type(
+         bool
+        ) [Type]
+        ConstDeclSingleItemList(
+          ConstDeclItem(
+           y
+            BoolConst(
+             0
+            ) [BoolConst]
+          ) [ConstDeclItem]
+        ) [ConstDeclSingleItemList]
+      ) [ConstDecl]
+    ) [DeclartionItem]
+  ) [DeclarationsList]
+  NoMethodDecl(
+  ) [NoMethodDecl]
+) [Program]
+INFO  21:06:18,574 - ===================================
+INFO  21:06:18,575 -  Print count calls = 0
+INFO  21:06:18,575 -  Deklarisanih promenljivih ima = 0

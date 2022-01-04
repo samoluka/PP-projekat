@@ -24,7 +24,6 @@ public class MJTest {
 		Logger log = Logger.getLogger(MJTest.class);
 		Reader br = null;
 		try {
-			
 			File sourceCode = new File("test/program.mj");	
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 			
