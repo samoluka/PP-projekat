@@ -1,8 +1,0 @@
-INFO  20:30:13,567 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
-INFO  20:30:13,582 - #2 program
-INFO  20:30:13,582 - #25 MJProgram
-INFO  20:30:13,583 - #47 {
-INFO  20:30:13,583 - #21 void
-ERROR 20:30:13,583 - 
-Sintaksna greska na liniji 3
-ERROR 20:30:13,583 - Fatalna greska, parsiranje se ne moze nastaviti na liniji 3

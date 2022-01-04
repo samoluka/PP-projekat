@@ -1,7 +1,0 @@
-INFO  20:47:31,084 - Compiling source file: C:\Users\Luka\Desktop\PP-projekat\MJCompiler\test\program.mj
-INFO  20:47:31,100 - #2 program
-INFO  20:47:31,100 - #25 MJProgram
-INFO  20:47:31,100 - #9 const
-ERROR 20:47:31,100 - 
-Sintaksna greska na liniji 2
-ERROR 20:47:31,100 - Fatalna greska, parsiranje se ne moze nastaviti token je: #9 na liniji 2
