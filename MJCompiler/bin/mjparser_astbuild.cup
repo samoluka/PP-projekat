@@ -161,6 +161,11 @@ RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList:V1 RBRA
 ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends:C1 LBRACE VarDeclList:V2 ClassMethodDeclItemList:C3 RBRACE {: RESULT=new ClassDeclarations(className, C1, V2, C3); RESULT.setLine(classNameleft); :};
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassDeclarationsExtends(T1); RESULT.setLine(T1left); :}
 			|
+			(ClassExtendsError) EXTENDS error:e
+			{:
+				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakove do prvog znaka {", null);
+			:} {: RESULT=new ClassExtendsError(); :}
+			|
 			(NoClassExtends) {: RESULT=new NoClassExtends(); :} /* epsilon */
 			;
 ClassMethodDeclItemList ::= (FullClassMethodDeclarationsItemList) LBRACE ConstructorDecl:C1 MethodDeclListNonEmpty:M2 RBRACE {: RESULT=new FullClassMethodDeclarationsItemList(C1, M2); RESULT.setLine(C1left); :}

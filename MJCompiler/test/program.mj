@@ -6,11 +6,11 @@ program MJProgram
 		int x, y;
 		int d;
 	}
-	class B extends B{
+	class B extends A{
 		int x, y;
 		int d;
 		{
-			adsjidoa()
+			B()
 			int x; bool d;
 				{
 					x = 2;

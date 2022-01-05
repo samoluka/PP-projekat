@@ -130,6 +130,11 @@ RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList RBRACE;
 ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends LBRACE VarDeclList ClassMethodDeclItemList RBRACE;
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type
 			|
+			(ClassExtendsError) EXTENDS error:e
+			{:
+				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakove do prvog znaka {", null);
+			:}
+			|
 			(NoClassExtends) /* epsilon */
 			;
 ClassMethodDeclItemList ::= (FullClassMethodDeclarationsItemList) LBRACE ConstructorDecl MethodDeclListNonEmpty RBRACE
