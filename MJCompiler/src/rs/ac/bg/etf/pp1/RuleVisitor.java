@@ -10,8 +10,4 @@ public class RuleVisitor extends VisitorAdaptor{
 	
 	Logger log = Logger.getLogger(getClass());
 	
-    public void visit(PrintStmt print) {
-		printCallCount++;
-	}
-
 }

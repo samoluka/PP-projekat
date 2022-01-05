@@ -1,25 +1,45 @@
-program MJProgram
-	const int x = 10, y = 20;
-	const bool y = false;
-	int k;
-	record A{
-		int x, y;
-		int d;
-	}
-	class B jasdoidj{
-		int x, y;
-		int d;
+program p
+	const int size = 10;
+	class Table {
+		int pos[], neg[];
 		{
-			B()
-			int x; bool d;
-				{
-					x = 2;
-				}
-			void method1(int x, int y){}
-			int method2(int x){}
+			 void putp (int a, int idx) { this.pos[idx] = a; }
+			 void putn (int a, int idx) { this.neg[idx] = a; }
+			 int getp (int idx) { return pos[idx]; }
+			 int getn (int idx) { return neg[idx]; }
 		}
 	}
-{
+	record Board {
+		int rows, columns;
+	}
+	Table val;
+	Board board;
+	{
+		void f(char ch, int a, int arg)
+		int x;
+		{
+			x = arg;
+		}
+		void main() int x, i; char c;
+		{
+			val = new Table;
+			val.pos = new int [size];
+			val.neg = new int [size];
+			read(x);
+			i = 0;
+			do{
+				 val.putp(0, i); 
+				 val.putn(0, i);
+				 i++;
+			}while(i);
+			skip: f(c, x, i);
+			board = new Board;
+			read(board.rows);
+			x = board.rows;
+			do{
+				read(x);
+			}while(true);
+		}
+	}
 
-}
 //<arg value="-dump_states" />

@@ -53,13 +53,13 @@ import java_cup.runtime.Symbol;
 "void"		{ return new_symbol(sym.VOID, yytext());}
 "extends"	{ return new_symbol(sym.EXTENDS, yytext());}
 "continue"	{ return new_symbol(sym.CONTINUE, yytext());}
-"this"		{ return new_symbol(sym.THIS, yytext());}
 "super"		{ return new_symbol(sym.SUPER, yytext());}
 "goto"		{ return new_symbol(sym.GOTO, yytext());}
 "record"	{ return new_symbol(sym.RECORD, yytext());}
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-" 		{ return new_symbol(sym.MINUS, yytext()); }
 "*" 		{ return new_symbol(sym.MULTIPLY, yytext()); }
+"%" 		{ return new_symbol(sym.MOD, yytext()); }
 "\/" 		{ return new_symbol(sym.DEVIDE, yytext()); }
 "==" 		{ return new_symbol(sym.EQUALEQUAL, yytext()); }
 "!=" 		{ return new_symbol(sym.NOTEQUAL, yytext()); }

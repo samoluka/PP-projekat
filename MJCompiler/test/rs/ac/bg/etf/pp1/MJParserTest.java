@@ -61,3 +61,57 @@ public class MJParserTest {
 	}
 
 }
+
+
+
+
+//
+//VarDeclForClass ::= (VarDeclForClassarations) Type VarDeclForClassItemList SEMI
+//		|  
+//		(VarDeclForClassError) error:e SEMI
+//        {:
+//        	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do ;", null);
+//        :}
+//        |
+//        (VarDeclForClassLbraceError) Type IDENT error:e LBRACE
+//        {:
+//        	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do ;", null);
+//        :}
+//        ;
+//VarDeclForClassItemList ::= (VarDeclForClassMultiItemList) VarDeclForClassItemList COMMA VarDeclDefinition
+//                    |    
+//                    (VarDeclForClassSinglItemList) VarDeclDefinition
+//                    |    
+//                    (VarDeclForClassItemListLBRACEError) Type error:e LBRACE
+//                    {:
+//                    	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do { ili ;", null);
+//                    :}
+//                    ;
+//
+//VarDeclForClassList ::= (VarDeclForClassarationsList) VarDeclForClassList VarDeclForClassListItem
+//                    |    
+//                    (NoVarDeclForClassList) /* epsilon */
+//                    ;
+//VarDeclForClassListItem ::= (VarDeclForClassListItem) VarDeclForClass;
+//
+/*
+Unmatched ::= (UnmatchedIf) IF Expr Statement
+		 	|
+		 	(UnmatchedIfElse) IF Expr Matched ELSE Unmatched
+		 	;
+		 
+
+Matched ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
+		   |
+		   (ErrorStmt) error SEMI:l
+		   {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+		   |
+		   (PrintStmt) PRINT LPAREN Expr RPAREN SEMI
+		   |
+		   (ReturnExpr) RETURN Expr:t SEMI
+		   |
+		   (ReturnNoExpr) RETURN SEMI
+		   |
+		   (MatchedStatement) IF Expr Matched ELSE Matched
+		   ;
+*/		

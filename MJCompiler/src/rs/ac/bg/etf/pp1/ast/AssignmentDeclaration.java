@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 5/0/2022 1:28:29
+// 5/0/2022 16:14:38
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,12 +8,12 @@ package rs.ac.bg.etf.pp1.ast;
 public class AssignmentDeclaration extends AssignmentDecl {
 
     private String varName;
-    private Const Const;
+    private Factor Factor;
 
-    public AssignmentDeclaration (String varName, Const Const) {
+    public AssignmentDeclaration (String varName, Factor Factor) {
         this.varName=varName;
-        this.Const=Const;
-        if(Const!=null) Const.setParent(this);
+        this.Factor=Factor;
+        if(Factor!=null) Factor.setParent(this);
     }
 
     public String getVarName() {
@@ -24,12 +24,12 @@ public class AssignmentDeclaration extends AssignmentDecl {
         this.varName=varName;
     }
 
-    public Const getConst() {
-        return Const;
+    public Factor getFactor() {
+        return Factor;
     }
 
-    public void setConst(Const Const) {
-        this.Const=Const;
+    public void setFactor(Factor Factor) {
+        this.Factor=Factor;
     }
 
     public void accept(Visitor visitor) {
@@ -37,16 +37,16 @@ public class AssignmentDeclaration extends AssignmentDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Const!=null) Const.accept(visitor);
+        if(Factor!=null) Factor.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Const!=null) Const.traverseTopDown(visitor);
+        if(Factor!=null) Factor.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Const!=null) Const.traverseBottomUp(visitor);
+        if(Factor!=null) Factor.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -58,8 +58,8 @@ public class AssignmentDeclaration extends AssignmentDecl {
         buffer.append(" "+tab+varName);
         buffer.append("\n");
 
-        if(Const!=null)
-            buffer.append(Const.toString("  "+tab));
+        if(Factor!=null)
+            buffer.append(Factor.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

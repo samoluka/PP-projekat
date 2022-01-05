@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 5/0/2022 1:28:29
+// 5/0/2022 16:14:38
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class CharConst extends Const {
+public class CharConst extends Factor {
 
     private Character val;
 

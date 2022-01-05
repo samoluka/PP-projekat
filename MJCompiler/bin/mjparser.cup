@@ -56,12 +56,14 @@ terminal String IDENT;
 
 
 /* Operators */
-terminal PLUS,MINUS,MULTIPLY,DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
+terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
 
 nonterminal Program, DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, VarDeclList, VarDeclListItem;
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, ConstructorSingleDecl, MethodDeclList, MethodDecl, MethodDeclItem, MethodDeclListNonEmpty, Type;
-nonterminal FormalParams, StatementList, FormalParamList, FormalParamDecl, Statement;
-nonterminal Designator, Expr, Term, Addop, Const, ActualPars, ActualParamList;
+nonterminal VarDeclForClass, VarDeclForClassItemList, VarDeclForClassList, VarDeclForClassListItem;
+nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, DesignatorStatement, DesignatorItem, Assignop;
+nonterminal FormalParams, FormalParamList, FormalParamDecl, Relop, Condition, CondTermList, CondTerm, CondFact, CondFactList;
+nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, ActualParam, DesignatorMulti, DesignatorMultiList;
 nonterminal Matched, Unmatched;
 
 
@@ -89,7 +91,7 @@ ConstDeclItemList ::= (ConstDeclMultiItemList) ConstDeclItemList COMMA Assignmen
 				|
 				(ConstDeclSingleItemList) AssignmentDecl
 				;
-AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Const;
+AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Factor;
 			
 /* varDecl = Type ident [ʺ[ʺ ʺ]ʺ] {ʺ,ʺ ident [ʺ[ʺ ʺ]ʺ]} ʺ; */	
 VarDecl ::= (VarDeclarations) Type VarDeclItemList SEMI
@@ -151,7 +153,6 @@ ClassMethodDeclItemList ::= (FullClassMethodDeclarationsItemList) LBRACE Constru
 						(NoClassMethodDeclItemList) /* epsilon */
 						;
 
-
 /*ConstructorDecl = ident ʺ(ʺ ʺ)ʺ {VarDecl} ʺ{ʺ {Statement} ʺ}". */
 
 ConstructorDecl ::= (ClassConstructorDeclaration) IDENT LPAREN RPAREN VarDeclList LBRACE StatementList RBRACE;
@@ -173,6 +174,7 @@ MethodDecl ::= (MethodDeclarationType) Type:retType IDENT:methodName MethodDeclI
            (MethodDeclarationVoid) VOID IDENT:methodName MethodDeclItem
            ;
 MethodDeclItem ::=  (MethodDeclItem) LPAREN FormalParams RPAREN VarDeclList LBRACE StatementList RBRACE;
+
 
 FormalParams ::= (FormalParamsList) FormalParamList:n
                  |
@@ -196,63 +198,178 @@ FormalParamList ::= (FormalParamListActual) FormalParamList COMMA Type VarDeclDe
 
 Type ::= (Type) IDENT:typeName;
 
-StatementList ::= (Statements) StatementList Statement
-				|
-				(NoStmt) /* epsilon */
+/*Statement = [Label ":"] SingleStatement * za A nivo
+				| Statements.
+SingleStatement = DesignatorStatement ʺ;ʺ
+			| ʺifʺ ʺ(ʺ Condition ʺ)ʺ Statement [ʺelseʺ Statement]
+			| ʺdoʺ Statement ʺwhile ʺ ʺ(ʺ Condition ʺ)ʺ ʺ;ʺ
+			| ʺbreakʺ ʺ;ʺ
+			| ʺcontinueʺ ʺ;ʺ
+			| ʺreturnʺ [Expr] ʺ;ʺ
+			| ʺreadʺ ʺ(ʺ Designator ʺ)ʺ ʺ;ʺ
+			| ʺprintʺ ʺ(ʺ Expr [ʺ,ʺ numConst] ʺ)ʺ ʺ;ʺ
+			| ʺgotoʺ Label ʺ;ʺ. * za A nivo
+Statements 	| ʺ{ʺ {Statement} ʺ}ʺ*/
+
+
+Statement ::= (StatementWithLabel) StatementLabel SingleStatement
+				| 
+				(StatementWithoutLabel) SingleStatement
 				;
 				
-Statement ::= (MatchedStmt) Matched
-		   |
-		   (UnmatchedStmt) Unmatched
-		   ; 
+StatementLabel ::= (StatementLabel) Label COLON;
+StatementList ::= (ListOfStatements) StatementList Statement
+			  |
+			  (NoStatementList) /* epsilon */
+			  ;
 
-Unmatched ::= (UnmatchedIf) IF Expr Statement
-		 	|
-		 	(UnmatchedIfElse) IF Expr Matched ELSE Unmatched
-		 	;
-		 
+SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
+				|
+				(DoStatement) DO StatementList WHILE LPAREN Condition RPAREN SEMI
+				|
+				(BreakStatement) BREAK SEMI
+				|
+				(ContinueStatement) CONTINUE SEMI
+				|
+				(ReturnStatementWithExpresion) RETURN Expr SEMI
+				|
+				(ReturnStatementWithoutExpresion) RETURN SEMI
+				|
+				(ReadStatement) READ LPAREN Designator RPAREN SEMI
+				|
+				(PrintStatementWithoutNumConst) PRINT LPAREN Expr RPAREN SEMI
+                |   
+                (PrintStatementWithNumConst) PRINT LPAREN Expr COMMA NUMBER:n RPAREN SEMI
+                |
+                (GotoStatement) GOTO Label SEMI
+                |
+				(SingleMultiStatement) LBRACE StatementList RBRACE
+				;
 
-Matched ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
-		   |
-		   (ErrorStmt) error SEMI:l
-		   {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
-		   |
-		   (PrintStmt) PRINT LPAREN Expr RPAREN SEMI
-		   |
-		   (ReturnExpr) RETURN Expr:t SEMI
-		   |
-		   (ReturnNoExpr) RETURN SEMI
-		   |
-		   (MatchedStatement) IF Expr Matched ELSE Matched
-		   ;
-			
-Expr ::= (AddExpr) Expr:te Addop Term:t
-	 |
-	 (TermExpr) Term:t
-	 ;
 
-Term ::= (Term) Const:t;
 
-Const ::= (NumberConst) NUMBER:val
+/* Condition = CondTerm {ʺ||ʺ CondTerm}. */
+Condition ::= (ConditionList) Condition OR CondTerm
+			|
+			(SingleConditionList) CondTerm
+	     	;
+/* CondTerm = CondFact {ʺ&&ʺ CondFact}.
+	CondFact = Expr [Relop Expr].*/
+CondTerm ::= (ConditionTermList) CondTerm AND CondFact 
+		  |
+		  (SingleConditionTermList) CondFact
+		  ;
+CondFact ::= (SingleCondFact) Expr
+		|
+		(MultiCondFact) Expr Relop Expr
+		;			
+
+
+/* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ‐‐ʺ) */
+DesignatorStatement ::= (DesignatorStatement) Designator DesignatorItem;
+DesignatorItem ::= (DesignatorItemAssign) Assignop Expr
+				|
+				(DesignatorItemFuncCallWithParam) LPAREN ActualPars RPAREN
+				|
+				(DesignatorItemFuncCallWithoutParam) LPAREN RPAREN
+				|
+				(DesignatorItemInc) INCREMENT
+				|
+				(DesignatorItemDec) DECREMENT
+				;
+
+
+
+/* Expr = [ʺ-ʺ] Term {Addop Term}. */
+Expr ::= (NegativeExpr) MINUS ExprPositive
+		|
+		(PositiveExpr) ExprPositive
+		;
+ExprPositive ::= (AddExpr) ExprPositive:ex Addop Term:t
+	 			|
+	 			(TermExpr) Term:t
+	 			;
+/* Term = Factor {Mulop Factor}. */
+Term ::=(MulopTerm) Factor:t1 Mulop Factor:t2
+		| 
+		(SingleTerm) Factor:t
+		;
+
+
+/*
+Factor = Designator [ʺ(ʺ [ActPars] ʺ)ʺ]
+| numConst
+| charConst
+| boolConst
+| ʺnewʺ Type [ʺ[ʺ Expr ʺ]ʺ]
+| ʺ(ʺ Expr ʺ)ʺ.
+*/
+Factor ::= (NumberConst) NUMBER:val
 		|
 		(BoolConst) BOOLEAN:val
 		|
 		(CharConst) CHARACTER:val
+		|
+		(DesignatorConst) Designator
+		|
+		(DesignatorWithParam) Designator LPAREN ActualPars RPAREN
+		|
+		(NewFactor) NEW Type 
+		|
+		(NewFactorWithBrackets) NEW Type LBRACKET Expr RBRACKET
+		|
+		(ExprFactor) LPAREN Expr RPAREN
 		;
-		
-ActualPars ::= (Actuals) ActualParamList
+
+
+/* ActPars = Expr {ʺ,ʺ Expr}. */		
+ActualPars ::= (ActualParamMulti) ActualPars COMMA Expr
 			|
-			(NoActuals) /* epsilon */
+			(ActualParamSingle) Expr
 			;
-		
-ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
+
+/*Designator = ident {ʺ.ʺ ident | ʺ[ʺ Expr ʺ]ʺ}.*/				
+Designator ::= (MultiDesignator) IDENT:name DesignatorMultiList
+			|
+			(SingleDesignator) IDENT:name
+			;
+DesignatorMultiList ::= (MultiDesign) DesignatorMultiList DesignatorMulti
+					|
+					(SingleDesign) DesignatorMulti
+					;
+DesignatorMulti ::= (DotDesignator) DOT IDENT
 				|
-				(ActualParam) Expr
+				(ParenDesignator) LBRACKET Expr RBRACKET
 				;
-				
-Designator ::= (Designator) IDENT:name;
 
-Addop ::= (Addop) PLUS;
-		
-		
+/*
+Relop = ʺ==ʺ | ʺ!=ʺ | ʺ>ʺ | ʺ>=ʺ | ʺ<ʺ | ʺ<=ʺ.
+Addop = ʺ+ʺ | ʺ‐ʺ.
+Mulop = ʺ*ʺ | ʺ/ʺ | ʺ%ʺ.
+*/
+Addop ::= (AddPlus) PLUS
+		|
+		(AddMinus) MINUS
+		;
+Mulop ::= (MulMul) MULTIPLY
+		| 
+		(MulDiv) DEVIDE
+		|
+		(MulMod) MOD
+		;
+Assignop ::= (Assignop) EQUAL;
 
+Label ::= (Label) IDENT:name;
+
+Relop ::= (RelEqual) EQUALEQUAL 
+		|
+		(RelGEqual) GREATEROREQUAL 
+		|
+		(RelNEqual) NOTEQUAL 
+		| 
+		(RelLEqual) LESSOREQUAL 
+		| 
+		(RelGREATER) GREATER 
+		| 
+		(RelLess) LESS
+		;
