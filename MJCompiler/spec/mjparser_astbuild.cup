@@ -89,6 +89,7 @@ nonterminal StatementLabel StatementLabel;
 nonterminal Label Label;
 nonterminal SingleStatement SingleStatement;
 nonterminal Statement Statement;
+nonterminal ElseStatement ElseStatement;
 nonterminal DesignatorStatement DesignatorStatement;
 nonterminal DesignatorItem DesignatorItem;
 nonterminal Assignop Assignop;
@@ -115,6 +116,7 @@ nonterminal DesignatorMultiList DesignatorMultiList;
 nonterminal Matched Matched;
 nonterminal Unmatched Unmatched;
 
+precedence left ELSE;
 
 /* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {MethodDecl} ʺ}ʺ. */
 Program ::= (Program) PROG IDENT:programName DeclList:D1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(programName, D1, M2); RESULT.setLine(programNameleft); :};
@@ -274,6 +276,8 @@ StatementList ::= (ListOfStatements) StatementList:S1 Statement:S2 {: RESULT=new
 
 SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: RESULT=new DesignatorSingleStatement(D1); RESULT.setLine(D1left); :}
 				|
+				(IfStatement) IF LPAREN Condition:C1 RPAREN Statement:S2 ElseStatement:E3 {: RESULT=new IfStatement(C1, S2, E3); RESULT.setLine(C1left); :}
+				|
 				(DoStatement) DO StatementList:S1 WHILE LPAREN Condition:C2 RPAREN SEMI {: RESULT=new DoStatement(S1, C2); RESULT.setLine(S1left); :}
 				|
 				(BreakStatement) BREAK SEMI {: RESULT=new BreakStatement(); :}
@@ -295,7 +299,10 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
 				(SingleMultiStatement) LBRACE StatementList:S1 RBRACE {: RESULT=new SingleMultiStatement(S1); RESULT.setLine(S1left); :}
 				;
 
-
+ElseStatement ::= (ElseStatementStatement) ELSE Statement:S1 {: RESULT=new ElseStatementStatement(S1); RESULT.setLine(S1left); :}
+               | 
+               (NoElseStatement) {: RESULT=new NoElseStatement(); :} /* epsilon */
+               ;
 
 /* Condition = CondTerm {ʺ||ʺ CondTerm}. */
 Condition ::= (ConditionList) Condition:C1 OR CondTerm:C2 {: RESULT=new ConditionList(C1, C2); RESULT.setLine(C1left); :}

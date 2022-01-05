@@ -61,11 +61,12 @@ terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LES
 nonterminal Program, DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, VarDeclList, VarDeclListItem;
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, ConstructorSingleDecl, MethodDeclList, MethodDecl, MethodDeclItem, MethodDeclListNonEmpty, Type;
 nonterminal VarDeclForClass, VarDeclForClassItemList, VarDeclForClassList, VarDeclForClassListItem;
-nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, DesignatorStatement, DesignatorItem, Assignop;
+nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, FormalParamDecl, Relop, Condition, CondTermList, CondTerm, CondFact, CondFactList;
 nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, ActualParam, DesignatorMulti, DesignatorMultiList;
 nonterminal Matched, Unmatched;
 
+precedence left ELSE;
 
 /* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {MethodDecl} ʺ}ʺ. */
 Program ::= (Program) PROG IDENT:programName DeclList LBRACE MethodDeclList RBRACE;
@@ -225,6 +226,8 @@ StatementList ::= (ListOfStatements) StatementList Statement
 
 SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
 				|
+				(IfStatement) IF LPAREN Condition RPAREN Statement ElseStatement
+				|
 				(DoStatement) DO StatementList WHILE LPAREN Condition RPAREN SEMI
 				|
 				(BreakStatement) BREAK SEMI
@@ -246,7 +249,10 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
 				(SingleMultiStatement) LBRACE StatementList RBRACE
 				;
 
-
+ElseStatement ::= (ElseStatementStatement) ELSE Statement
+               | 
+               (NoElseStatement) /* epsilon */
+               ;
 
 /* Condition = CondTerm {ʺ||ʺ CondTerm}. */
 Condition ::= (ConditionList) Condition OR CondTerm

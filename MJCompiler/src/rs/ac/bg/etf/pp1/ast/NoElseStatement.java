@@ -5,9 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class RelEqual extends Relop {
+public class NoElseStatement extends ElseStatement {
 
-    public RelEqual () {
+    public NoElseStatement () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class RelEqual extends Relop {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("RelEqual(\n");
+        buffer.append("NoElseStatement(\n");
 
         buffer.append(tab);
-        buffer.append(") [RelEqual]");
+        buffer.append(") [NoElseStatement]");
         return buffer.toString();
     }
 }

@@ -26,6 +26,9 @@ program p
 			val.pos = new int [size];
 			val.neg = new int [size];
 			read(x);
+			if(x > 5){
+				goto skip;
+			}
 			i = 0;
 			do{
 				 val.putp(0, i); 
@@ -37,6 +40,12 @@ program p
 			read(board.rows);
 			x = board.rows;
 			do{
+				if(x <= 0) break;
+				if (0 <= x && x < size)
+					if (‐size < x && x < 0)
+						val.putn(val.getn(‐x)+1);
+					else
+						continue;
 				read(x);
 			}while(true);
 		}

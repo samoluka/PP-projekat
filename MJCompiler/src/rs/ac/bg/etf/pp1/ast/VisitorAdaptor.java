@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 5/0/2022 16:14:38
+// 5/0/2022 16:21:26
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -36,6 +36,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Condition Condition) { }
     public void visit(DeclItem DeclItem) { }
     public void visit(DesignatorMultiList DesignatorMultiList) { }
+    public void visit(ElseStatement ElseStatement) { }
     public void visit(ClassExtends ClassExtends) { }
     public void visit(AssignmentDecl AssignmentDecl) { }
     public void visit(FormalParamList FormalParamList) { }
@@ -101,6 +102,8 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConditionTermList ConditionTermList) { visit(); }
     public void visit(SingleConditionList SingleConditionList) { visit(); }
     public void visit(ConditionList ConditionList) { visit(); }
+    public void visit(NoElseStatement NoElseStatement) { visit(); }
+    public void visit(ElseStatementStatement ElseStatementStatement) { visit(); }
     public void visit(SingleMultiStatement SingleMultiStatement) { visit(); }
     public void visit(GotoStatement GotoStatement) { visit(); }
     public void visit(PrintStatementWithNumConst PrintStatementWithNumConst) { visit(); }
@@ -111,6 +114,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ContinueStatement ContinueStatement) { visit(); }
     public void visit(BreakStatement BreakStatement) { visit(); }
     public void visit(DoStatement DoStatement) { visit(); }
+    public void visit(IfStatement IfStatement) { visit(); }
     public void visit(DesignatorSingleStatement DesignatorSingleStatement) { visit(); }
     public void visit(NoStatementList NoStatementList) { visit(); }
     public void visit(ListOfStatements ListOfStatements) { visit(); }
