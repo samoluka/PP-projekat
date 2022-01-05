@@ -5,9 +5,20 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class VarDeclError extends VarDecl {
+public class ClassNoExtedsError extends ClassExtends {
 
-    public VarDeclError () {
+    private String I1;
+
+    public ClassNoExtedsError (String I1) {
+        this.I1=I1;
+    }
+
+    public String getI1() {
+        return I1;
+    }
+
+    public void setI1(String I1) {
+        this.I1=I1;
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +39,13 @@ public class VarDeclError extends VarDecl {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("VarDeclError(\n");
+        buffer.append("ClassNoExtedsError(\n");
+
+        buffer.append(" "+tab+I1);
+        buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [VarDeclError]");
+        buffer.append(") [ClassNoExtedsError]");
         return buffer.toString();
     }
 }

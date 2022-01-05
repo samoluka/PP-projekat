@@ -132,7 +132,12 @@ ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type
 			|
 			(ClassExtendsError) EXTENDS error:e
 			{:
-				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakove do prvog znaka {", null);
+				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
+			:}
+			|
+			(ClassNoExtedsError) IDENT error:e
+			{:
+				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
 			:}
 			|
 			(NoClassExtends) /* epsilon */
@@ -169,21 +174,23 @@ MethodDecl ::= (MethodDeclarationType) Type:retType IDENT:methodName MethodDeclI
            ;
 MethodDeclItem ::=  (MethodDeclItem) LPAREN FormalParams RPAREN VarDeclList LBRACE StatementList RBRACE;
 
-FormalParams ::=         (FormalParamsList) FormalParamList:n
-                 |       (NoFormalParamsList) /* epsilon */
-                 |       (FormalParamErrorComma)  error:e COMMA FormalParamList:n
-                           {:
-                                parser.report_error("Uspesan oporavak od greske na liniji " + eleft +
-                                          " u formalnim parametrima do ,", null);
-                           :}
-                 |       (FormalParamErrorParen) error:e
-                         {:
-                            parser.report_error("Uspesan oporavak od greske na liniji " + eleft +
-                                      " u formalnim parametrima do )", null);
-                          :};
+FormalParams ::= (FormalParamsList) FormalParamList:n
+                 |
+                 (NoFormalParamsList) /* epsilon */
+                 |
+				 (FormalParamErrorComma)  error:e COMMA FormalParamList:n
+                 {:
+                 	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka , ili )", null);
+                 :}
+                 |
+                 (FormalParamErrorParen) error:e
+                 {:
+                 	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka , ili )", null);
+                 :};
 
-FormalParamList ::=     (FormalParamListActual) FormalParamList COMMA Type VarDeclDefinition
-                   |    (FormalParamVar) Type VarDeclDefinition;
+FormalParamList ::= (FormalParamListActual) FormalParamList COMMA Type VarDeclDefinition
+                 |    
+                 (FormalParamVar) Type VarDeclDefinition;
                
 
 

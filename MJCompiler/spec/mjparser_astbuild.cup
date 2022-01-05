@@ -163,8 +163,13 @@ ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassD
 			|
 			(ClassExtendsError) EXTENDS error:e
 			{:
-				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakove do prvog znaka {", null);
+				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
 			:} {: RESULT=new ClassExtendsError(); :}
+			|
+			(ClassNoExtedsError) IDENT:I1 error:e
+			{:
+				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
+			:} {: RESULT=new ClassNoExtedsError(I1); RESULT.setLine(I1left); :}
 			|
 			(NoClassExtends) {: RESULT=new NoClassExtends(); :} /* epsilon */
 			;
@@ -200,21 +205,23 @@ MethodDecl ::= (MethodDeclarationType) Type:retType IDENT:methodName MethodDeclI
            ;
 MethodDeclItem ::=  (MethodDeclItem) LPAREN FormalParams:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new MethodDeclItem(F1, V2, S3); RESULT.setLine(F1left); :};
 
-FormalParams ::=         (FormalParamsList) FormalParamList:n {: RESULT=new FormalParamsList(n); RESULT.setLine(nleft); :}
-                 |       (NoFormalParamsList) {: RESULT=new NoFormalParamsList(); :} /* epsilon */
-                 |       (FormalParamErrorComma)  error:e COMMA FormalParamList:n
-                           {:
-                                parser.report_error("Uspesan oporavak od greske na liniji " + eleft +
-                                          " u formalnim parametrima do ,", null);
-                           :} {: RESULT=new FormalParamErrorComma(n); RESULT.setLine(nleft); :}
-                 |       (FormalParamErrorParen) error:e
-                         {:
-                            parser.report_error("Uspesan oporavak od greske na liniji " + eleft +
-                                      " u formalnim parametrima do )", null);
-                          :} {: RESULT=new FormalParamErrorParen(); :};
+FormalParams ::= (FormalParamsList) FormalParamList:n {: RESULT=new FormalParamsList(n); RESULT.setLine(nleft); :}
+                 |
+                 (NoFormalParamsList) {: RESULT=new NoFormalParamsList(); :} /* epsilon */
+                 |
+				 (FormalParamErrorComma)  error:e COMMA FormalParamList:n
+                 {:
+                 	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka , ili )", null);
+                 :} {: RESULT=new FormalParamErrorComma(n); RESULT.setLine(nleft); :}
+                 |
+                 (FormalParamErrorParen) error:e
+                 {:
+                 	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka , ili )", null);
+                 :} {: RESULT=new FormalParamErrorParen(); :};
 
-FormalParamList ::=     (FormalParamListActual) FormalParamList:F1 COMMA Type:T2 VarDeclDefinition:V3 {: RESULT=new FormalParamListActual(F1, T2, V3); RESULT.setLine(F1left); :}
-                   |    (FormalParamVar) Type:T1 VarDeclDefinition:V2 {: RESULT=new FormalParamVar(T1, V2); RESULT.setLine(T1left); :};
+FormalParamList ::= (FormalParamListActual) FormalParamList:F1 COMMA Type:T2 VarDeclDefinition:V3 {: RESULT=new FormalParamListActual(F1, T2, V3); RESULT.setLine(F1left); :}
+                 |    
+                 (FormalParamVar) Type:T1 VarDeclDefinition:V2 {: RESULT=new FormalParamVar(T1, V2); RESULT.setLine(T1left); :};
                
 
 
