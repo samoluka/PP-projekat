@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,10 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public abstract class VisitorAdaptor implements Visitor { 
 
     public void visit(Unmatched Unmatched) { }
+    public void visit(MethodDecl MethodDecl) { }
+    public void visit(ConstructorDecl ConstructorDecl) { }
     public void visit(Matched Matched) { }
     public void visit(VarDeclDefinition VarDeclDefinition) { }
     public void visit(FormalParamDecl FormalParamDecl) { }
     public void visit(VarDeclItemList VarDeclItemList) { }
+    public void visit(MethodDeclListNonEmpty MethodDeclListNonEmpty) { }
     public void visit(StatementList StatementList) { }
     public void visit(RecordDecl RecordDecl) { }
     public void visit(DeclList DeclList) { }
@@ -21,10 +24,10 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(AssignmentDecl AssignmentDecl) { }
     public void visit(VarDeclList VarDeclList) { }
     public void visit(FormalParamList FormalParamList) { }
+    public void visit(FormalParams FormalParams) { }
     public void visit(Expr Expr) { }
-    public void visit(ClassVarDeclItemList ClassVarDeclItemList) { }
-    public void visit(RecordDeclItemList RecordDeclItemList) { }
     public void visit(ActualPars ActualPars) { }
+    public void visit(ConstructorSingleDecl ConstructorSingleDecl) { }
     public void visit(Const Const) { }
     public void visit(Statement Statement) { }
     public void visit(VarDecl VarDecl) { }
@@ -32,7 +35,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstDeclItemList ConstDeclItemList) { }
     public void visit(ClassDecl ClassDecl) { }
     public void visit(MethodDeclList MethodDeclList) { }
-    public void visit(FormPars FormPars) { }
     public void visit(Addop Addop) { visit(); }
     public void visit(Designator Designator) { visit(); }
     public void visit(ActualParam ActualParam) { visit(); }
@@ -57,27 +59,32 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(MatchedStmt MatchedStmt) { visit(); }
     public void visit(NoStmt NoStmt) { visit(); }
     public void visit(Statements Statements) { visit(); }
-    public void visit(SingleFormalParamDecl SingleFormalParamDecl) { visit(); }
-    public void visit(FormalParamDecls FormalParamDecls) { visit(); }
-    public void visit(ErrorStmtFormParam ErrorStmtFormParam) { visit(); }
-    public void visit(NoFormParam NoFormParam) { visit(); }
-    public void visit(FormParams FormParams) { visit(); }
-    public void visit(MethodDecl MethodDecl) { visit(); }
-    public void visit(NoMethodDecl NoMethodDecl) { visit(); }
-    public void visit(MethodDeclarations MethodDeclarations) { visit(); }
     public void visit(Type Type) { visit(); }
+    public void visit(FormalParamVar FormalParamVar) { visit(); }
+    public void visit(FormalParamListActual FormalParamListActual) { visit(); }
+    public void visit(FormalParamErrorParen FormalParamErrorParen) { visit(); }
+    public void visit(FormalParamErrorComma FormalParamErrorComma) { visit(); }
+    public void visit(NoFormalParamsList NoFormalParamsList) { visit(); }
+    public void visit(FormalParamsList FormalParamsList) { visit(); }
+    public void visit(MethodDeclItem MethodDeclItem) { visit(); }
+    public void visit(MethodDeclarationVoid MethodDeclarationVoid) { visit(); }
+    public void visit(MethodDeclarationType MethodDeclarationType) { visit(); }
+    public void visit(NoMethodDeclList NoMethodDeclList) { visit(); }
+    public void visit(MethodDeclarationList MethodDeclarationList) { visit(); }
+    public void visit(MethodDeclarationNonEmptySingleList MethodDeclarationNonEmptySingleList) { visit(); }
+    public void visit(MethodDeclarationNonEmptyList MethodDeclarationNonEmptyList) { visit(); }
+    public void visit(ClassConstructorDeclaration ClassConstructorDeclaration) { visit(); }
     public void visit(NoClassMethodDeclItemList NoClassMethodDeclItemList) { visit(); }
-    public void visit(ClassMethodDeclItemListDerived1 ClassMethodDeclItemListDerived1) { visit(); }
-    public void visit(ClassDeclItem ClassDeclItem) { visit(); }
-    public void visit(NoClassVarDeclItemList NoClassVarDeclItemList) { visit(); }
-    public void visit(ClassDeclarationsItemList ClassDeclarationsItemList) { visit(); }
+    public void visit(OnlyMethodClassMethodDeclaration OnlyMethodClassMethodDeclaration) { visit(); }
+    public void visit(OnlyConstructorClassMethodDeclaration OnlyConstructorClassMethodDeclaration) { visit(); }
+    public void visit(FullClassMethodDeclarationsItemList FullClassMethodDeclarationsItemList) { visit(); }
     public void visit(NoClassExtends NoClassExtends) { visit(); }
     public void visit(ClassDeclarationsExtends ClassDeclarationsExtends) { visit(); }
     public void visit(ClassDeclarations ClassDeclarations) { visit(); }
-    public void visit(RecordDeclItem RecordDeclItem) { visit(); }
-    public void visit(NoRecordDeclItemList NoRecordDeclItemList) { visit(); }
-    public void visit(RecordDeclarationsItemList RecordDeclarationsItemList) { visit(); }
     public void visit(RecordDeclarations RecordDeclarations) { visit(); }
+    public void visit(VarDeclListItem VarDeclListItem) { visit(); }
+    public void visit(NoVarDeclList NoVarDeclList) { visit(); }
+    public void visit(VarDeclarationsList VarDeclarationsList) { visit(); }
     public void visit(DefinitionArray DefinitionArray) { visit(); }
     public void visit(Definition Definition) { visit(); }
     public void visit(VarDeclItemListError VarDeclItemListError) { visit(); }

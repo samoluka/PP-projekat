@@ -1,15 +1,15 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class FormParams extends FormPars {
+public class FormalParamErrorComma extends FormalParams {
 
     private FormalParamList FormalParamList;
 
-    public FormParams (FormalParamList FormalParamList) {
+    public FormalParamErrorComma (FormalParamList FormalParamList) {
         this.FormalParamList=FormalParamList;
         if(FormalParamList!=null) FormalParamList.setParent(this);
     }
@@ -43,7 +43,7 @@ public class FormParams extends FormPars {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("FormParams(\n");
+        buffer.append("FormalParamErrorComma(\n");
 
         if(FormalParamList!=null)
             buffer.append(FormalParamList.toString("  "+tab));
@@ -52,7 +52,7 @@ public class FormParams extends FormPars {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [FormParams]");
+        buffer.append(") [FormalParamErrorComma]");
         return buffer.toString();
     }
 }

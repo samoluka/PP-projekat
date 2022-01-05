@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,15 +9,15 @@ public class ClassDeclarations extends ClassDecl {
 
     private String className;
     private ClassExtends ClassExtends;
-    private ClassVarDeclItemList ClassVarDeclItemList;
+    private VarDeclList VarDeclList;
     private ClassMethodDeclItemList ClassMethodDeclItemList;
 
-    public ClassDeclarations (String className, ClassExtends ClassExtends, ClassVarDeclItemList ClassVarDeclItemList, ClassMethodDeclItemList ClassMethodDeclItemList) {
+    public ClassDeclarations (String className, ClassExtends ClassExtends, VarDeclList VarDeclList, ClassMethodDeclItemList ClassMethodDeclItemList) {
         this.className=className;
         this.ClassExtends=ClassExtends;
         if(ClassExtends!=null) ClassExtends.setParent(this);
-        this.ClassVarDeclItemList=ClassVarDeclItemList;
-        if(ClassVarDeclItemList!=null) ClassVarDeclItemList.setParent(this);
+        this.VarDeclList=VarDeclList;
+        if(VarDeclList!=null) VarDeclList.setParent(this);
         this.ClassMethodDeclItemList=ClassMethodDeclItemList;
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.setParent(this);
     }
@@ -38,12 +38,12 @@ public class ClassDeclarations extends ClassDecl {
         this.ClassExtends=ClassExtends;
     }
 
-    public ClassVarDeclItemList getClassVarDeclItemList() {
-        return ClassVarDeclItemList;
+    public VarDeclList getVarDeclList() {
+        return VarDeclList;
     }
 
-    public void setClassVarDeclItemList(ClassVarDeclItemList ClassVarDeclItemList) {
-        this.ClassVarDeclItemList=ClassVarDeclItemList;
+    public void setVarDeclList(VarDeclList VarDeclList) {
+        this.VarDeclList=VarDeclList;
     }
 
     public ClassMethodDeclItemList getClassMethodDeclItemList() {
@@ -60,20 +60,20 @@ public class ClassDeclarations extends ClassDecl {
 
     public void childrenAccept(Visitor visitor) {
         if(ClassExtends!=null) ClassExtends.accept(visitor);
-        if(ClassVarDeclItemList!=null) ClassVarDeclItemList.accept(visitor);
+        if(VarDeclList!=null) VarDeclList.accept(visitor);
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(ClassExtends!=null) ClassExtends.traverseTopDown(visitor);
-        if(ClassVarDeclItemList!=null) ClassVarDeclItemList.traverseTopDown(visitor);
+        if(VarDeclList!=null) VarDeclList.traverseTopDown(visitor);
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(ClassExtends!=null) ClassExtends.traverseBottomUp(visitor);
-        if(ClassVarDeclItemList!=null) ClassVarDeclItemList.traverseBottomUp(visitor);
+        if(VarDeclList!=null) VarDeclList.traverseBottomUp(visitor);
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -92,8 +92,8 @@ public class ClassDeclarations extends ClassDecl {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(ClassVarDeclItemList!=null)
-            buffer.append(ClassVarDeclItemList.toString("  "+tab));
+        if(VarDeclList!=null)
+            buffer.append(VarDeclList.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

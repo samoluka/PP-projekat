@@ -9,8 +9,17 @@ program MJProgram
 	class B extends B{
 		int x, y;
 		int d;
-		{}
+		{
+			adsjidoa()
+			int x; bool d;
+				{
+					x = 2;
+				}
+			void method1(){}
+			int method2(){}
+		}
 	}
 {
 
 }
+//<arg value="-dump_states" />

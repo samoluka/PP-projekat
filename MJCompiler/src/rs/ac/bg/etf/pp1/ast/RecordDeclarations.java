@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,12 +8,12 @@ package rs.ac.bg.etf.pp1.ast;
 public class RecordDeclarations extends RecordDecl {
 
     private String name;
-    private RecordDeclItemList RecordDeclItemList;
+    private VarDeclList VarDeclList;
 
-    public RecordDeclarations (String name, RecordDeclItemList RecordDeclItemList) {
+    public RecordDeclarations (String name, VarDeclList VarDeclList) {
         this.name=name;
-        this.RecordDeclItemList=RecordDeclItemList;
-        if(RecordDeclItemList!=null) RecordDeclItemList.setParent(this);
+        this.VarDeclList=VarDeclList;
+        if(VarDeclList!=null) VarDeclList.setParent(this);
     }
 
     public String getName() {
@@ -24,12 +24,12 @@ public class RecordDeclarations extends RecordDecl {
         this.name=name;
     }
 
-    public RecordDeclItemList getRecordDeclItemList() {
-        return RecordDeclItemList;
+    public VarDeclList getVarDeclList() {
+        return VarDeclList;
     }
 
-    public void setRecordDeclItemList(RecordDeclItemList RecordDeclItemList) {
-        this.RecordDeclItemList=RecordDeclItemList;
+    public void setVarDeclList(VarDeclList VarDeclList) {
+        this.VarDeclList=VarDeclList;
     }
 
     public void accept(Visitor visitor) {
@@ -37,16 +37,16 @@ public class RecordDeclarations extends RecordDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(RecordDeclItemList!=null) RecordDeclItemList.accept(visitor);
+        if(VarDeclList!=null) VarDeclList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(RecordDeclItemList!=null) RecordDeclItemList.traverseTopDown(visitor);
+        if(VarDeclList!=null) VarDeclList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(RecordDeclItemList!=null) RecordDeclItemList.traverseBottomUp(visitor);
+        if(VarDeclList!=null) VarDeclList.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -58,8 +58,8 @@ public class RecordDeclarations extends RecordDecl {
         buffer.append(" "+tab+name);
         buffer.append("\n");
 
-        if(RecordDeclItemList!=null)
-            buffer.append(RecordDeclItemList.toString("  "+tab));
+        if(VarDeclList!=null)
+            buffer.append(VarDeclList.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

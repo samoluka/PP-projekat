@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,10 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public interface Visitor { 
 
     public void visit(Unmatched Unmatched);
+    public void visit(MethodDecl MethodDecl);
+    public void visit(ConstructorDecl ConstructorDecl);
     public void visit(Matched Matched);
     public void visit(VarDeclDefinition VarDeclDefinition);
     public void visit(FormalParamDecl FormalParamDecl);
     public void visit(VarDeclItemList VarDeclItemList);
+    public void visit(MethodDeclListNonEmpty MethodDeclListNonEmpty);
     public void visit(StatementList StatementList);
     public void visit(RecordDecl RecordDecl);
     public void visit(DeclList DeclList);
@@ -21,10 +24,10 @@ public interface Visitor {
     public void visit(AssignmentDecl AssignmentDecl);
     public void visit(VarDeclList VarDeclList);
     public void visit(FormalParamList FormalParamList);
+    public void visit(FormalParams FormalParams);
     public void visit(Expr Expr);
-    public void visit(ClassVarDeclItemList ClassVarDeclItemList);
-    public void visit(RecordDeclItemList RecordDeclItemList);
     public void visit(ActualPars ActualPars);
+    public void visit(ConstructorSingleDecl ConstructorSingleDecl);
     public void visit(Const Const);
     public void visit(Statement Statement);
     public void visit(VarDecl VarDecl);
@@ -32,7 +35,6 @@ public interface Visitor {
     public void visit(ConstDeclItemList ConstDeclItemList);
     public void visit(ClassDecl ClassDecl);
     public void visit(MethodDeclList MethodDeclList);
-    public void visit(FormPars FormPars);
     public void visit(Addop Addop);
     public void visit(Designator Designator);
     public void visit(ActualParam ActualParam);
@@ -57,27 +59,32 @@ public interface Visitor {
     public void visit(MatchedStmt MatchedStmt);
     public void visit(NoStmt NoStmt);
     public void visit(Statements Statements);
-    public void visit(SingleFormalParamDecl SingleFormalParamDecl);
-    public void visit(FormalParamDecls FormalParamDecls);
-    public void visit(ErrorStmtFormParam ErrorStmtFormParam);
-    public void visit(NoFormParam NoFormParam);
-    public void visit(FormParams FormParams);
-    public void visit(MethodDecl MethodDecl);
-    public void visit(NoMethodDecl NoMethodDecl);
-    public void visit(MethodDeclarations MethodDeclarations);
     public void visit(Type Type);
+    public void visit(FormalParamVar FormalParamVar);
+    public void visit(FormalParamListActual FormalParamListActual);
+    public void visit(FormalParamErrorParen FormalParamErrorParen);
+    public void visit(FormalParamErrorComma FormalParamErrorComma);
+    public void visit(NoFormalParamsList NoFormalParamsList);
+    public void visit(FormalParamsList FormalParamsList);
+    public void visit(MethodDeclItem MethodDeclItem);
+    public void visit(MethodDeclarationVoid MethodDeclarationVoid);
+    public void visit(MethodDeclarationType MethodDeclarationType);
+    public void visit(NoMethodDeclList NoMethodDeclList);
+    public void visit(MethodDeclarationList MethodDeclarationList);
+    public void visit(MethodDeclarationNonEmptySingleList MethodDeclarationNonEmptySingleList);
+    public void visit(MethodDeclarationNonEmptyList MethodDeclarationNonEmptyList);
+    public void visit(ClassConstructorDeclaration ClassConstructorDeclaration);
     public void visit(NoClassMethodDeclItemList NoClassMethodDeclItemList);
-    public void visit(ClassMethodDeclItemListDerived1 ClassMethodDeclItemListDerived1);
-    public void visit(ClassDeclItem ClassDeclItem);
-    public void visit(NoClassVarDeclItemList NoClassVarDeclItemList);
-    public void visit(ClassDeclarationsItemList ClassDeclarationsItemList);
+    public void visit(OnlyMethodClassMethodDeclaration OnlyMethodClassMethodDeclaration);
+    public void visit(OnlyConstructorClassMethodDeclaration OnlyConstructorClassMethodDeclaration);
+    public void visit(FullClassMethodDeclarationsItemList FullClassMethodDeclarationsItemList);
     public void visit(NoClassExtends NoClassExtends);
     public void visit(ClassDeclarationsExtends ClassDeclarationsExtends);
     public void visit(ClassDeclarations ClassDeclarations);
-    public void visit(RecordDeclItem RecordDeclItem);
-    public void visit(NoRecordDeclItemList NoRecordDeclItemList);
-    public void visit(RecordDeclarationsItemList RecordDeclarationsItemList);
     public void visit(RecordDeclarations RecordDeclarations);
+    public void visit(VarDeclListItem VarDeclListItem);
+    public void visit(NoVarDeclList NoVarDeclList);
+    public void visit(VarDeclarationsList VarDeclarationsList);
     public void visit(DefinitionArray DefinitionArray);
     public void visit(Definition Definition);
     public void visit(VarDeclItemListError VarDeclItemListError);

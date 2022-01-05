@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoRecordDeclItemList extends RecordDeclItemList {
+public class NoFormalParamsList extends FormalParams {
 
-    public NoRecordDeclItemList () {
+    public NoFormalParamsList () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class NoRecordDeclItemList extends RecordDeclItemList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoRecordDeclItemList(\n");
+        buffer.append("NoFormalParamsList(\n");
 
         buffer.append(tab);
-        buffer.append(") [NoRecordDeclItemList]");
+        buffer.append(") [NoFormalParamsList]");
         return buffer.toString();
     }
 }

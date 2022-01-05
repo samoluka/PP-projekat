@@ -68,18 +68,19 @@ nonterminal VarDecl VarDecl;
 nonterminal VarDeclItemList VarDeclItemList;
 nonterminal VarDeclDefinition VarDeclDefinition;
 nonterminal RecordDecl RecordDecl;
-nonterminal RecordDeclItemList RecordDeclItemList;
-nonterminal RecordDeclItem RecordDeclItem;
+nonterminal VarDeclList VarDeclList;
+nonterminal VarDeclListItem VarDeclListItem;
 nonterminal ClassDecl ClassDecl;
 nonterminal ClassExtends ClassExtends;
-nonterminal ClassVarDeclItemList ClassVarDeclItemList;
 nonterminal ClassMethodDeclItemList ClassMethodDeclItemList;
-nonterminal ClassDeclItem ClassDeclItem;
+nonterminal ConstructorDecl ConstructorDecl;
+nonterminal ConstructorSingleDecl ConstructorSingleDecl;
 nonterminal MethodDeclList MethodDeclList;
-nonterminal Type Type;
 nonterminal MethodDecl MethodDecl;
-nonterminal VarDeclList VarDeclList;
-nonterminal FormPars FormPars;
+nonterminal MethodDeclItem MethodDeclItem;
+nonterminal MethodDeclListNonEmpty MethodDeclListNonEmpty;
+nonterminal Type Type;
+nonterminal FormalParams FormalParams;
 nonterminal StatementList StatementList;
 nonterminal FormalParamList FormalParamList;
 nonterminal FormalParamDecl FormalParamDecl;
@@ -93,6 +94,7 @@ nonterminal ActualPars ActualPars;
 nonterminal ActualParamList ActualParamList;
 nonterminal Matched Matched;
 nonterminal Unmatched Unmatched;
+
 
 /* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {MethodDecl} ʺ}ʺ. */
 Program ::= (Program) PROG IDENT:programName DeclList:D1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(programName, D1, M2); RESULT.setLine(programNameleft); :};
@@ -142,58 +144,76 @@ VarDeclDefinition ::= (Definition) IDENT:name {: RESULT=new Definition(name); RE
    					|   
        				(DefinitionArray) IDENT:name LBRACKET RBRACKET {: RESULT=new DefinitionArray(name); RESULT.setLine(nameleft); :}
        				;
+ 
+VarDeclList ::= (VarDeclarationsList) VarDeclList:V1 VarDeclListItem:V2 {: RESULT=new VarDeclarationsList(V1, V2); RESULT.setLine(V1left); :}
+                    |    
+                    (NoVarDeclList) {: RESULT=new NoVarDeclList(); :} /* epsilon */
+                    ;
+VarDeclListItem ::= (VarDeclListItem) VarDecl:V1 {: RESULT=new VarDeclListItem(V1); RESULT.setLine(V1left); :};
 
 /* ʺrecordʺ ident ʺ{ʺ {VarDecl} ʺ}ʺ.  */
 
-RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE RecordDeclItemList:R1 RBRACE {: RESULT=new RecordDeclarations(name, R1); RESULT.setLine(nameleft); :};
-RecordDeclItemList ::= (RecordDeclarationsItemList) RecordDeclItemList:R1 RecordDeclItem:R2 {: RESULT=new RecordDeclarationsItemList(R1, R2); RESULT.setLine(R1left); :}
-                    |    
-                    (NoRecordDeclItemList) {: RESULT=new NoRecordDeclItemList(); :} /* epsilon */
-                    ;
-RecordDeclItem ::= (RecordDeclItem) VarDecl:V1 {: RESULT=new RecordDeclItem(V1); RESULT.setLine(V1left); :};
+RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList:V1 RBRACE {: RESULT=new RecordDeclarations(name, V1); RESULT.setLine(nameleft); :};
 
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
 
-ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends:C1 LBRACE ClassVarDeclItemList:C2 ClassMethodDeclItemList:C3 RBRACE {: RESULT=new ClassDeclarations(className, C1, C2, C3); RESULT.setLine(classNameleft); :};
+ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends:C1 LBRACE VarDeclList:V2 ClassMethodDeclItemList:C3 RBRACE {: RESULT=new ClassDeclarations(className, C1, V2, C3); RESULT.setLine(classNameleft); :};
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassDeclarationsExtends(T1); RESULT.setLine(T1left); :}
 			|
 			(NoClassExtends) {: RESULT=new NoClassExtends(); :} /* epsilon */
 			;
-ClassVarDeclItemList ::= (ClassDeclarationsItemList) ClassVarDeclItemList:C1 ClassDeclItem:C2 {: RESULT=new ClassDeclarationsItemList(C1, C2); RESULT.setLine(C1left); :}
-                    |    
-                    (NoClassVarDeclItemList) {: RESULT=new NoClassVarDeclItemList(); :} /* epsilon */
-                    ;
-ClassDeclItem ::= (ClassDeclItem) VarDecl:V1 {: RESULT=new ClassDeclItem(V1); RESULT.setLine(V1left); :};
-ClassMethodDeclItemList ::= LBRACE RBRACE {: RESULT=new ClassMethodDeclItemListDerived1(); :}
+ClassMethodDeclItemList ::= (FullClassMethodDeclarationsItemList) LBRACE ConstructorDecl:C1 MethodDeclListNonEmpty:M2 RBRACE {: RESULT=new FullClassMethodDeclarationsItemList(C1, M2); RESULT.setLine(C1left); :}
+						|
+						(OnlyConstructorClassMethodDeclaration) LBRACE ConstructorDecl:C1 RBRACE {: RESULT=new OnlyConstructorClassMethodDeclaration(C1); RESULT.setLine(C1left); :}
+						|
+						(OnlyMethodClassMethodDeclaration) LBRACE MethodDeclListNonEmpty:M1 RBRACE {: RESULT=new OnlyMethodClassMethodDeclaration(M1); RESULT.setLine(M1left); :}
 						|
 						(NoClassMethodDeclItemList) {: RESULT=new NoClassMethodDeclItemList(); :} /* epsilon */
 						;
 
 
+/*ConstructorDecl = ident ʺ(ʺ ʺ)ʺ {VarDecl} ʺ{ʺ {Statement} ʺ}". */
+
+ConstructorDecl ::= (ClassConstructorDeclaration) IDENT:I1 LPAREN RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new ClassConstructorDeclaration(I1, V2, S3); RESULT.setLine(I1left); :};
+
+
+
+/*MethodDecl = (Type | ʺvoidʺ) ident ʺ(ʺ [FormPars] ʺ)ʺ {VarDecl} ʺ{ʺ {Statement} ʺ}ʺ.*/
+
+MethodDeclListNonEmpty ::= (MethodDeclarationNonEmptyList) MethodDeclListNonEmpty:M1 MethodDecl:M2 {: RESULT=new MethodDeclarationNonEmptyList(M1, M2); RESULT.setLine(M1left); :}
+						| 
+						(MethodDeclarationNonEmptySingleList) MethodDecl:M1 {: RESULT=new MethodDeclarationNonEmptySingleList(M1); RESULT.setLine(M1left); :}
+						;
+MethodDeclList ::= (MethodDeclarationList) MethodDeclList:M1 MethodDecl:M2 {: RESULT=new MethodDeclarationList(M1, M2); RESULT.setLine(M1left); :}
+               |
+               (NoMethodDeclList) {: RESULT=new NoMethodDeclList(); :} /* epsilon */
+               ;
+MethodDecl ::= (MethodDeclarationType) Type:retType IDENT:methodName MethodDeclItem:M1 {: RESULT=new MethodDeclarationType(retType, methodName, M1); RESULT.setLine(retTypeleft); :}
+           |    
+           (MethodDeclarationVoid) VOID IDENT:methodName MethodDeclItem:M1 {: RESULT=new MethodDeclarationVoid(methodName, M1); RESULT.setLine(methodNameleft); :}
+           ;
+MethodDeclItem ::=  (MethodDeclItem) LPAREN FormalParams:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new MethodDeclItem(F1, V2, S3); RESULT.setLine(F1left); :};
+
+FormalParams ::=         (FormalParamsList) FormalParamList:n {: RESULT=new FormalParamsList(n); RESULT.setLine(nleft); :}
+                 |       (NoFormalParamsList) {: RESULT=new NoFormalParamsList(); :} /* epsilon */
+                 |       (FormalParamErrorComma)  error:e COMMA FormalParamList:n
+                           {:
+                                parser.report_error("Uspesan oporavak od greske na liniji " + eleft +
+                                          " u formalnim parametrima do ,", null);
+                           :} {: RESULT=new FormalParamErrorComma(n); RESULT.setLine(nleft); :}
+                 |       (FormalParamErrorParen) error:e
+                         {:
+                            parser.report_error("Uspesan oporavak od greske na liniji " + eleft +
+                                      " u formalnim parametrima do )", null);
+                          :} {: RESULT=new FormalParamErrorParen(); :};
+
+FormalParamList ::=     (FormalParamListActual) FormalParamList:F1 COMMA Type:T2 VarDeclDefinition:V3 {: RESULT=new FormalParamListActual(F1, T2, V3); RESULT.setLine(F1left); :}
+                   |    (FormalParamVar) Type:T1 VarDeclDefinition:V2 {: RESULT=new FormalParamVar(T1, V2); RESULT.setLine(T1left); :};
+               
+
 
 Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
-
-MethodDeclList ::= (MethodDeclarations) MethodDeclList:M1 MethodDecl:M2 {: RESULT=new MethodDeclarations(M1, M2); RESULT.setLine(M1left); :}
-				|
-				(NoMethodDecl) {: RESULT=new NoMethodDecl(); :} /* epsilon */
-				;
-				
-MethodDecl ::= (MethodDecl) Type:retType IDENT:methName LPAREN FormPars:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new MethodDecl(retType, methName, F1, V2, S3); RESULT.setLine(retTypeleft); :};
-
-
-FormPars ::= (FormParams) FormalParamList:F1 {: RESULT=new FormParams(F1); RESULT.setLine(F1left); :}
-		  |
-		  (NoFormParam) {: RESULT=new NoFormParam(); :} /* epsilon */
-		  |
-		  (ErrorStmtFormParam) error RPAREN:l
-		  {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :} {: RESULT=new ErrorStmtFormParam(); :}
-		  ;
-		  
-FormalParamList ::= (FormalParamDecls) FormalParamList:F1 COMMA FormalParamDecl:F2 {: RESULT=new FormalParamDecls(F1, F2); RESULT.setLine(F1left); :}
-				|
-				(SingleFormalParamDecl) FormalParamDecl:F1 {: RESULT=new SingleFormalParamDecl(F1); RESULT.setLine(F1left); :}
-				;
 
 StatementList ::= (Statements) StatementList:S1 Statement:S2 {: RESULT=new Statements(S1, S2); RESULT.setLine(S1left); :}
 				|

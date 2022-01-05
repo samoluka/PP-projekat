@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoClassVarDeclItemList extends ClassVarDeclItemList {
+public class NoVarDeclList extends VarDeclList {
 
-    public NoClassVarDeclItemList () {
+    public NoVarDeclList () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class NoClassVarDeclItemList extends ClassVarDeclItemList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoClassVarDeclItemList(\n");
+        buffer.append("NoVarDeclList(\n");
 
         buffer.append(tab);
-        buffer.append(") [NoClassVarDeclItemList]");
+        buffer.append(") [NoVarDeclList]");
         return buffer.toString();
     }
 }

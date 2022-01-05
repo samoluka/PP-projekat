@@ -1,17 +1,17 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class RecordDeclItem implements SyntaxNode {
+public class VarDeclListItem implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
     private VarDecl VarDecl;
 
-    public RecordDeclItem (VarDecl VarDecl) {
+    public VarDeclListItem (VarDecl VarDecl) {
         this.VarDecl=VarDecl;
         if(VarDecl!=null) VarDecl.setParent(this);
     }
@@ -61,7 +61,7 @@ public class RecordDeclItem implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("RecordDeclItem(\n");
+        buffer.append("VarDeclListItem(\n");
 
         if(VarDecl!=null)
             buffer.append(VarDecl.toString("  "+tab));
@@ -70,7 +70,7 @@ public class RecordDeclItem implements SyntaxNode {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [RecordDeclItem]");
+        buffer.append(") [VarDeclListItem]");
         return buffer.toString();
     }
 }

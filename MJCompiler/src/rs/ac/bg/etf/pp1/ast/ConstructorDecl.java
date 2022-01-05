@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 4/0/2022 23:6:39
+// 5/0/2022 1:0:35
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class FormPars implements SyntaxNode {
+public abstract class ConstructorDecl implements SyntaxNode {
 
     private SyntaxNode parent;
 
