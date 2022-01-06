@@ -114,6 +114,7 @@ nonterminal VarListClass VarListClass;
 nonterminal VarDefinitionClass VarDefinitionClass;
 nonterminal VarItemListClass VarItemListClass;
 nonterminal VarClass VarClass;
+nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 nonterminal Matched Matched;
 nonterminal Unmatched Unmatched;
 
@@ -187,13 +188,18 @@ RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList:V1 RBRA
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
 
-VarClass ::= (VarClass) Type:T1 VarItemListClass:V2 SEMI {: RESULT=new VarClass(T1, V2); RESULT.setLine(T1left); :};
-VarListClass ::= (VarListClassNonEmpty) VarListClass:V1 VarClass:V2 {: RESULT=new VarListClassNonEmpty(V1, V2); RESULT.setLine(V1left); :}
+VarClass ::= (VarClassNonError) Type:T1 VarItemListClass:V2 SEMI {: RESULT=new VarClassNonError(T1, V2); RESULT.setLine(T1left); :}
                     | 
-                    (VarErrorClass) error:e
+                    (VarErrorClass) error:e VarClassErrorEndPoint:end
        				{:
         				parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju klasne promenljive do ; ili {", null);
-       				:} {: RESULT=new VarErrorClass(); :}
+       				:} {: RESULT=new VarErrorClass(end); RESULT.setLine(endleft); :}
+       				;
+VarClassErrorEndPoint ::= SEMI {: RESULT=new VarClassErrorEndPointDerived1(); :}
+					| {: RESULT=new VarClassErrorEndPointDerived2(); :}
+					/* epsilon */
+					;
+VarListClass ::= (VarListClassNonEmpty) VarListClass:V1 VarClass:V2 {: RESULT=new VarListClassNonEmpty(V1, V2); RESULT.setLine(V1left); :}
        				|
                     (NoVarDeclListClLass) {: RESULT=new NoVarDeclListClLass(); :} /* epsilon */
                     ;

@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 2:19:23
+// 6/0/2022 2:36:45
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -12,6 +12,7 @@ public interface Visitor {
     public void visit(MethodDecl MethodDecl);
     public void visit(ConstructorDecl ConstructorDecl);
     public void visit(Matched Matched);
+    public void visit(VarClassErrorEndPoint VarClassErrorEndPoint);
     public void visit(Relop Relop);
     public void visit(VarListClass VarListClass);
     public void visit(CondTermList CondTermList);
@@ -47,6 +48,7 @@ public interface Visitor {
     public void visit(ActualPars ActualPars);
     public void visit(ConstructorSingleDecl ConstructorSingleDecl);
     public void visit(Statement Statement);
+    public void visit(VarClass VarClass);
     public void visit(VarDecl VarDecl);
     public void visit(ClassMethodDeclItemList ClassMethodDeclItemList);
     public void visit(ConstDeclItemList ConstDeclItemList);
@@ -151,9 +153,11 @@ public interface Visitor {
     public void visit(VarSinglItemListClass VarSinglItemListClass);
     public void visit(VarMultiItemListClass VarMultiItemListClass);
     public void visit(NoVarDeclListClLass NoVarDeclListClLass);
-    public void visit(VarErrorClass VarErrorClass);
     public void visit(VarListClassNonEmpty VarListClassNonEmpty);
-    public void visit(VarClass VarClass);
+    public void visit(VarClassErrorEndPointDerived2 VarClassErrorEndPointDerived2);
+    public void visit(VarClassErrorEndPointDerived1 VarClassErrorEndPointDerived1);
+    public void visit(VarErrorClass VarErrorClass);
+    public void visit(VarClassNonError VarClassNonError);
     public void visit(RecordDeclarations RecordDeclarations);
     public void visit(VarDeclListItem VarDeclListItem);
     public void visit(NoVarDeclList NoVarDeclList);

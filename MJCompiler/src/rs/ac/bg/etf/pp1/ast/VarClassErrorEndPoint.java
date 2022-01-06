@@ -5,7 +5,7 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class ExprPositive implements SyntaxNode {
+public abstract class VarClassErrorEndPoint implements SyntaxNode {
 
     private SyntaxNode parent;
 

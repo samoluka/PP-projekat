@@ -1,27 +1,13 @@
 program Oporavak
-	class B extends A{
-		int a, ;
-		int a,b;
-		int x y;
-		int c;
-		int x
-		{
-			A(){
-				if (x>y){
-					a = 10;
-				}
-			}
-		}
-	}
+	int x y, y;	
 {
 }
 
-
-//definicija globalne promenljive – ignorisati karaktere do prvog znaka ";" ili sledećeg ","
+//definicija globalne promenljive – ignorisati karaktere do prvog znaka ";" ili sledećeg "," - valjda je dob ro, ne radi int 123x, y;
 //konstrukcija iskaza dodele – ignorisati karaktere do ";" - valjda je dobro, ne radi 123x = 123;
 //NIVO B (2 poena, uključujući i A):
 //deklaracija formalnog parametra funkcije – ignorisati znakove do znaka "," ili ")"
 //logički izraz unutar if konstrukcije - ignorisati karaktere do prvog znaka ")"
 //NIVO C (3 poena, uključujući i sve za B):
-//deklaracija polja unutrašnje klase – ignorisati karaktere do prvog ";" ili "{" - fali do {
+//deklaracija polja unutrašnje klase – ignorisati karaktere do prvog ";" ili "{" 
 //deklaracija proširenja natklase – ignorisati znakove do prvog znaka "{".

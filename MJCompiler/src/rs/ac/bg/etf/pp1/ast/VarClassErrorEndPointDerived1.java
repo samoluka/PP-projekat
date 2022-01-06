@@ -1,24 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 2:36:45
+// 6/0/2022 2:36:44
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NumberConst extends Factor {
+public class VarClassErrorEndPointDerived1 extends VarClassErrorEndPoint {
 
-    private Integer val;
-
-    public NumberConst (Integer val) {
-        this.val=val;
-    }
-
-    public Integer getVal() {
-        return val;
-    }
-
-    public void setVal(Integer val) {
-        this.val=val;
+    public VarClassErrorEndPointDerived1 () {
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +28,10 @@ public class NumberConst extends Factor {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NumberConst(\n");
-
-        buffer.append(" "+tab+val);
-        buffer.append("\n");
+        buffer.append("VarClassErrorEndPointDerived1(\n");
 
         buffer.append(tab);
-        buffer.append(") [NumberConst]");
+        buffer.append(") [VarClassErrorEndPointDerived1]");
         return buffer.toString();
     }
 }

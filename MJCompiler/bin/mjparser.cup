@@ -62,7 +62,7 @@ nonterminal Program, DeclList, DeclItem, ConstDecl, ConstDeclItemList, Assignmen
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, ConstructorSingleDecl, MethodDeclList, MethodDecl, MethodDeclItem, MethodDeclListNonEmpty, Type;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, FormalParamDecl, Relop, Condition, CondTermList, CondTerm, CondFact, CondFactList, FormalParamListItem;
-nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, ActualParam, DesignatorMulti, DesignatorMultiList, VarListClass, VarDefinitionClass, VarItemListClass, VarClass;
+nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, ActualParam, DesignatorMulti, DesignatorMultiList, VarListClass, VarDefinitionClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 nonterminal Matched, Unmatched;
 
 precedence left ELSE;
@@ -135,13 +135,18 @@ RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList RBRACE;
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
 
-VarClass ::= (VarClass) Type VarItemListClass SEMI;
-VarListClass ::= (VarListClassNonEmpty) VarListClass VarClass
+VarClass ::= (VarClassNonError) Type VarItemListClass SEMI
                     | 
-                    (VarErrorClass) error:e
+                    (VarErrorClass) error:e VarClassErrorEndPoint:end
        				{:
         				parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju klasne promenljive do ; ili {", null);
        				:}
+       				;
+VarClassErrorEndPoint ::= SEMI
+					|
+					/* epsilon */
+					;
+VarListClass ::= (VarListClassNonEmpty) VarListClass VarClass
        				|
                     (NoVarDeclListClLass) /* epsilon */
                     ;

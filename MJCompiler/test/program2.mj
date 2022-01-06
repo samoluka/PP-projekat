@@ -84,7 +84,7 @@ program p
 program Oporavak
 	int x y;
 
-	//int 123d;
+	int 123d;
 	int d;
 	
 	int 123a, y;
@@ -98,15 +98,18 @@ program Oporavak
 	class B extends{
 	}
 	class B extends A{
-		int x;
+		int a, ;
+		int a,b;
 		int x y;
-		//{
-		//	A(){
-		//		if (x> y && ){
-		//			a = 10;
-		//		}
-		//	}
-		//}
+		int c;
+		int x
+		{
+			A(){
+				if (x> y && ){
+					a = 10;
+				}
+			}
+		}
 	}
 {
 	void formalParamErrorFunc(int , int y){}
