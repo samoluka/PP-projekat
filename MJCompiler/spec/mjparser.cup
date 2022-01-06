@@ -60,10 +60,9 @@ terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LES
 
 nonterminal Program, DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, VarDeclList, VarDeclListItem;
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, ConstructorSingleDecl, MethodDeclList, MethodDecl, MethodDeclItem, MethodDeclListNonEmpty, Type;
-nonterminal VarDeclForClass, VarDeclForClassItemList, VarDeclForClassList, VarDeclForClassListItem;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, FormalParamDecl, Relop, Condition, CondTermList, CondTerm, CondFact, CondFactList, FormalParamListItem;
-nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, ActualParam, DesignatorMulti, DesignatorMultiList;
+nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, ActualParam, DesignatorMulti, DesignatorMultiList, VarListClass, VarDefinitionClass, VarItemListClass, VarClass;
 nonterminal Matched, Unmatched;
 
 precedence left ELSE;
@@ -136,7 +135,22 @@ RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList RBRACE;
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
 
-ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends LBRACE VarDeclList ClassMethodDeclItemList RBRACE;
+VarClass ::= (VarClass) Type VarItemListClass SEMI;
+VarListClass ::= (VarListClassNonEmpty) VarListClass VarClass
+                    | 
+                    (VarErrorClass) error:e
+       				{:
+        				parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju klasne promenljive do ; ili {", null);
+       				:}
+       				|
+                    (NoVarDeclListClLass) /* epsilon */
+                    ;
+VarItemListClass ::= (VarMultiItemListClass) VarItemListClass COMMA VarDeclDefinition
+                    |    
+                    (VarSinglItemListClass) VarDeclDefinition
+                    ;
+
+ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends LBRACE VarListClass ClassMethodDeclItemList RBRACE;
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type
 			|
 			(ClassExtendsError) EXTENDS error:e

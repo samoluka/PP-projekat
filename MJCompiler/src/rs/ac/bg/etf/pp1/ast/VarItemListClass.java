@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 1:32:39
+// 6/0/2022 2:19:23
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class VarDeclForClassList implements SyntaxNode {
+public abstract class VarItemListClass implements SyntaxNode {
 
     private SyntaxNode parent;
 

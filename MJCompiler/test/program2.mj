@@ -113,6 +113,7 @@ program Oporavak
 	void formalParamErrorFunc(int 2e1){}
 	int main(){
 		//x = 123x;
+		
 		if (x > y &&){
 			a = 10;
 		}
@@ -124,7 +125,8 @@ program Oporavak
 		}
 		if (x y || x)
 			a = 10;
-		a a;
+		x = ;
+		x = 123x),;
 	}
 
 

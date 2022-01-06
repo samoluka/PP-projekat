@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 1:32:39
+// 6/0/2022 2:19:23
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -13,17 +13,16 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstructorDecl ConstructorDecl) { }
     public void visit(Matched Matched) { }
     public void visit(Relop Relop) { }
+    public void visit(VarListClass VarListClass) { }
     public void visit(CondTermList CondTermList) { }
     public void visit(VarDeclDefinition VarDeclDefinition) { }
     public void visit(FormalParamDecl FormalParamDecl) { }
     public void visit(VarDeclItemList VarDeclItemList) { }
-    public void visit(VarDeclForClass VarDeclForClass) { }
     public void visit(MethodDeclListNonEmpty MethodDeclListNonEmpty) { }
-    public void visit(VarDeclForClassItemList VarDeclForClassItemList) { }
     public void visit(StatementList StatementList) { }
     public void visit(DesignatorMulti DesignatorMulti) { }
     public void visit(Addop Addop) { }
-    public void visit(VarDeclForClassList VarDeclForClassList) { }
+    public void visit(VarItemListClass VarItemListClass) { }
     public void visit(RecordDecl RecordDecl) { }
     public void visit(Factor Factor) { }
     public void visit(CondTerm CondTerm) { }
@@ -35,12 +34,13 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ExprPositive ExprPositive) { }
     public void visit(Condition Condition) { }
     public void visit(DeclItem DeclItem) { }
+    public void visit(VarDefinitionClass VarDefinitionClass) { }
     public void visit(DesignatorMultiList DesignatorMultiList) { }
     public void visit(ElseStatement ElseStatement) { }
     public void visit(ClassExtends ClassExtends) { }
     public void visit(AssignmentDecl AssignmentDecl) { }
-    public void visit(FormalParamList FormalParamList) { }
     public void visit(VarDeclList VarDeclList) { }
+    public void visit(FormalParamList FormalParamList) { }
     public void visit(Expr Expr) { }
     public void visit(FormalParamListItem FormalParamListItem) { }
     public void visit(FormalParams FormalParams) { }
@@ -51,7 +51,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ClassMethodDeclItemList ClassMethodDeclItemList) { }
     public void visit(ConstDeclItemList ConstDeclItemList) { }
     public void visit(DesignatorItem DesignatorItem) { }
-    public void visit(VarDeclForClassListItem VarDeclForClassListItem) { }
     public void visit(ClassDecl ClassDecl) { }
     public void visit(CondFact CondFact) { }
     public void visit(MethodDeclList MethodDeclList) { }
@@ -149,6 +148,12 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ClassExtendsError ClassExtendsError) { visit(); }
     public void visit(ClassDeclarationsExtends ClassDeclarationsExtends) { visit(); }
     public void visit(ClassDeclarations ClassDeclarations) { visit(); }
+    public void visit(VarSinglItemListClass VarSinglItemListClass) { visit(); }
+    public void visit(VarMultiItemListClass VarMultiItemListClass) { visit(); }
+    public void visit(NoVarDeclListClLass NoVarDeclListClLass) { visit(); }
+    public void visit(VarErrorClass VarErrorClass) { visit(); }
+    public void visit(VarListClassNonEmpty VarListClassNonEmpty) { visit(); }
+    public void visit(VarClass VarClass) { visit(); }
     public void visit(RecordDeclarations RecordDeclarations) { visit(); }
     public void visit(VarDeclListItem VarDeclListItem) { visit(); }
     public void visit(NoVarDeclList NoVarDeclList) { visit(); }

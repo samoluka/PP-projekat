@@ -80,10 +80,6 @@ nonterminal MethodDecl MethodDecl;
 nonterminal MethodDeclItem MethodDeclItem;
 nonterminal MethodDeclListNonEmpty MethodDeclListNonEmpty;
 nonterminal Type Type;
-nonterminal VarDeclForClass VarDeclForClass;
-nonterminal VarDeclForClassItemList VarDeclForClassItemList;
-nonterminal VarDeclForClassList VarDeclForClassList;
-nonterminal VarDeclForClassListItem VarDeclForClassListItem;
 nonterminal StatementList StatementList;
 nonterminal StatementLabel StatementLabel;
 nonterminal Label Label;
@@ -114,6 +110,10 @@ nonterminal ActualPars ActualPars;
 nonterminal ActualParam ActualParam;
 nonterminal DesignatorMulti DesignatorMulti;
 nonterminal DesignatorMultiList DesignatorMultiList;
+nonterminal VarListClass VarListClass;
+nonterminal VarDefinitionClass VarDefinitionClass;
+nonterminal VarItemListClass VarItemListClass;
+nonterminal VarClass VarClass;
 nonterminal Matched Matched;
 nonterminal Unmatched Unmatched;
 
@@ -187,7 +187,22 @@ RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList:V1 RBRA
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
 
-ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends:C1 LBRACE VarDeclList:V2 ClassMethodDeclItemList:C3 RBRACE {: RESULT=new ClassDeclarations(className, C1, V2, C3); RESULT.setLine(classNameleft); :};
+VarClass ::= (VarClass) Type:T1 VarItemListClass:V2 SEMI {: RESULT=new VarClass(T1, V2); RESULT.setLine(T1left); :};
+VarListClass ::= (VarListClassNonEmpty) VarListClass:V1 VarClass:V2 {: RESULT=new VarListClassNonEmpty(V1, V2); RESULT.setLine(V1left); :}
+                    | 
+                    (VarErrorClass) error:e
+       				{:
+        				parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju klasne promenljive do ; ili {", null);
+       				:} {: RESULT=new VarErrorClass(); :}
+       				|
+                    (NoVarDeclListClLass) {: RESULT=new NoVarDeclListClLass(); :} /* epsilon */
+                    ;
+VarItemListClass ::= (VarMultiItemListClass) VarItemListClass:V1 COMMA VarDeclDefinition:V2 {: RESULT=new VarMultiItemListClass(V1, V2); RESULT.setLine(V1left); :}
+                    |    
+                    (VarSinglItemListClass) VarDeclDefinition:V1 {: RESULT=new VarSinglItemListClass(V1); RESULT.setLine(V1left); :}
+                    ;
+
+ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends:C1 LBRACE VarListClass:V2 ClassMethodDeclItemList:C3 RBRACE {: RESULT=new ClassDeclarations(className, C1, V2, C3); RESULT.setLine(classNameleft); :};
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassDeclarationsExtends(T1); RESULT.setLine(T1left); :}
 			|
 			(ClassExtendsError) EXTENDS error:e
@@ -310,7 +325,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
 				|
 				(StatementError) error SEMI:e1
 				{:
-					parser.report_error("Uspesan oporavak od greske na liniji " + e1right + " pri dodeli vrednosti do ;", null);
+					parser.report_error("Uspesan oporavak od greske na liniji " + e1left + " pri dodeli vrednosti do ;", null);
 				:} {: RESULT=new StatementError(); :}
 				/* ovo se moze prebaciti u designatorItem ako pravi probleme */
 				;
