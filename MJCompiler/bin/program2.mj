@@ -1,0 +1,140 @@
+program Program
+	class A {
+		int x[],y[];
+	}
+	const int pi = 3, e = 2;
+	class B extends A {
+	 	int i;
+	 	{
+			int getValue(int a) int b; bool c;{ return this.i + this.x[0] + a; }
+			void m(){}
+	 	}
+	}
+	class C extends B{
+		A theA;
+		int a;
+	}
+	{
+		void main() A a; C c; int i; int x[]; char ch; {
+			a = new A;
+			a.x = new int[5];
+			a.y = new int[5];
+			c = new C;
+			c.theA = a; c.x = new int[5];
+			x = new int[3];
+			read(c.i);
+			i = 0;
+			do{
+				read(c.x[i]); read(c.theA.x[i]); 
+				i++;
+			}while(i<5);
+			print(c.getValue(c.theA.x[0]));
+			c.m();
+		}
+	}
+	
+	
+	
+program p
+	const int size = 10;
+	class Table {
+		int pos[], neg[];
+		{
+			 void putp (int a, int idx) { this.pos[idx] = a; }
+			 void putn (int a, int idx) { this.neg[idx] = a; }
+			 int getp (int idx) { return pos[idx]; }
+			 int getn (int idx) { return neg[idx]; }
+		}
+	}
+	record Board {
+		int rows, columns;
+	}
+	Table val;
+	Board board;
+	{
+		void f(char ch, int a, int arg)
+		int x;
+		{
+			x = arg;
+		}
+		void main() int x, i; char c;
+		{
+			val = new Table;
+			val.pos = new int [size];
+			val.neg = new int [size];
+			read(x);
+			i = 0;
+			do{
+				 val.putp(0, i); 
+				 val.putn(0, i);
+				 i++;
+			}while(i);
+			skip: f(c, x, i);
+			board = new Board;
+			read(board.rows);
+			x = board.rows;
+			do{
+				read(x);
+			}while(true);
+		}
+	}
+
+
+
+program Oporavak
+	int x y;
+
+	int 123d;
+	int d;
+	
+	int 123a, y;
+	
+	class B extendasd A{
+	}
+	class B A{
+	}
+	class B extends 12eD{
+	}
+	class B extends{
+	}
+	class B extends A{
+		int a, ;
+		int a,b;
+		int x y;
+		int c;
+		int x
+		{
+			A(){
+				if (x> y && ){
+					a = 10;
+				}
+			}
+		}
+	}
+{
+	void formalParamErrorFunc(int , int y){}
+	void formalParamErrorFunc(int 2e1){}
+	int main(){
+		//x = 123x;
+		
+		if (x > y &&){
+			a = 10;
+		}
+		if (x y){
+			a = 10;
+		}
+		if (x > y || y x){
+			a = 10;
+		}
+		if (x y || x)
+			a = 10;
+		x = ;
+		x = 123x),;
+	}
+
+
+}
+
+//<arg value="-dump_states" />
+	
+//<arg value="-dump_states" />

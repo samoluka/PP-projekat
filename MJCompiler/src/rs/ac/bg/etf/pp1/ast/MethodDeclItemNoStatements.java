@@ -5,23 +5,24 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class RecordDeclarations extends RecordDecl {
+public class MethodDeclItemNoStatements extends MethodDeclItem {
 
-    private String name;
+    private FormalParams FormalParams;
     private VarDeclList VarDeclList;
 
-    public RecordDeclarations (String name, VarDeclList VarDeclList) {
-        this.name=name;
+    public MethodDeclItemNoStatements (FormalParams FormalParams, VarDeclList VarDeclList) {
+        this.FormalParams=FormalParams;
+        if(FormalParams!=null) FormalParams.setParent(this);
         this.VarDeclList=VarDeclList;
         if(VarDeclList!=null) VarDeclList.setParent(this);
     }
 
-    public String getName() {
-        return name;
+    public FormalParams getFormalParams() {
+        return FormalParams;
     }
 
-    public void setName(String name) {
-        this.name=name;
+    public void setFormalParams(FormalParams FormalParams) {
+        this.FormalParams=FormalParams;
     }
 
     public VarDeclList getVarDeclList() {
@@ -37,15 +38,18 @@ public class RecordDeclarations extends RecordDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(FormalParams!=null) FormalParams.accept(visitor);
         if(VarDeclList!=null) VarDeclList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(FormalParams!=null) FormalParams.traverseTopDown(visitor);
         if(VarDeclList!=null) VarDeclList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(FormalParams!=null) FormalParams.traverseBottomUp(visitor);
         if(VarDeclList!=null) VarDeclList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -53,9 +57,12 @@ public class RecordDeclarations extends RecordDecl {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("RecordDeclarations(\n");
+        buffer.append("MethodDeclItemNoStatements(\n");
 
-        buffer.append(" "+tab+name);
+        if(FormalParams!=null)
+            buffer.append(FormalParams.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(VarDeclList!=null)
@@ -65,7 +72,7 @@ public class RecordDeclarations extends RecordDecl {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [RecordDeclarations]");
+        buffer.append(") [MethodDeclItemNoStatements]");
         return buffer.toString();
     }
 }

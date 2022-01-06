@@ -59,11 +59,11 @@ terminal String IDENT;
 terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
 
 nonterminal Program, DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, VarDeclList, VarDeclListItem;
-nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, ConstructorSingleDecl, MethodDeclList, MethodDecl, MethodDeclItem, MethodDeclListNonEmpty, Type;
+nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDecl, MethodDeclItem, MethodDeclListNonEmpty, Type;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
-nonterminal FormalParams, FormalParamList, FormalParamDecl, Relop, Condition, CondTermList, CondTerm, CondFact, CondFactList, FormalParamListItem;
-nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, ActualParam, DesignatorMulti, DesignatorMultiList, VarListClass, VarDefinitionClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
-nonterminal Matched, Unmatched;
+nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact, FormalParamListItem;
+nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, DesignatorMulti;
+nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
 precedence left ELSE;
 
@@ -199,7 +199,10 @@ MethodDecl ::= (MethodDeclarationType) Type:retType IDENT:methodName MethodDeclI
            |    
            (MethodDeclarationVoid) VOID IDENT:methodName MethodDeclItem
            ;
-MethodDeclItem ::=  (MethodDeclItem) LPAREN FormalParams RPAREN VarDeclList LBRACE StatementList RBRACE;
+MethodDeclItem ::=  (MethodDeclItemWithStatements) LPAREN FormalParams RPAREN VarDeclList LBRACE StatementList RBRACE
+				|
+				(MethodDeclItemNoStatements) LPAREN FormalParams RPAREN VarDeclList LBRACE RBRACE
+				;
 
 
 FormalParams ::= (FormalParamsList) FormalParamList:n
@@ -246,11 +249,12 @@ Statement ::= (StatementWithLabel) StatementLabel SingleStatement
 				(StatementWithoutLabel) SingleStatement
 				;
 				
+				
 StatementLabel ::= (StatementLabel) Label COLON;
 StatementList ::= (ListOfStatements) StatementList Statement
-			  |
-			  (NoStatementList) /* epsilon */
-			  ;
+			  	|
+			  	(ListOfStatement) Statement
+				;
 
 SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
 				|

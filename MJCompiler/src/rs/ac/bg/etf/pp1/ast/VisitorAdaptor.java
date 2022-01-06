@@ -1,23 +1,20 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 2:36:45
+// 7/0/2022 1:18:44
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
-    public void visit(Unmatched Unmatched) { }
     public void visit(Mulop Mulop) { }
+    public void visit(MethodDeclItem MethodDeclItem) { }
     public void visit(MethodDecl MethodDecl) { }
     public void visit(ConstructorDecl ConstructorDecl) { }
-    public void visit(Matched Matched) { }
     public void visit(VarClassErrorEndPoint VarClassErrorEndPoint) { }
     public void visit(Relop Relop) { }
     public void visit(VarListClass VarListClass) { }
-    public void visit(CondTermList CondTermList) { }
     public void visit(VarDeclDefinition VarDeclDefinition) { }
-    public void visit(FormalParamDecl FormalParamDecl) { }
     public void visit(VarDeclItemList VarDeclItemList) { }
     public void visit(MethodDeclListNonEmpty MethodDeclListNonEmpty) { }
     public void visit(StatementList StatementList) { }
@@ -27,15 +24,12 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(RecordDecl RecordDecl) { }
     public void visit(Factor Factor) { }
     public void visit(CondTerm CondTerm) { }
-    public void visit(CondFactList CondFactList) { }
     public void visit(DeclList DeclList) { }
     public void visit(Designator Designator) { }
-    public void visit(ActualParam ActualParam) { }
     public void visit(Term Term) { }
     public void visit(ExprPositive ExprPositive) { }
     public void visit(Condition Condition) { }
     public void visit(DeclItem DeclItem) { }
-    public void visit(VarDefinitionClass VarDefinitionClass) { }
     public void visit(DesignatorMultiList DesignatorMultiList) { }
     public void visit(ElseStatement ElseStatement) { }
     public void visit(ClassExtends ClassExtends) { }
@@ -46,7 +40,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(FormalParamListItem FormalParamListItem) { }
     public void visit(FormalParams FormalParams) { }
     public void visit(ActualPars ActualPars) { }
-    public void visit(ConstructorSingleDecl ConstructorSingleDecl) { }
     public void visit(Statement Statement) { }
     public void visit(VarClass VarClass) { }
     public void visit(VarDecl VarDecl) { }
@@ -120,7 +113,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(DoStatement DoStatement) { visit(); }
     public void visit(IfStatement IfStatement) { visit(); }
     public void visit(DesignatorSingleStatement DesignatorSingleStatement) { visit(); }
-    public void visit(NoStatementList NoStatementList) { visit(); }
+    public void visit(ListOfStatement ListOfStatement) { visit(); }
     public void visit(ListOfStatements ListOfStatements) { visit(); }
     public void visit(StatementLabel StatementLabel) { visit(); }
     public void visit(StatementWithoutLabel StatementWithoutLabel) { visit(); }
@@ -133,7 +126,8 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NoFormalParamsList NoFormalParamsList) { visit(); }
     public void visit(FormalParamListError FormalParamListError) { visit(); }
     public void visit(FormalParamsList FormalParamsList) { visit(); }
-    public void visit(MethodDeclItem MethodDeclItem) { visit(); }
+    public void visit(MethodDeclItemNoStatements MethodDeclItemNoStatements) { visit(); }
+    public void visit(MethodDeclItemWithStatements MethodDeclItemWithStatements) { visit(); }
     public void visit(MethodDeclarationVoid MethodDeclarationVoid) { visit(); }
     public void visit(MethodDeclarationType MethodDeclarationType) { visit(); }
     public void visit(NoMethodDeclList NoMethodDeclList) { visit(); }

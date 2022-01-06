@@ -5,26 +5,27 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ClassConstructorDeclaration extends ConstructorDecl {
+public class MethodDeclItemWithStatements extends MethodDeclItem {
 
-    private String I1;
+    private FormalParams FormalParams;
     private VarDeclList VarDeclList;
     private StatementList StatementList;
 
-    public ClassConstructorDeclaration (String I1, VarDeclList VarDeclList, StatementList StatementList) {
-        this.I1=I1;
+    public MethodDeclItemWithStatements (FormalParams FormalParams, VarDeclList VarDeclList, StatementList StatementList) {
+        this.FormalParams=FormalParams;
+        if(FormalParams!=null) FormalParams.setParent(this);
         this.VarDeclList=VarDeclList;
         if(VarDeclList!=null) VarDeclList.setParent(this);
         this.StatementList=StatementList;
         if(StatementList!=null) StatementList.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public FormalParams getFormalParams() {
+        return FormalParams;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setFormalParams(FormalParams FormalParams) {
+        this.FormalParams=FormalParams;
     }
 
     public VarDeclList getVarDeclList() {
@@ -48,17 +49,20 @@ public class ClassConstructorDeclaration extends ConstructorDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(FormalParams!=null) FormalParams.accept(visitor);
         if(VarDeclList!=null) VarDeclList.accept(visitor);
         if(StatementList!=null) StatementList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(FormalParams!=null) FormalParams.traverseTopDown(visitor);
         if(VarDeclList!=null) VarDeclList.traverseTopDown(visitor);
         if(StatementList!=null) StatementList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(FormalParams!=null) FormalParams.traverseBottomUp(visitor);
         if(VarDeclList!=null) VarDeclList.traverseBottomUp(visitor);
         if(StatementList!=null) StatementList.traverseBottomUp(visitor);
         accept(visitor);
@@ -67,9 +71,12 @@ public class ClassConstructorDeclaration extends ConstructorDecl {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ClassConstructorDeclaration(\n");
+        buffer.append("MethodDeclItemWithStatements(\n");
 
-        buffer.append(" "+tab+I1);
+        if(FormalParams!=null)
+            buffer.append(FormalParams.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(VarDeclList!=null)
@@ -85,7 +92,7 @@ public class ClassConstructorDeclaration extends ConstructorDecl {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ClassConstructorDeclaration]");
+        buffer.append(") [MethodDeclItemWithStatements]");
         return buffer.toString();
     }
 }

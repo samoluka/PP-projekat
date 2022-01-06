@@ -5,11 +5,11 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ElseStatementStatement extends ElseStatement {
+public class ListOfStatement extends StatementList {
 
     private Statement Statement;
 
-    public ElseStatementStatement (Statement Statement) {
+    public ListOfStatement (Statement Statement) {
         this.Statement=Statement;
         if(Statement!=null) Statement.setParent(this);
     }
@@ -43,7 +43,7 @@ public class ElseStatementStatement extends ElseStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ElseStatementStatement(\n");
+        buffer.append("ListOfStatement(\n");
 
         if(Statement!=null)
             buffer.append(Statement.toString("  "+tab));
@@ -52,7 +52,7 @@ public class ElseStatementStatement extends ElseStatement {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ElseStatementStatement]");
+        buffer.append(") [ListOfStatement]");
         return buffer.toString();
     }
 }
