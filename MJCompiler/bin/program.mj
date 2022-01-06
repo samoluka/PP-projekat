@@ -30,8 +30,7 @@ program Oporavak
 	void formalParamErrorFunc(int 2e1){}
 	int main(){
 		//x = 123x;
-				
-
+		
 		if (x > y &&){
 			a = 10;
 		}

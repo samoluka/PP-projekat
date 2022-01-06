@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 1:13:37
+// 6/0/2022 1:32:39
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -44,7 +44,6 @@ public interface Visitor {
     public void visit(Expr Expr);
     public void visit(FormalParamListItem FormalParamListItem);
     public void visit(FormalParams FormalParams);
-    public void visit(DesignatorStatement DesignatorStatement);
     public void visit(ActualPars ActualPars);
     public void visit(ConstructorSingleDecl ConstructorSingleDecl);
     public void visit(Statement Statement);
@@ -92,13 +91,12 @@ public interface Visitor {
     public void visit(AddExpr AddExpr);
     public void visit(PositiveExpr PositiveExpr);
     public void visit(NegativeExpr NegativeExpr);
-    public void visit(DesignatorError DesignatorError);
     public void visit(DesignatorItemDec DesignatorItemDec);
     public void visit(DesignatorItemInc DesignatorItemInc);
     public void visit(DesignatorItemFuncCallWithoutParam DesignatorItemFuncCallWithoutParam);
     public void visit(DesignatorItemFuncCallWithParam DesignatorItemFuncCallWithParam);
     public void visit(DesignatorItemAssign DesignatorItemAssign);
-    public void visit(DesignatorStatementNoError DesignatorStatementNoError);
+    public void visit(DesignatorStatement DesignatorStatement);
     public void visit(MultiCondFact MultiCondFact);
     public void visit(SingleCondFact SingleCondFact);
     public void visit(SingleConditionTermList SingleConditionTermList);
@@ -108,6 +106,7 @@ public interface Visitor {
     public void visit(ConditionList ConditionList);
     public void visit(NoElseStatement NoElseStatement);
     public void visit(ElseStatementStatement ElseStatementStatement);
+    public void visit(StatementError StatementError);
     public void visit(SingleMultiStatement SingleMultiStatement);
     public void visit(GotoStatement GotoStatement);
     public void visit(PrintStatementWithNumConst PrintStatementWithNumConst);

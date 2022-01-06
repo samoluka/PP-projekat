@@ -256,6 +256,12 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
                 (GotoStatement) GOTO Label SEMI
                 |
 				(SingleMultiStatement) LBRACE StatementList RBRACE
+				|
+				(StatementError) error SEMI:e1
+				{:
+					parser.report_error("Uspesan oporavak od greske na liniji " + e1left + " pri dodeli vrednosti do ;", null);
+				:}
+				/* ovo se moze prebaciti u designatorItem ako pravi probleme */
 				;
 
 ElseStatement ::= (ElseStatementStatement) ELSE Statement
@@ -286,7 +292,7 @@ CondFact ::= (SingleCondFact) Expr
 
 
 /* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ‐‐ʺ) */
-DesignatorStatement ::= (DesignatorStatementNoError) Designator DesignatorItem;
+DesignatorStatement ::= (DesignatorStatement) Designator DesignatorItem;
 DesignatorItem ::= (DesignatorItemAssign) Assignop Expr
 				|
 				(DesignatorItemFuncCallWithParam) LPAREN ActualPars RPAREN
@@ -296,11 +302,6 @@ DesignatorItem ::= (DesignatorItemAssign) Assignop Expr
 				(DesignatorItemInc) INCREMENT
 				|
 				(DesignatorItemDec) DECREMENT
-				|
-				(DesignatorError) error:e
-				{:
-					parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri dodeli vrednosti do ;", null);
-				:}
 				;
 
 

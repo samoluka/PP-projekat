@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 1:13:37
+// 6/0/2022 1:32:39
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorError extends DesignatorItem {
+public class StatementError extends SingleStatement {
 
-    public DesignatorError () {
+    public StatementError () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class DesignatorError extends DesignatorItem {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorError(\n");
+        buffer.append("StatementError(\n");
 
         buffer.append(tab);
-        buffer.append(") [DesignatorError]");
+        buffer.append(") [StatementError]");
         return buffer.toString();
     }
 }

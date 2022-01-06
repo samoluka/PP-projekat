@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 6/0/2022 1:13:37
+// 6/0/2022 1:32:39
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -44,7 +44,6 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Expr Expr) { }
     public void visit(FormalParamListItem FormalParamListItem) { }
     public void visit(FormalParams FormalParams) { }
-    public void visit(DesignatorStatement DesignatorStatement) { }
     public void visit(ActualPars ActualPars) { }
     public void visit(ConstructorSingleDecl ConstructorSingleDecl) { }
     public void visit(Statement Statement) { }
@@ -92,13 +91,12 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(AddExpr AddExpr) { visit(); }
     public void visit(PositiveExpr PositiveExpr) { visit(); }
     public void visit(NegativeExpr NegativeExpr) { visit(); }
-    public void visit(DesignatorError DesignatorError) { visit(); }
     public void visit(DesignatorItemDec DesignatorItemDec) { visit(); }
     public void visit(DesignatorItemInc DesignatorItemInc) { visit(); }
     public void visit(DesignatorItemFuncCallWithoutParam DesignatorItemFuncCallWithoutParam) { visit(); }
     public void visit(DesignatorItemFuncCallWithParam DesignatorItemFuncCallWithParam) { visit(); }
     public void visit(DesignatorItemAssign DesignatorItemAssign) { visit(); }
-    public void visit(DesignatorStatementNoError DesignatorStatementNoError) { visit(); }
+    public void visit(DesignatorStatement DesignatorStatement) { visit(); }
     public void visit(MultiCondFact MultiCondFact) { visit(); }
     public void visit(SingleCondFact SingleCondFact) { visit(); }
     public void visit(SingleConditionTermList SingleConditionTermList) { visit(); }
@@ -108,6 +106,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConditionList ConditionList) { visit(); }
     public void visit(NoElseStatement NoElseStatement) { visit(); }
     public void visit(ElseStatementStatement ElseStatementStatement) { visit(); }
+    public void visit(StatementError StatementError) { visit(); }
     public void visit(SingleMultiStatement SingleMultiStatement) { visit(); }
     public void visit(GotoStatement GotoStatement) { visit(); }
     public void visit(PrintStatementWithNumConst PrintStatementWithNumConst) { visit(); }

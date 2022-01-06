@@ -307,6 +307,12 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
                 (GotoStatement) GOTO Label:L1 SEMI {: RESULT=new GotoStatement(L1); RESULT.setLine(L1left); :}
                 |
 				(SingleMultiStatement) LBRACE StatementList:S1 RBRACE {: RESULT=new SingleMultiStatement(S1); RESULT.setLine(S1left); :}
+				|
+				(StatementError) error SEMI:e1
+				{:
+					parser.report_error("Uspesan oporavak od greske na liniji " + e1right + " pri dodeli vrednosti do ;", null);
+				:} {: RESULT=new StatementError(); :}
+				/* ovo se moze prebaciti u designatorItem ako pravi probleme */
 				;
 
 ElseStatement ::= (ElseStatementStatement) ELSE Statement:S1 {: RESULT=new ElseStatementStatement(S1); RESULT.setLine(S1left); :}
@@ -337,7 +343,7 @@ CondFact ::= (SingleCondFact) Expr:E1 {: RESULT=new SingleCondFact(E1); RESULT.s
 
 
 /* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ�?�?ʺ) */
-DesignatorStatement ::= (DesignatorStatementNoError) Designator:D1 DesignatorItem:D2 {: RESULT=new DesignatorStatementNoError(D1, D2); RESULT.setLine(D1left); :};
+DesignatorStatement ::= (DesignatorStatement) Designator:D1 DesignatorItem:D2 {: RESULT=new DesignatorStatement(D1, D2); RESULT.setLine(D1left); :};
 DesignatorItem ::= (DesignatorItemAssign) Assignop:A1 Expr:E2 {: RESULT=new DesignatorItemAssign(A1, E2); RESULT.setLine(A1left); :}
 				|
 				(DesignatorItemFuncCallWithParam) LPAREN ActualPars:A1 RPAREN {: RESULT=new DesignatorItemFuncCallWithParam(A1); RESULT.setLine(A1left); :}
@@ -347,11 +353,6 @@ DesignatorItem ::= (DesignatorItemAssign) Assignop:A1 Expr:E2 {: RESULT=new Desi
 				(DesignatorItemInc) INCREMENT {: RESULT=new DesignatorItemInc(); :}
 				|
 				(DesignatorItemDec) DECREMENT {: RESULT=new DesignatorItemDec(); :}
-				|
-				(DesignatorError) error:e
-				{:
-					parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri dodeli vrednosti do ;", null);
-				:} {: RESULT=new DesignatorError(); :}
 				;
 
 
