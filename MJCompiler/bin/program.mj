@@ -1,54 +1,61 @@
-program p
-	const int size = 10;
-	class Table {
-		int pos[], neg[];
-		{
-			 void putp (int a, int idx) { this.pos[idx] = a; }
-			 void putn (int a, int idx) { this.neg[idx] = a; }
-			 int getp (int idx) { return pos[idx]; }
-			 int getn (int idx) { return neg[idx]; }
-		}
+program Oporavak
+	int x y;
+
+	//int 123d;
+	int d;
+	
+	int 123a, y;
+	
+	class B extendasd A{
 	}
-	record Board {
-		int rows, columns;
+	class B A{
 	}
-	Table val;
-	Board board;
-	{
-		void f(char ch, int a, int arg)
+	class B extends 12eD{
+	}
+	class B extends{
+	}
+	class B extends A{
 		int x;
-		{
-			x = arg;
+		int x y;
+		//{
+		//	A(){
+		//		if (x> y && ){
+		//			a = 10;
+		//		}
+		//	}
+		//}
+	}
+{
+	void formalParamErrorFunc(int , int y){}
+	void formalParamErrorFunc(int 2e1){}
+	int main(){
+		//x = 123x;
+				
+
+		if (x > y &&){
+			a = 10;
 		}
-		void main() int x, i; char c;
-		{
-			val = new Table;
-			val.pos = new int [size];
-			val.neg = new int [size];
-			read(x);
-			if(x > 5){
-				goto skip;
-			}
-			i = 0;
-			do{
-				 val.putp(0, i); 
-				 val.putn(0, i);
-				 i++;
-			}while(i);
-			skip: f(c, x, i);
-			board = new Board;
-			read(board.rows);
-			x = board.rows;
-			do{
-				if(x <= 0) break;
-				if (0 <= x && x < size)
-					if (‐size < x && x < 0)
-						val.putn(val.getn(‐x)+1);
-					else
-						continue;
-				read(x);
-			}while(true);
+		if (x y){
+			a = 10;
 		}
+		if (x > y || y x){
+			a = 10;
+		}
+		if (x y || x)
+			a = 10;
+		x = ;
+		x = 123x),;
 	}
 
-//<arg value="-dump_states" />
+
+}
+
+
+//definicija globalne promenljive – ignorisati karaktere do prvog znaka ";" ili sledećeg ","
+//konstrukcija iskaza dodele – ignorisati karaktere do ";" - valjda je dobro, ne radi 123x = 123;
+//NIVO B (2 poena, uključujući i A):
+//deklaracija formalnog parametra funkcije – ignorisati znakove do znaka "," ili ")"
+//logički izraz unutar if konstrukcije - ignorisati karaktere do prvog znaka ")"
+//NIVO C (3 poena, uključujući i sve za B):
+//deklaracija polja unutrašnje klase – ignorisati karaktere do prvog ";" ili "{" - fali do {
+//deklaracija proširenja natklase – ignorisati znakove do prvog znaka "{".

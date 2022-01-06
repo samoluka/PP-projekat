@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 5/0/2022 16:21:26
+// 6/0/2022 1:13:37
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -42,7 +42,9 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(FormalParamList FormalParamList) { }
     public void visit(VarDeclList VarDeclList) { }
     public void visit(Expr Expr) { }
+    public void visit(FormalParamListItem FormalParamListItem) { }
     public void visit(FormalParams FormalParams) { }
+    public void visit(DesignatorStatement DesignatorStatement) { }
     public void visit(ActualPars ActualPars) { }
     public void visit(ConstructorSingleDecl ConstructorSingleDecl) { }
     public void visit(Statement Statement) { }
@@ -90,17 +92,19 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(AddExpr AddExpr) { visit(); }
     public void visit(PositiveExpr PositiveExpr) { visit(); }
     public void visit(NegativeExpr NegativeExpr) { visit(); }
+    public void visit(DesignatorError DesignatorError) { visit(); }
     public void visit(DesignatorItemDec DesignatorItemDec) { visit(); }
     public void visit(DesignatorItemInc DesignatorItemInc) { visit(); }
     public void visit(DesignatorItemFuncCallWithoutParam DesignatorItemFuncCallWithoutParam) { visit(); }
     public void visit(DesignatorItemFuncCallWithParam DesignatorItemFuncCallWithParam) { visit(); }
     public void visit(DesignatorItemAssign DesignatorItemAssign) { visit(); }
-    public void visit(DesignatorStatement DesignatorStatement) { visit(); }
+    public void visit(DesignatorStatementNoError DesignatorStatementNoError) { visit(); }
     public void visit(MultiCondFact MultiCondFact) { visit(); }
     public void visit(SingleCondFact SingleCondFact) { visit(); }
     public void visit(SingleConditionTermList SingleConditionTermList) { visit(); }
     public void visit(ConditionTermList ConditionTermList) { visit(); }
     public void visit(SingleConditionList SingleConditionList) { visit(); }
+    public void visit(ConditionError ConditionError) { visit(); }
     public void visit(ConditionList ConditionList) { visit(); }
     public void visit(NoElseStatement NoElseStatement) { visit(); }
     public void visit(ElseStatementStatement ElseStatementStatement) { visit(); }
@@ -122,11 +126,12 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(StatementWithoutLabel StatementWithoutLabel) { visit(); }
     public void visit(StatementWithLabel StatementWithLabel) { visit(); }
     public void visit(Type Type) { visit(); }
+    public void visit(FormalParamCommaError FormalParamCommaError) { visit(); }
+    public void visit(FormalParametherListItem FormalParametherListItem) { visit(); }
     public void visit(FormalParamVar FormalParamVar) { visit(); }
     public void visit(FormalParamListActual FormalParamListActual) { visit(); }
-    public void visit(FormalParamErrorParen FormalParamErrorParen) { visit(); }
-    public void visit(FormalParamErrorComma FormalParamErrorComma) { visit(); }
     public void visit(NoFormalParamsList NoFormalParamsList) { visit(); }
+    public void visit(FormalParamListError FormalParamListError) { visit(); }
     public void visit(FormalParamsList FormalParamsList) { visit(); }
     public void visit(MethodDeclItem MethodDeclItem) { visit(); }
     public void visit(MethodDeclarationVoid MethodDeclarationVoid) { visit(); }
@@ -156,6 +161,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(VarDeclMultiItemList VarDeclMultiItemList) { visit(); }
     public void visit(VarDeclError VarDeclError) { visit(); }
     public void visit(VarDeclarations VarDeclarations) { visit(); }
+    public void visit(AssignmentDeclError AssignmentDeclError) { visit(); }
     public void visit(AssignmentDeclaration AssignmentDeclaration) { visit(); }
     public void visit(ConstDeclSingleItemList ConstDeclSingleItemList) { visit(); }
     public void visit(ConstDeclMultiItemList ConstDeclMultiItemList) { visit(); }

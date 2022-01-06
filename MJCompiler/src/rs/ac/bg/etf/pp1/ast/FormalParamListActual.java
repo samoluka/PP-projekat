@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 5/0/2022 16:21:26
+// 6/0/2022 1:13:37
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,16 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public class FormalParamListActual extends FormalParamList {
 
     private FormalParamList FormalParamList;
-    private Type Type;
-    private VarDeclDefinition VarDeclDefinition;
+    private FormalParamListItem FormalParamListItem;
 
-    public FormalParamListActual (FormalParamList FormalParamList, Type Type, VarDeclDefinition VarDeclDefinition) {
+    public FormalParamListActual (FormalParamList FormalParamList, FormalParamListItem FormalParamListItem) {
         this.FormalParamList=FormalParamList;
         if(FormalParamList!=null) FormalParamList.setParent(this);
-        this.Type=Type;
-        if(Type!=null) Type.setParent(this);
-        this.VarDeclDefinition=VarDeclDefinition;
-        if(VarDeclDefinition!=null) VarDeclDefinition.setParent(this);
+        this.FormalParamListItem=FormalParamListItem;
+        if(FormalParamListItem!=null) FormalParamListItem.setParent(this);
     }
 
     public FormalParamList getFormalParamList() {
@@ -28,20 +25,12 @@ public class FormalParamListActual extends FormalParamList {
         this.FormalParamList=FormalParamList;
     }
 
-    public Type getType() {
-        return Type;
+    public FormalParamListItem getFormalParamListItem() {
+        return FormalParamListItem;
     }
 
-    public void setType(Type Type) {
-        this.Type=Type;
-    }
-
-    public VarDeclDefinition getVarDeclDefinition() {
-        return VarDeclDefinition;
-    }
-
-    public void setVarDeclDefinition(VarDeclDefinition VarDeclDefinition) {
-        this.VarDeclDefinition=VarDeclDefinition;
+    public void setFormalParamListItem(FormalParamListItem FormalParamListItem) {
+        this.FormalParamListItem=FormalParamListItem;
     }
 
     public void accept(Visitor visitor) {
@@ -50,21 +39,18 @@ public class FormalParamListActual extends FormalParamList {
 
     public void childrenAccept(Visitor visitor) {
         if(FormalParamList!=null) FormalParamList.accept(visitor);
-        if(Type!=null) Type.accept(visitor);
-        if(VarDeclDefinition!=null) VarDeclDefinition.accept(visitor);
+        if(FormalParamListItem!=null) FormalParamListItem.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(FormalParamList!=null) FormalParamList.traverseTopDown(visitor);
-        if(Type!=null) Type.traverseTopDown(visitor);
-        if(VarDeclDefinition!=null) VarDeclDefinition.traverseTopDown(visitor);
+        if(FormalParamListItem!=null) FormalParamListItem.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(FormalParamList!=null) FormalParamList.traverseBottomUp(visitor);
-        if(Type!=null) Type.traverseBottomUp(visitor);
-        if(VarDeclDefinition!=null) VarDeclDefinition.traverseBottomUp(visitor);
+        if(FormalParamListItem!=null) FormalParamListItem.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -79,14 +65,8 @@ public class FormalParamListActual extends FormalParamList {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(Type!=null)
-            buffer.append(Type.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
-
-        if(VarDeclDefinition!=null)
-            buffer.append(VarDeclDefinition.toString("  "+tab));
+        if(FormalParamListItem!=null)
+            buffer.append(FormalParamListItem.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

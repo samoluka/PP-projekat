@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 5/0/2022 16:21:26
+// 6/0/2022 1:13:37
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class FormalParamErrorParen extends FormalParams {
+public class AssignmentDeclError extends AssignmentDecl {
 
-    public FormalParamErrorParen () {
+    public AssignmentDeclError () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class FormalParamErrorParen extends FormalParams {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("FormalParamErrorParen(\n");
+        buffer.append("AssignmentDeclError(\n");
 
         buffer.append(tab);
-        buffer.append(") [FormalParamErrorParen]");
+        buffer.append(") [AssignmentDeclError]");
         return buffer.toString();
     }
 }

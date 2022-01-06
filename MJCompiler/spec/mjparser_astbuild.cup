@@ -102,6 +102,7 @@ nonterminal CondTermList CondTermList;
 nonterminal CondTerm CondTerm;
 nonterminal CondFact CondFact;
 nonterminal CondFactList CondFactList;
+nonterminal FormalParamListItem FormalParamListItem;
 nonterminal Designator Designator;
 nonterminal Expr Expr;
 nonterminal ExprPositive ExprPositive;
@@ -142,7 +143,13 @@ ConstDeclItemList ::= (ConstDeclMultiItemList) ConstDeclItemList:C1 COMMA Assign
 				|
 				(ConstDeclSingleItemList) AssignmentDecl:A1 {: RESULT=new ConstDeclSingleItemList(A1); RESULT.setLine(A1left); :}
 				;
-AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Factor:F1 {: RESULT=new AssignmentDeclaration(varName, F1); RESULT.setLine(varNameleft); :};
+AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Factor:F1 {: RESULT=new AssignmentDeclaration(varName, F1); RESULT.setLine(varNameleft); :}
+				|
+				(AssignmentDeclError) error:e
+				{:
+					parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri dodeli vrednosti do ;", null);
+				:} {: RESULT=new AssignmentDeclError(); :}
+				;
 			
 /* varDecl = Type ident [ʺ[ʺ ʺ]ʺ] {ʺ,ʺ ident [ʺ[ʺ ʺ]ʺ]} ʺ; */	
 VarDecl ::= (VarDeclarations) Type:T1 VarDeclItemList:V2 SEMI {: RESULT=new VarDeclarations(T1, V2); RESULT.setLine(T1left); :}
@@ -229,22 +236,25 @@ MethodDeclItem ::=  (MethodDeclItem) LPAREN FormalParams:F1 RPAREN VarDeclList:V
 
 FormalParams ::= (FormalParamsList) FormalParamList:n {: RESULT=new FormalParamsList(n); RESULT.setLine(nleft); :}
                  |
+                 (FormalParamListError) error:e
+                 {:
+                 	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka )", null);
+                 :} {: RESULT=new FormalParamListError(); :}
+                 |
                  (NoFormalParamsList) {: RESULT=new NoFormalParamsList(); :} /* epsilon */
-                 |
-				 (FormalParamErrorComma)  error:e COMMA FormalParamList:n
-                 {:
-                 	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka , ili )", null);
-                 :} {: RESULT=new FormalParamErrorComma(n); RESULT.setLine(nleft); :}
-                 |
-                 (FormalParamErrorParen) error:e
-                 {:
-                 	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka , ili )", null);
-                 :} {: RESULT=new FormalParamErrorParen(); :};
+                 ;
 
-FormalParamList ::= (FormalParamListActual) FormalParamList:F1 COMMA Type:T2 VarDeclDefinition:V3 {: RESULT=new FormalParamListActual(F1, T2, V3); RESULT.setLine(F1left); :}
+FormalParamList ::= (FormalParamListActual) FormalParamList:F1 COMMA FormalParamListItem:F2 {: RESULT=new FormalParamListActual(F1, F2); RESULT.setLine(F1left); :}
                  |    
-                 (FormalParamVar) Type:T1 VarDeclDefinition:V2 {: RESULT=new FormalParamVar(T1, V2); RESULT.setLine(T1left); :};
-               
+                 (FormalParamVar) FormalParamListItem:F1 {: RESULT=new FormalParamVar(F1); RESULT.setLine(F1left); :}
+                 ;
+FormalParamListItem ::= (FormalParametherListItem) Type:T1 VarDeclDefinition:V2 {: RESULT=new FormalParametherListItem(T1, V2); RESULT.setLine(T1left); :}
+					|
+					(FormalParamCommaError) IDENT:I1 error:e
+					{:
+						parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " za deklaraciju formalnog parametra funkcije, ignorisani znakovi do znaka , ili )", null);
+					:} {: RESULT=new FormalParamCommaError(I1); RESULT.setLine(I1left); :}
+					;
 
 
 Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
@@ -307,6 +317,11 @@ ElseStatement ::= (ElseStatementStatement) ELSE Statement:S1 {: RESULT=new ElseS
 /* Condition = CondTerm {ʺ||ʺ CondTerm}. */
 Condition ::= (ConditionList) Condition:C1 OR CondTerm:C2 {: RESULT=new ConditionList(C1, C2); RESULT.setLine(C1left); :}
 			|
+			(ConditionError) error:e
+            {:
+            	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " u logicnom izrazu kod if naredbe, oporavak do znaka ), ConditionError", null);
+            :} {: RESULT=new ConditionError(); :}
+            |
 			(SingleConditionList) CondTerm:C1 {: RESULT=new SingleConditionList(C1); RESULT.setLine(C1left); :}
 	     	;
 /* CondTerm = CondFact {ʺ&&ʺ CondFact}.
@@ -322,7 +337,7 @@ CondFact ::= (SingleCondFact) Expr:E1 {: RESULT=new SingleCondFact(E1); RESULT.s
 
 
 /* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ�?�?ʺ) */
-DesignatorStatement ::= (DesignatorStatement) Designator:D1 DesignatorItem:D2 {: RESULT=new DesignatorStatement(D1, D2); RESULT.setLine(D1left); :};
+DesignatorStatement ::= (DesignatorStatementNoError) Designator:D1 DesignatorItem:D2 {: RESULT=new DesignatorStatementNoError(D1, D2); RESULT.setLine(D1left); :};
 DesignatorItem ::= (DesignatorItemAssign) Assignop:A1 Expr:E2 {: RESULT=new DesignatorItemAssign(A1, E2); RESULT.setLine(A1left); :}
 				|
 				(DesignatorItemFuncCallWithParam) LPAREN ActualPars:A1 RPAREN {: RESULT=new DesignatorItemFuncCallWithParam(A1); RESULT.setLine(A1left); :}
@@ -332,6 +347,11 @@ DesignatorItem ::= (DesignatorItemAssign) Assignop:A1 Expr:E2 {: RESULT=new Desi
 				(DesignatorItemInc) INCREMENT {: RESULT=new DesignatorItemInc(); :}
 				|
 				(DesignatorItemDec) DECREMENT {: RESULT=new DesignatorItemDec(); :}
+				|
+				(DesignatorError) error:e
+				{:
+					parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri dodeli vrednosti do ;", null);
+				:} {: RESULT=new DesignatorError(); :}
 				;
 
 
