@@ -14,6 +14,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 import rs.ac.bg.etf.pp1.ast.Program;
 import rs.ac.bg.etf.pp1.util.Log4JUtils;
+import rs.etf.pp1.symboltable.Tab;
 
 public class MJParserTest {
 
@@ -36,19 +37,29 @@ public class MJParserTest {
 
 			MJParser p = new MJParser(lexer);
 			Symbol s = p.parse(); // pocetak parsiranja
+
 			Program prog = (Program) (s.value);
+			Tab.init();
 			// ispis sintaksnog stabla
 			log.info(prog.toString(""));
 			log.info("===================================");
 
 			// ispis prepoznatih programskih konstrukcija
-			RuleVisitor v = new RuleVisitor();
+			SemanticPass v = new SemanticPass();
 			prog.traverseBottomUp(v);
 
 			log.info(" Print count calls = " + v.printCallCount);
 
 			log.info(" Deklarisanih promenljivih ima = " + v.varDeclCount);
 
+			log.info("===================================");
+			Tab.dump();
+
+			if (v.passed()) {
+				log.info("Parsiranje uspesno zavrseno!");
+			} else { 
+				log.error("Parsiranje NIJE uspesno zavrseno!");
+			}
 		} finally {
 			if (br != null)
 				try {
@@ -61,9 +72,6 @@ public class MJParserTest {
 	}
 
 }
-
-
-
 
 //
 //VarDeclForClass ::= (VarDeclForClassarations) Type VarDeclForClassItemList SEMI
@@ -95,23 +103,13 @@ public class MJParserTest {
 //VarDeclForClassListItem ::= (VarDeclForClassListItem) VarDeclForClass;
 //
 /*
-Unmatched ::= (UnmatchedIf) IF Expr Statement
-		 	|
-		 	(UnmatchedIfElse) IF Expr Matched ELSE Unmatched
-		 	;
-		 
-
-Matched ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
-		   |
-		   (ErrorStmt) error SEMI:l
-		   {: parser.report_error("Izvrsen oporavak do ; u liniji " + lleft, null);  :}
-		   |
-		   (PrintStmt) PRINT LPAREN Expr RPAREN SEMI
-		   |
-		   (ReturnExpr) RETURN Expr:t SEMI
-		   |
-		   (ReturnNoExpr) RETURN SEMI
-		   |
-		   (MatchedStatement) IF Expr Matched ELSE Matched
-		   ;
-*/		
+ * Unmatched ::= (UnmatchedIf) IF Expr Statement | (UnmatchedIfElse) IF Expr
+ * Matched ELSE Unmatched ;
+ * 
+ * 
+ * Matched ::= (Assignment) Designator:dest EQUAL Expr:e SEMI | (ErrorStmt)
+ * error SEMI:l {: parser.report_error("Izvrsen oporavak do ; u liniji " +
+ * lleft, null); :} | (PrintStmt) PRINT LPAREN Expr RPAREN SEMI | (ReturnExpr)
+ * RETURN Expr:t SEMI | (ReturnNoExpr) RETURN SEMI | (MatchedStatement) IF Expr
+ * Matched ELSE Matched ;
+ */

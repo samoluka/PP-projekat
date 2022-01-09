@@ -5,20 +5,20 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class BoolConst extends Factor {
+public class MethodTypeNameVoid extends MethodTypeName {
 
-    private Integer val;
+    private String methodName;
 
-    public BoolConst (Integer val) {
-        this.val=val;
+    public MethodTypeNameVoid (String methodName) {
+        this.methodName=methodName;
     }
 
-    public Integer getVal() {
-        return val;
+    public String getMethodName() {
+        return methodName;
     }
 
-    public void setVal(Integer val) {
-        this.val=val;
+    public void setMethodName(String methodName) {
+        this.methodName=methodName;
     }
 
     public void accept(Visitor visitor) {
@@ -39,13 +39,13 @@ public class BoolConst extends Factor {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("BoolConst(\n");
+        buffer.append("MethodTypeNameVoid(\n");
 
-        buffer.append(" "+tab+val);
+        buffer.append(" "+tab+methodName);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [BoolConst]");
+        buffer.append(") [MethodTypeNameVoid]");
         return buffer.toString();
     }
 }

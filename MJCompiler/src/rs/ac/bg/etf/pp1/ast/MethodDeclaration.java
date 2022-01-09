@@ -1,27 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/0/2022 1:18:44
+// 9/0/2022 23:53:46
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class MethodDeclarationVoid extends MethodDecl {
+public class MethodDeclaration extends MethodDecl {
 
-    private String methodName;
+    private MethodTypeName MethodTypeName;
     private MethodDeclItem MethodDeclItem;
 
-    public MethodDeclarationVoid (String methodName, MethodDeclItem MethodDeclItem) {
-        this.methodName=methodName;
+    public MethodDeclaration (MethodTypeName MethodTypeName, MethodDeclItem MethodDeclItem) {
+        this.MethodTypeName=MethodTypeName;
+        if(MethodTypeName!=null) MethodTypeName.setParent(this);
         this.MethodDeclItem=MethodDeclItem;
         if(MethodDeclItem!=null) MethodDeclItem.setParent(this);
     }
 
-    public String getMethodName() {
-        return methodName;
+    public MethodTypeName getMethodTypeName() {
+        return MethodTypeName;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName=methodName;
+    public void setMethodTypeName(MethodTypeName MethodTypeName) {
+        this.MethodTypeName=MethodTypeName;
     }
 
     public MethodDeclItem getMethodDeclItem() {
@@ -37,15 +38,18 @@ public class MethodDeclarationVoid extends MethodDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(MethodTypeName!=null) MethodTypeName.accept(visitor);
         if(MethodDeclItem!=null) MethodDeclItem.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(MethodTypeName!=null) MethodTypeName.traverseTopDown(visitor);
         if(MethodDeclItem!=null) MethodDeclItem.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(MethodTypeName!=null) MethodTypeName.traverseBottomUp(visitor);
         if(MethodDeclItem!=null) MethodDeclItem.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -53,9 +57,12 @@ public class MethodDeclarationVoid extends MethodDecl {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("MethodDeclarationVoid(\n");
+        buffer.append("MethodDeclaration(\n");
 
-        buffer.append(" "+tab+methodName);
+        if(MethodTypeName!=null)
+            buffer.append(MethodTypeName.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDeclItem!=null)
@@ -65,7 +72,7 @@ public class MethodDeclarationVoid extends MethodDecl {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [MethodDeclarationVoid]");
+        buffer.append(") [MethodDeclaration]");
         return buffer.toString();
     }
 }

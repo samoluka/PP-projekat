@@ -58,17 +58,24 @@ terminal String IDENT;
 /* Operators */
 terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
 
-nonterminal Program, DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, VarDeclList, VarDeclListItem;
-nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDecl, MethodDeclItem, MethodDeclListNonEmpty, Type;
+nonterminal DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, VarDeclList, VarDeclListItem;
+nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDeclItem, MethodDeclListNonEmpty;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact, FormalParamListItem;
-nonterminal Designator, Expr, ExprPositive, Term, Addop, Mulop, Factor, ActualPars, DesignatorMulti;
+nonterminal ExprPositive, Addop, Mulop, ActualPars, DesignatorMulti;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr;
+
+
 
 precedence left ELSE;
 
-/* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {MethodDecl} ʺ}ʺ. */
-Program ::= (Program) PROG IDENT:programName DeclList LBRACE MethodDeclList RBRACE;
+/* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {} ʺ}ʺ. */
+
+Program ::= (Program) PROG ProgName:p DeclList LBRACE MethodDeclList RBRACE;
+ProgName ::= (ProgName) IDENT:progName;
 
 DeclList ::= (DeclarationsList) DeclList DeclItem
 			|
@@ -100,7 +107,7 @@ AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Factor
 				;
 			
 /* varDecl = Type ident [ʺ[ʺ ʺ]ʺ] {ʺ,ʺ ident [ʺ[ʺ ʺ]ʺ]} ʺ; */	
-VarDecl ::= (VarDeclarations) Type VarDeclItemList SEMI
+VarDecl ::= (VarDeclarations) Type:t VarDeclItemList SEMI
 		|  
 		(VarDeclError) error:e SEMI
         {:
@@ -195,10 +202,12 @@ MethodDeclList ::= (MethodDeclarationList) MethodDeclList MethodDecl
                |
                (NoMethodDeclList) /* epsilon */
                ;
-MethodDecl ::= (MethodDeclarationType) Type:retType IDENT:methodName MethodDeclItem
-           |    
-           (MethodDeclarationVoid) VOID IDENT:methodName MethodDeclItem
-           ;
+MethodDecl ::= (MethodDeclaration) MethodTypeName MethodDeclItem;
+
+MethodTypeName ::= (MethodTypeNameWithType) Type:retType IDENT:methodName
+			|
+			(MethodTypeNameVoid) VOID IDENT:methodName
+			;
 MethodDeclItem ::=  (MethodDeclItemWithStatements) LPAREN FormalParams RPAREN VarDeclList LBRACE StatementList RBRACE
 				|
 				(MethodDeclItemNoStatements) LPAREN FormalParams RPAREN VarDeclList LBRACE RBRACE
@@ -359,9 +368,9 @@ Factor ::= (NumberConst) NUMBER:val
 		|
 		(CharConst) CHARACTER:val
 		|
-		(DesignatorConst) Designator
+		(Variable) Designator
 		|
-		(DesignatorWithParam) Designator LPAREN ActualPars RPAREN
+		(MethodCall) Designator LPAREN ActualPars RPAREN
 		|
 		(NewFactor) NEW Type 
 		|

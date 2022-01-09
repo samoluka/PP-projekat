@@ -58,7 +58,6 @@ terminal String IDENT;
 /* Operators */
 terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
 
-nonterminal Program Program;
 nonterminal DeclList DeclList;
 nonterminal DeclItem DeclItem;
 nonterminal ConstDecl ConstDecl;
@@ -75,10 +74,8 @@ nonterminal ClassExtends ClassExtends;
 nonterminal ClassMethodDeclItemList ClassMethodDeclItemList;
 nonterminal ConstructorDecl ConstructorDecl;
 nonterminal MethodDeclList MethodDeclList;
-nonterminal MethodDecl MethodDecl;
 nonterminal MethodDeclItem MethodDeclItem;
 nonterminal MethodDeclListNonEmpty MethodDeclListNonEmpty;
-nonterminal Type Type;
 nonterminal StatementList StatementList;
 nonterminal StatementLabel StatementLabel;
 nonterminal Label Label;
@@ -95,13 +92,9 @@ nonterminal Condition Condition;
 nonterminal CondTerm CondTerm;
 nonterminal CondFact CondFact;
 nonterminal FormalParamListItem FormalParamListItem;
-nonterminal Designator Designator;
-nonterminal Expr Expr;
 nonterminal ExprPositive ExprPositive;
-nonterminal Term Term;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
-nonterminal Factor Factor;
 nonterminal ActualPars ActualPars;
 nonterminal DesignatorMulti DesignatorMulti;
 nonterminal DesignatorMultiList DesignatorMultiList;
@@ -110,10 +103,17 @@ nonterminal VarItemListClass VarItemListClass;
 nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr;
+
+
+
 precedence left ELSE;
 
-/* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {MethodDecl} ʺ}ʺ. */
-Program ::= (Program) PROG IDENT:programName DeclList:D1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(programName, D1, M2); RESULT.setLine(programNameleft); :};
+/* Program = ʺprogramʺ ident {ConstDecl | VarDecl | ClassDecl | RecordDecl} ʺ{ʺ {} ʺ}ʺ. */
+
+Program ::= (Program) PROG ProgName:p DeclList:D1 LBRACE MethodDeclList:M2 RBRACE {: RESULT=new Program(p, D1, M2); RESULT.setLine(pleft); :};
+ProgName ::= (ProgName) IDENT:progName {: RESULT=new ProgName(progName); RESULT.setLine(progNameleft); :};
 
 DeclList ::= (DeclarationsList) DeclList:D1 DeclItem:D2 {: RESULT=new DeclarationsList(D1, D2); RESULT.setLine(D1left); :}
 			|
@@ -145,7 +145,7 @@ AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Factor:F1 {: RESU
 				;
 			
 /* varDecl = Type ident [ʺ[ʺ ʺ]ʺ] {ʺ,ʺ ident [ʺ[ʺ ʺ]ʺ]} ʺ; */	
-VarDecl ::= (VarDeclarations) Type:T1 VarDeclItemList:V2 SEMI {: RESULT=new VarDeclarations(T1, V2); RESULT.setLine(T1left); :}
+VarDecl ::= (VarDeclarations) Type:t VarDeclItemList:V1 SEMI {: RESULT=new VarDeclarations(t, V1); RESULT.setLine(tleft); :}
 		|  
 		(VarDeclError) error:e SEMI
         {:
@@ -240,10 +240,12 @@ MethodDeclList ::= (MethodDeclarationList) MethodDeclList:M1 MethodDecl:M2 {: RE
                |
                (NoMethodDeclList) {: RESULT=new NoMethodDeclList(); :} /* epsilon */
                ;
-MethodDecl ::= (MethodDeclarationType) Type:retType IDENT:methodName MethodDeclItem:M1 {: RESULT=new MethodDeclarationType(retType, methodName, M1); RESULT.setLine(retTypeleft); :}
-           |    
-           (MethodDeclarationVoid) VOID IDENT:methodName MethodDeclItem:M1 {: RESULT=new MethodDeclarationVoid(methodName, M1); RESULT.setLine(methodNameleft); :}
-           ;
+MethodDecl ::= (MethodDeclaration) MethodTypeName:M1 MethodDeclItem:M2 {: RESULT=new MethodDeclaration(M1, M2); RESULT.setLine(M1left); :};
+
+MethodTypeName ::= (MethodTypeNameWithType) Type:retType IDENT:methodName {: RESULT=new MethodTypeNameWithType(retType, methodName); RESULT.setLine(retTypeleft); :}
+			|
+			(MethodTypeNameVoid) VOID IDENT:methodName {: RESULT=new MethodTypeNameVoid(methodName); RESULT.setLine(methodNameleft); :}
+			;
 MethodDeclItem ::=  (MethodDeclItemWithStatements) LPAREN FormalParams:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new MethodDeclItemWithStatements(F1, V2, S3); RESULT.setLine(F1left); :}
 				|
 				(MethodDeclItemNoStatements) LPAREN FormalParams:F1 RPAREN VarDeclList:V2 LBRACE RBRACE {: RESULT=new MethodDeclItemNoStatements(F1, V2); RESULT.setLine(F1left); :}
@@ -404,9 +406,9 @@ Factor ::= (NumberConst) NUMBER:val {: RESULT=new NumberConst(val); RESULT.setLi
 		|
 		(CharConst) CHARACTER:val {: RESULT=new CharConst(val); RESULT.setLine(valleft); :}
 		|
-		(DesignatorConst) Designator:D1 {: RESULT=new DesignatorConst(D1); RESULT.setLine(D1left); :}
+		(Variable) Designator:D1 {: RESULT=new Variable(D1); RESULT.setLine(D1left); :}
 		|
-		(DesignatorWithParam) Designator:D1 LPAREN ActualPars:A2 RPAREN {: RESULT=new DesignatorWithParam(D1, A2); RESULT.setLine(D1left); :}
+		(MethodCall) Designator:D1 LPAREN ActualPars:A2 RPAREN {: RESULT=new MethodCall(D1, A2); RESULT.setLine(D1left); :}
 		|
 		(NewFactor) NEW Type:T1 {: RESULT=new NewFactor(T1); RESULT.setLine(T1left); :} 
 		|

@@ -1,15 +1,15 @@
 // generated with ast extension for cup
 // version 0.8
-// 7/0/2022 1:18:44
+// 9/0/2022 23:53:46
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public interface Visitor { 
 
+    public void visit(MethodDecl MethodDecl);
     public void visit(Mulop Mulop);
     public void visit(MethodDeclItem MethodDeclItem);
-    public void visit(MethodDecl MethodDecl);
     public void visit(ConstructorDecl ConstructorDecl);
     public void visit(VarClassErrorEndPoint VarClassErrorEndPoint);
     public void visit(Relop Relop);
@@ -37,8 +37,9 @@ public interface Visitor {
     public void visit(VarDeclList VarDeclList);
     public void visit(FormalParamList FormalParamList);
     public void visit(Expr Expr);
-    public void visit(FormalParamListItem FormalParamListItem);
     public void visit(FormalParams FormalParams);
+    public void visit(FormalParamListItem FormalParamListItem);
+    public void visit(MethodTypeName MethodTypeName);
     public void visit(ActualPars ActualPars);
     public void visit(Statement Statement);
     public void visit(VarClass VarClass);
@@ -74,8 +75,8 @@ public interface Visitor {
     public void visit(ExprFactor ExprFactor);
     public void visit(NewFactorWithBrackets NewFactorWithBrackets);
     public void visit(NewFactor NewFactor);
-    public void visit(DesignatorWithParam DesignatorWithParam);
-    public void visit(DesignatorConst DesignatorConst);
+    public void visit(MethodCall MethodCall);
+    public void visit(Variable Variable);
     public void visit(CharConst CharConst);
     public void visit(BoolConst BoolConst);
     public void visit(NumberConst NumberConst);
@@ -128,8 +129,9 @@ public interface Visitor {
     public void visit(FormalParamsList FormalParamsList);
     public void visit(MethodDeclItemNoStatements MethodDeclItemNoStatements);
     public void visit(MethodDeclItemWithStatements MethodDeclItemWithStatements);
-    public void visit(MethodDeclarationVoid MethodDeclarationVoid);
-    public void visit(MethodDeclarationType MethodDeclarationType);
+    public void visit(MethodTypeNameVoid MethodTypeNameVoid);
+    public void visit(MethodTypeNameWithType MethodTypeNameWithType);
+    public void visit(MethodDeclaration MethodDeclaration);
     public void visit(NoMethodDeclList NoMethodDeclList);
     public void visit(MethodDeclarationList MethodDeclarationList);
     public void visit(MethodDeclarationNonEmptySingleList MethodDeclarationNonEmptySingleList);
@@ -174,6 +176,7 @@ public interface Visitor {
     public void visit(ConstDeclartionItem ConstDeclartionItem);
     public void visit(NoDeclList NoDeclList);
     public void visit(DeclarationsList DeclarationsList);
+    public void visit(ProgName ProgName);
     public void visit(Program Program);
 
 }
