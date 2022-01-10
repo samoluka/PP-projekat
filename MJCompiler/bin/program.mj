@@ -1,9 +1,17 @@
 program Program
-	int a;
+	int a, b, c;
+	char x;
 	{
-		void main()
+		int main()
+		int k,a;
 		{
+		
 			a = 1+2;
+		}
+		int metoda()
+		int k;
+		{
+		
 		}
 	}
 

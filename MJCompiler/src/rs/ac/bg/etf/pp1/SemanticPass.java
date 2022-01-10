@@ -1,5 +1,8 @@
 package rs.ac.bg.etf.pp1;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.ast.*;
@@ -17,6 +20,7 @@ public class SemanticPass extends VisitorAdaptor {
 	int nVars;
 
 	Logger log = Logger.getLogger(getClass());
+	private List<String> currDeclVar = new LinkedList<>();
 
 	public void report_error(String message, SyntaxNode info) {
 		errorDetected = true;
@@ -37,13 +41,25 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(Definition varDefinition) {
 		varDeclCount++;
-		report_info("Deklarisana promenljiva " + varDefinition.getName(), varDefinition);
-		Obj varNode = Tab.insert(Obj.Var, varDefinition.getName(), currentType.struct);
+		currDeclVar.add(varDefinition.getName());
+	}
+
+	public void visit(VarDeclItemList varDeclItemList) {
+		int x = 2;
 	}
 
 	public void visit(VarDeclarations varDeclarations) {
 		currentType = varDeclarations.getType();
-		log.info("Nasao sam varDeclarations");
+		for (String varName : currDeclVar) {
+			if (Tab.currentScope.findSymbol(varName) != null) {
+				log.error("Greska na liniji " + varDeclarations.getLine() + ". Varijabla " + varName
+						+ " je vec definisana");
+				continue;
+			}
+			report_info("Deklarisana promenljiva " + varName, varDeclarations);
+			Tab.insert(Obj.Var, varName, currentType.struct);
+		}
+		currDeclVar.clear();
 	}
 
 	public void visit(ProgName progName) {
@@ -55,6 +71,7 @@ public class SemanticPass extends VisitorAdaptor {
 		nVars = Tab.currentScope.getnVars();
 		Tab.chainLocalSymbols(program.getProgName().obj);
 		Tab.closeScope();
+		log.info("Zatvoren skoup programa");
 	}
 
 	public void visit(Type type) {
@@ -73,17 +90,19 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(MethodTypeNameWithType methodTypeNameWithType) {
-		currentMethod = Tab.insert(Obj.Meth, methodTypeNameWithType.getMethodName(), methodTypeNameWithType.getType().struct);
+		currentMethod = Tab.insert(Obj.Meth, methodTypeNameWithType.getMethodName(),
+				methodTypeNameWithType.getType().struct);
 		methodTypeNameWithType.obj = currentMethod;
 		Tab.openScope();
 		report_info("Obradjuje se funkcija " + methodTypeNameWithType.getMethodName(), methodTypeNameWithType);
 	}
 
-	public void visit(MethodDecl methodDecl) {
+	public void visit(MethodDeclaration MethodDeclaration) {
 		if (!returnFound && currentMethod.getType() != Tab.noType) {
-			report_error("Semanticka greska na liniji " + methodDecl.getLine() + ": funkcija " + currentMethod.getName()
+			report_error("Semanticka greska na liniji " + MethodDeclaration.getLine() + ": funkcija " + currentMethod.getName()
 					+ " nema return iskaz!", null);
 		}
+		log.info("Zatvoren skoup funkcije");
 		Tab.chainLocalSymbols(currentMethod);
 		Tab.closeScope();
 
