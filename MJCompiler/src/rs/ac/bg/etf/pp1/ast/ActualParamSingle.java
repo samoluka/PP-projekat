@@ -1,25 +1,25 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/0/2022 17:10:6
+// 11/0/2022 18:59:32
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ActualParamSingle extends ActualPars {
 
-    private Expr Expr;
+    private ActualParamSingleItem ActualParamSingleItem;
 
-    public ActualParamSingle (Expr Expr) {
-        this.Expr=Expr;
-        if(Expr!=null) Expr.setParent(this);
+    public ActualParamSingle (ActualParamSingleItem ActualParamSingleItem) {
+        this.ActualParamSingleItem=ActualParamSingleItem;
+        if(ActualParamSingleItem!=null) ActualParamSingleItem.setParent(this);
     }
 
-    public Expr getExpr() {
-        return Expr;
+    public ActualParamSingleItem getActualParamSingleItem() {
+        return ActualParamSingleItem;
     }
 
-    public void setExpr(Expr Expr) {
-        this.Expr=Expr;
+    public void setActualParamSingleItem(ActualParamSingleItem ActualParamSingleItem) {
+        this.ActualParamSingleItem=ActualParamSingleItem;
     }
 
     public void accept(Visitor visitor) {
@@ -27,16 +27,16 @@ public class ActualParamSingle extends ActualPars {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Expr!=null) Expr.accept(visitor);
+        if(ActualParamSingleItem!=null) ActualParamSingleItem.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Expr!=null) Expr.traverseTopDown(visitor);
+        if(ActualParamSingleItem!=null) ActualParamSingleItem.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Expr!=null) Expr.traverseBottomUp(visitor);
+        if(ActualParamSingleItem!=null) ActualParamSingleItem.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -45,8 +45,8 @@ public class ActualParamSingle extends ActualPars {
         buffer.append(tab);
         buffer.append("ActualParamSingle(\n");
 
-        if(Expr!=null)
-            buffer.append(Expr.toString("  "+tab));
+        if(ActualParamSingleItem!=null)
+            buffer.append(ActualParamSingleItem.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

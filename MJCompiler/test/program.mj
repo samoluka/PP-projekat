@@ -2,14 +2,16 @@ program Program
 	int a, b, c;
 	char x;
 	{
-		int f(){
-		return 2;
+		int f(char xx, int d)
+		int dd;
+		{
+			return 2;
 		}
-		int metoda(int d,int x)
+		int metoda(int d,char xx)
 		int k;
 		char c;
 		{
-			k = 2+k*(f()/1 + d);
+			k = 2+k*(f("c",1)/1 + d);
 			return k;
 		}
 	}

@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/0/2022 17:10:6
+// 11/0/2022 18:59:32
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class MethodCall extends Factor {
 
-    private Designator Designator;
+    private DesignatorForMethodCall DesignatorForMethodCall;
     private ActualPars ActualPars;
 
-    public MethodCall (Designator Designator, ActualPars ActualPars) {
-        this.Designator=Designator;
-        if(Designator!=null) Designator.setParent(this);
+    public MethodCall (DesignatorForMethodCall DesignatorForMethodCall, ActualPars ActualPars) {
+        this.DesignatorForMethodCall=DesignatorForMethodCall;
+        if(DesignatorForMethodCall!=null) DesignatorForMethodCall.setParent(this);
         this.ActualPars=ActualPars;
         if(ActualPars!=null) ActualPars.setParent(this);
     }
 
-    public Designator getDesignator() {
-        return Designator;
+    public DesignatorForMethodCall getDesignatorForMethodCall() {
+        return DesignatorForMethodCall;
     }
 
-    public void setDesignator(Designator Designator) {
-        this.Designator=Designator;
+    public void setDesignatorForMethodCall(DesignatorForMethodCall DesignatorForMethodCall) {
+        this.DesignatorForMethodCall=DesignatorForMethodCall;
     }
 
     public ActualPars getActualPars() {
@@ -38,18 +38,18 @@ public class MethodCall extends Factor {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Designator!=null) Designator.accept(visitor);
+        if(DesignatorForMethodCall!=null) DesignatorForMethodCall.accept(visitor);
         if(ActualPars!=null) ActualPars.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(DesignatorForMethodCall!=null) DesignatorForMethodCall.traverseTopDown(visitor);
         if(ActualPars!=null) ActualPars.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(DesignatorForMethodCall!=null) DesignatorForMethodCall.traverseBottomUp(visitor);
         if(ActualPars!=null) ActualPars.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -59,8 +59,8 @@ public class MethodCall extends Factor {
         buffer.append(tab);
         buffer.append("MethodCall(\n");
 
-        if(Designator!=null)
-            buffer.append(Designator.toString("  "+tab));
+        if(DesignatorForMethodCall!=null)
+            buffer.append(DesignatorForMethodCall.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

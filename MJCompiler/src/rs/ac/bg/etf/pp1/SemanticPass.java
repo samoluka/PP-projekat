@@ -14,13 +14,16 @@ public class SemanticPass extends VisitorAdaptor {
 	int printCallCount = 0;
 	int varDeclCount = 0;
 	Obj currentMethod = null;
+
+	Obj methodCalled = null;
 	boolean returnFound = false;
 	boolean errorDetected = false;
 	Type currentType;
+	int currentMethodParamNum = 0;
 	int nVars;
 
 	Logger log = Logger.getLogger(getClass());
-	private List<String> currDeclVar = new LinkedList<>();
+	private List<Definition> currDeclVar = new LinkedList<>();
 	private Struct currExprType = Tab.noType;
 
 	public SemanticPass() {
@@ -48,7 +51,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(Definition varDefinition) {
 		varDeclCount++;
-		currDeclVar.add(varDefinition.getName());
+		currDeclVar.add(varDefinition);
 	}
 
 	public void visit(VarDeclItemList varDeclItemList) {
@@ -57,14 +60,14 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(VarDeclarations varDeclarations) {
 		currentType = varDeclarations.getType();
-		for (String varName : currDeclVar) {
-			if (Tab.currentScope.findSymbol(varName) != null) {
-				log.error("Greska na liniji " + varDeclarations.getLine() + ". Varijabla " + varName
+		for (Definition var : currDeclVar) {
+			if (Tab.currentScope.findSymbol(var.getName()) != null) {
+				log.error("Greska na liniji " + varDeclarations.getLine() + ". Varijabla " + var.getName()
 						+ " je vec definisana");
 				continue;
 			}
-			report_info("Deklarisana promenljiva " + varName, varDeclarations);
-			Tab.insert(Obj.Var, varName, currentType.struct);
+			report_info("Deklarisana promenljiva " + var.getName(), varDeclarations);
+			Tab.insert(Obj.Var, var.getName(), currentType.struct);
 		}
 		currDeclVar.clear();
 	}
@@ -112,6 +115,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(MethodTypeNameVoid MethodTypeNameVoid) {
 		currentMethod = Tab.insert(Obj.Meth, MethodTypeNameVoid.getMethodName(), Tab.noType);
 		currentMethod.setFpPos(-1);
+		currentMethodParamNum = 0;
 		MethodTypeNameVoid.obj = currentMethod;
 		Tab.openScope();
 		report_info("Obradjuje se funkcija " + MethodTypeNameVoid.getMethodName(), MethodTypeNameVoid);
@@ -137,6 +141,19 @@ public class SemanticPass extends VisitorAdaptor {
 		currentMethod.setFpPos(currentMethod.getFpPos() + 1);
 	}
 
+	public void visit(FormalParamsList fList) {
+		for (Definition var : currDeclVar) {
+			if (Tab.currentScope.findSymbol(var.getName()) != null) {
+				log.error(
+						"Greska na liniji " + fList.getLine() + ". Varijabla " + var.getName() + " je vec definisana");
+				continue;
+			}
+			report_info("Deklarisana promenljiva " + var.getName(), fList);
+			Tab.insert(Obj.Var, var.getName(), var.struct);
+		}
+		currDeclVar.clear();
+	}
+
 	@Override
 	public void visit(SingleDesignator singleDesignator) {
 		Obj obj = Tab.find(singleDesignator.getName());
@@ -156,13 +173,25 @@ public class SemanticPass extends VisitorAdaptor {
 					+ "nekompatibilni tipovi u dodeli vrednosti! ", null);
 	}
 
+	public void visit(DesignatorForMethodCall dsForMethodCall) {
+		methodCalled = dsForMethodCall.getDesignator().obj;
+	}
+
 	public void visit(MethodCall funcCall) {
-		Obj func = funcCall.getDesignator().obj;
-		if (Obj.Meth == func.getKind()) {
-			report_info("Pronadjen poziv funkcije " + func.getName() + " na liniji " + funcCall.getLine(), null);
-			funcCall.struct = func.getType();
+//		methodCalled = funcCall.getDesignatorForMethodCall().getDesignator().obj;
+		if ((funcCall.getActualPars() instanceof NoActualParam && methodCalled.getLevel() > 0)
+				|| (!(funcCall.getActualPars() instanceof NoActualParam) && methodCalled.getLevel() == 0)
+				|| (currentMethodParamNum != methodCalled.getLevel())) {
+			report_error("Broj prosledjenih parametara se ne slaze sa brojem definisanih parametara na liniji "
+					+ funcCall.getLine(), null);
+		}
+		if (Obj.Meth == methodCalled.getKind()) {
+			report_info("Pronadjen poziv funkcije " + methodCalled.getName() + " na liniji " + funcCall.getLine(),
+					null);
+			funcCall.struct = methodCalled.getType();
 		} else {
-			report_error("Greska na liniji " + funcCall.getLine() + " : ime " + func.getName() + " nije funkcija!",
+			report_error(
+					"Greska na liniji " + funcCall.getLine() + " : ime " + methodCalled.getName() + " nije funkcija!",
 					null);
 			funcCall.struct = Tab.noType;
 		}
@@ -192,6 +221,20 @@ public class SemanticPass extends VisitorAdaptor {
 	@Override
 	public void visit(NegativeTermExpr NegativeTermExpr) {
 		NegativeTermExpr.struct = NegativeTermExpr.getTerm().struct;
+	}
+
+	public void visit(ActualParamSingleItem acSingleItem) {
+		Struct paramType = acSingleItem.getExpr().struct;
+		Object[] localSymbols = methodCalled.getLocalSymbols().toArray();
+		if (methodCalled.getLevel() <= currentMethodParamNum) {
+			report_error("Neispravan broj parametara pri pozivu metode " + methodCalled.getName() + " na liniji "
+					+ acSingleItem.getLine(), null);
+		} else {
+			if (!((Obj) localSymbols[currentMethodParamNum]).getType().equals(paramType))
+				report_error("Prosledjeni parametar broj " + currentMethodParamNum
+						+ " nije odgovarajuceg tipa na liniji " + acSingleItem.getLine(), null);
+		}
+		currentMethodParamNum++;
 	}
 
 	public void visit(AddExpr addExpr) {

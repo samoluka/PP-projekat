@@ -62,10 +62,10 @@ nonterminal DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, Va
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDeclItem, MethodDeclListNonEmpty;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact, FormalParamListItem;
-nonterminal Addop, Mulop, ActualPars, DesignatorMulti;
+nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
@@ -368,7 +368,7 @@ Factor ::= (NumberConst) NUMBER:val
 		|
 		(Variable) Designator
 		|
-		(MethodCall) Designator LPAREN ActualPars RPAREN
+		(MethodCall) DesignatorForMethodCall:d LPAREN ActualPars RPAREN
 		|
 		(NewFactor) NEW Type 
 		|
@@ -379,14 +379,17 @@ Factor ::= (NumberConst) NUMBER:val
 
 
 /* ActPars = Expr {ʺ,ʺ Expr}. */		
-ActualPars ::= (ActualParamMulti) ActualPars COMMA Expr
+ActualPars ::= (ActualParamMulti) ActualPars COMMA ActualParamSingleItem
 			|
-			(ActualParamSingle) Expr
+			(ActualParamSingle) ActualParamSingleItem
 			|
 			(NoActualParam) /*epsilon*/
 			;
+ActualParamSingleItem ::= (ActualParamSingleItem) Expr;
+/*Designator = ident {ʺ.ʺ ident | ʺ[ʺ Expr ʺ]ʺ}.*/		
 
-/*Designator = ident {ʺ.ʺ ident | ʺ[ʺ Expr ʺ]ʺ}.*/				
+DesignatorForMethodCall ::= (DesignatorForMethodCall) Designator;
+		
 Designator ::= (MultiDesignator) IDENT:name DesignatorMultiList
 			|
 			(SingleDesignator) IDENT:name
