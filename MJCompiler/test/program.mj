@@ -2,11 +2,22 @@ program Program
 	int a, b, c;
 	char x;
 	{
+		int f()
+		int f1;
+		{
+			return 2;
+		}
+		int f()
+		int f2;
+		{
+			return 3;
+		}
 		int metoda()
-		int k;
+		int k, d;
 		char c;
 		{
-			return - (2 + 3);
+			k = 2+k*(f()/1 + d);
+			return k;
 		}
 	}
 

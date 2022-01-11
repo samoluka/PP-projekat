@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/0/2022 15:44:31
+// 11/0/2022 16:27:1
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -39,6 +39,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(FormalParams FormalParams) { }
     public void visit(FormalParamListItem FormalParamListItem) { }
     public void visit(MethodTypeName MethodTypeName) { }
+    public void visit(DesignatorStatement DesignatorStatement) { }
     public void visit(ActualPars ActualPars) { }
     public void visit(Statement Statement) { }
     public void visit(VarClass VarClass) { }
@@ -69,6 +70,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(MultiDesign MultiDesign) { visit(); }
     public void visit(SingleDesignator SingleDesignator) { visit(); }
     public void visit(MultiDesignator MultiDesignator) { visit(); }
+    public void visit(NoActualParam NoActualParam) { visit(); }
     public void visit(ActualParamSingle ActualParamSingle) { visit(); }
     public void visit(ActualParamMulti ActualParamMulti) { visit(); }
     public void visit(ExprFactor ExprFactor) { visit(); }
@@ -86,10 +88,9 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(AddExpr AddExpr) { visit(); }
     public void visit(DesignatorItemDec DesignatorItemDec) { visit(); }
     public void visit(DesignatorItemInc DesignatorItemInc) { visit(); }
-    public void visit(DesignatorItemFuncCallWithoutParam DesignatorItemFuncCallWithoutParam) { visit(); }
     public void visit(DesignatorItemFuncCallWithParam DesignatorItemFuncCallWithParam) { visit(); }
-    public void visit(DesignatorItemAssign DesignatorItemAssign) { visit(); }
-    public void visit(DesignatorStatement DesignatorStatement) { visit(); }
+    public void visit(DesignatorAssignmentStatement DesignatorAssignmentStatement) { visit(); }
+    public void visit(DesignatorStatementNoAssigment DesignatorStatementNoAssigment) { visit(); }
     public void visit(MultiCondFact MultiCondFact) { visit(); }
     public void visit(SingleCondFact SingleCondFact) { visit(); }
     public void visit(SingleConditionTermList SingleConditionTermList) { visit(); }

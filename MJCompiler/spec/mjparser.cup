@@ -324,12 +324,12 @@ CondFact ::= (SingleCondFact) Expr
 
 
 /* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ‐‐ʺ) */
-DesignatorStatement ::= (DesignatorStatement) Designator DesignatorItem;
-DesignatorItem ::= (DesignatorItemAssign) Assignop Expr
-				|
+DesignatorStatement ::= (DesignatorStatementNoAssigment) Designator DesignatorItem
+					|
+					(DesignatorAssignmentStatement) Designator Assignop Expr
+					;
+DesignatorItem ::=
 				(DesignatorItemFuncCallWithParam) LPAREN ActualPars RPAREN
-				|
-				(DesignatorItemFuncCallWithoutParam) LPAREN RPAREN
 				|
 				(DesignatorItemInc) INCREMENT
 				|
@@ -382,6 +382,8 @@ Factor ::= (NumberConst) NUMBER:val
 ActualPars ::= (ActualParamMulti) ActualPars COMMA Expr
 			|
 			(ActualParamSingle) Expr
+			|
+			(NoActualParam) /*epsilon*/
 			;
 
 /*Designator = ident {ʺ.ʺ ident | ʺ[ʺ Expr ʺ]ʺ}.*/				

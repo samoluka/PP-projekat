@@ -98,6 +98,10 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(MethodTypeNameWithType methodTypeNameWithType) {
+		if (Tab.find(methodTypeNameWithType.getMethodName()) != Tab.noObj) {
+			report_error("Greska na liniji " + methodTypeNameWithType.getLine() + ". Metoda "
+					+ methodTypeNameWithType.getMethodName() + " je vec definisana", null);
+		}
 		currentMethod = Tab.insert(Obj.Meth, methodTypeNameWithType.getMethodName(),
 				methodTypeNameWithType.getType().struct);
 		methodTypeNameWithType.obj = currentMethod;
@@ -125,7 +129,6 @@ public class SemanticPass extends VisitorAdaptor {
 		currentMethod = null;
 	}
 
-	
 	@Override
 	public void visit(SingleDesignator singleDesignator) {
 		Obj obj = Tab.find(singleDesignator.getName());
@@ -136,14 +139,14 @@ public class SemanticPass extends VisitorAdaptor {
 		singleDesignator.obj = obj;
 	}
 
-//	public void visit(Designator designator) {
-//		Obj obj = Tab.find(designator.get());
-//		if (obj == Tab.noObj) {
-//			report_error("Greska na liniji " + designator.getLine() + " : ime " + designator.getName()
-//					+ " nije deklarisano! ", null);
-//		}
-//		designator.obj = obj;
-//	}
+	@Override
+	public void visit(DesignatorAssignmentStatement designatorAssignmentStatement) {
+		Struct left = designatorAssignmentStatement.getDesignator().obj.getType();
+		Struct right = designatorAssignmentStatement.getExpr().struct;
+		if (!right.assignableTo(left))
+			report_error("Greska na liniji " + designatorAssignmentStatement.getLine() + " : "
+					+ "nekompatibilni tipovi u dodeli vrednosti! ", null);
+	}
 
 	public void visit(MethodCall funcCall) {
 		Obj func = funcCall.getDesignator().obj;
@@ -157,6 +160,19 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 	}
 
+	@Override
+	public void visit(MulopTerm mulopTerm) {
+		Struct leftT = mulopTerm.getFactor().struct;
+		Struct rightT = mulopTerm.getFactor1().struct;
+		if (leftT.equals(rightT) && leftT == Tab.intType) {
+			mulopTerm.struct = leftT;
+		} else {
+			report_error("Greska na liniji " + mulopTerm.getLine() + " : nekompatibilni tipovi u izrazu za sabiranje.",
+					null);
+			mulopTerm.struct = Tab.noType;
+		}
+	}
+
 	public void visit(SingleTerm singleTerm) {
 		singleTerm.struct = singleTerm.getFactor().struct;
 	}
@@ -164,7 +180,6 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(TermExpr termExpr) {
 		termExpr.struct = termExpr.getTerm().struct;
 	}
-	
 
 	@Override
 	public void visit(NegativeTermExpr NegativeTermExpr) {
@@ -212,11 +227,6 @@ public class SemanticPass extends VisitorAdaptor {
 					+ currentMethod.getName(), null);
 		}
 	}
-
-//    public void visit(Assignment assignment){
-//    	if(!assignment.getExpr().struct.assignableTo(assignment.getDesignator().obj.getType()))
-//    		report_error("Greska na liniji " + assignment.getLine() + " : " + "nekompatibilni tipovi u dodeli vrednosti! ", null);
-//    }
 
 	public boolean passed() {
 		return !errorDetected;

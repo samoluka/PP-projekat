@@ -361,12 +361,12 @@ CondFact ::= (SingleCondFact) Expr:E1 {: RESULT=new SingleCondFact(E1); RESULT.s
 
 
 /* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ�?�?ʺ) */
-DesignatorStatement ::= (DesignatorStatement) Designator:D1 DesignatorItem:D2 {: RESULT=new DesignatorStatement(D1, D2); RESULT.setLine(D1left); :};
-DesignatorItem ::= (DesignatorItemAssign) Assignop:A1 Expr:E2 {: RESULT=new DesignatorItemAssign(A1, E2); RESULT.setLine(A1left); :}
-				|
+DesignatorStatement ::= (DesignatorStatementNoAssigment) Designator:D1 DesignatorItem:D2 {: RESULT=new DesignatorStatementNoAssigment(D1, D2); RESULT.setLine(D1left); :}
+					|
+					(DesignatorAssignmentStatement) Designator:D1 Assignop:A2 Expr:E3 {: RESULT=new DesignatorAssignmentStatement(D1, A2, E3); RESULT.setLine(D1left); :}
+					;
+DesignatorItem ::=
 				(DesignatorItemFuncCallWithParam) LPAREN ActualPars:A1 RPAREN {: RESULT=new DesignatorItemFuncCallWithParam(A1); RESULT.setLine(A1left); :}
-				|
-				(DesignatorItemFuncCallWithoutParam) LPAREN RPAREN {: RESULT=new DesignatorItemFuncCallWithoutParam(); :}
 				|
 				(DesignatorItemInc) INCREMENT {: RESULT=new DesignatorItemInc(); :}
 				|
@@ -419,6 +419,8 @@ Factor ::= (NumberConst) NUMBER:val {: RESULT=new NumberConst(val); RESULT.setLi
 ActualPars ::= (ActualParamMulti) ActualPars:A1 COMMA Expr:E2 {: RESULT=new ActualParamMulti(A1, E2); RESULT.setLine(A1left); :}
 			|
 			(ActualParamSingle) Expr:E1 {: RESULT=new ActualParamSingle(E1); RESULT.setLine(E1left); :}
+			|
+			(NoActualParam) {: RESULT=new NoActualParam(); :} /*epsilon*/
 			;
 
 /*Designator = ident {ʺ.ʺ ident | ʺ[ʺ Expr ʺ]ʺ}.*/				

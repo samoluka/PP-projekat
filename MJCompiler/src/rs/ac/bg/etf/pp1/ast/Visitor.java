@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/0/2022 15:44:31
+// 11/0/2022 16:27:1
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -39,6 +39,7 @@ public interface Visitor {
     public void visit(FormalParams FormalParams);
     public void visit(FormalParamListItem FormalParamListItem);
     public void visit(MethodTypeName MethodTypeName);
+    public void visit(DesignatorStatement DesignatorStatement);
     public void visit(ActualPars ActualPars);
     public void visit(Statement Statement);
     public void visit(VarClass VarClass);
@@ -69,6 +70,7 @@ public interface Visitor {
     public void visit(MultiDesign MultiDesign);
     public void visit(SingleDesignator SingleDesignator);
     public void visit(MultiDesignator MultiDesignator);
+    public void visit(NoActualParam NoActualParam);
     public void visit(ActualParamSingle ActualParamSingle);
     public void visit(ActualParamMulti ActualParamMulti);
     public void visit(ExprFactor ExprFactor);
@@ -86,10 +88,9 @@ public interface Visitor {
     public void visit(AddExpr AddExpr);
     public void visit(DesignatorItemDec DesignatorItemDec);
     public void visit(DesignatorItemInc DesignatorItemInc);
-    public void visit(DesignatorItemFuncCallWithoutParam DesignatorItemFuncCallWithoutParam);
     public void visit(DesignatorItemFuncCallWithParam DesignatorItemFuncCallWithParam);
-    public void visit(DesignatorItemAssign DesignatorItemAssign);
-    public void visit(DesignatorStatement DesignatorStatement);
+    public void visit(DesignatorAssignmentStatement DesignatorAssignmentStatement);
+    public void visit(DesignatorStatementNoAssigment DesignatorStatementNoAssigment);
     public void visit(MultiCondFact MultiCondFact);
     public void visit(SingleCondFact SingleCondFact);
     public void visit(SingleConditionTermList SingleConditionTermList);

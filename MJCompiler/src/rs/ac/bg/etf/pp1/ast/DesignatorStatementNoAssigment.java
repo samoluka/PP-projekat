@@ -5,13 +5,16 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ReadStatement extends SingleStatement {
+public class DesignatorStatementNoAssigment extends DesignatorStatement {
 
     private Designator Designator;
+    private DesignatorItem DesignatorItem;
 
-    public ReadStatement (Designator Designator) {
+    public DesignatorStatementNoAssigment (Designator Designator, DesignatorItem DesignatorItem) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
+        this.DesignatorItem=DesignatorItem;
+        if(DesignatorItem!=null) DesignatorItem.setParent(this);
     }
 
     public Designator getDesignator() {
@@ -22,28 +25,39 @@ public class ReadStatement extends SingleStatement {
         this.Designator=Designator;
     }
 
+    public DesignatorItem getDesignatorItem() {
+        return DesignatorItem;
+    }
+
+    public void setDesignatorItem(DesignatorItem DesignatorItem) {
+        this.DesignatorItem=DesignatorItem;
+    }
+
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
+        if(DesignatorItem!=null) DesignatorItem.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(DesignatorItem!=null) DesignatorItem.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(DesignatorItem!=null) DesignatorItem.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ReadStatement(\n");
+        buffer.append("DesignatorStatementNoAssigment(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -51,8 +65,14 @@ public class ReadStatement extends SingleStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
+        if(DesignatorItem!=null)
+            buffer.append(DesignatorItem.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
         buffer.append(tab);
-        buffer.append(") [ReadStatement]");
+        buffer.append(") [DesignatorStatementNoAssigment]");
         return buffer.toString();
     }
 }
