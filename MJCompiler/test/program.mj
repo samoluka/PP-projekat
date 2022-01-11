@@ -1,18 +1,26 @@
 program Program
 	int a, b, c;
 	char x;
+	class B
 	{
-		int f(char xx, int d)
-		int dd;
 		{
-			return 2;
+			int method1(){
+				return 1;
+			}
+			void method2(){}
+			void method3(){}
 		}
-		int metoda(int d,char xx)
-		int k;
-		char c;
+	}
+	class A extends B
+	{
+	
+	}
+	
+	{	
+		void metoda()
+		B a;
 		{
-			k = 2+k*(f("c",1)/1 + d);
-			return k;
+			
 		}
 	}
 

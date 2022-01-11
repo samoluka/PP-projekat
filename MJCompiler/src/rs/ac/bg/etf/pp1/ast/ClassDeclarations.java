@@ -1,19 +1,20 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/0/2022 18:59:32
+// 12/0/2022 0:54:59
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ClassDeclarations extends ClassDecl {
 
-    private String className;
+    private ClassName ClassName;
     private ClassExtends ClassExtends;
     private VarListClass VarListClass;
     private ClassMethodDeclItemList ClassMethodDeclItemList;
 
-    public ClassDeclarations (String className, ClassExtends ClassExtends, VarListClass VarListClass, ClassMethodDeclItemList ClassMethodDeclItemList) {
-        this.className=className;
+    public ClassDeclarations (ClassName ClassName, ClassExtends ClassExtends, VarListClass VarListClass, ClassMethodDeclItemList ClassMethodDeclItemList) {
+        this.ClassName=ClassName;
+        if(ClassName!=null) ClassName.setParent(this);
         this.ClassExtends=ClassExtends;
         if(ClassExtends!=null) ClassExtends.setParent(this);
         this.VarListClass=VarListClass;
@@ -22,12 +23,12 @@ public class ClassDeclarations extends ClassDecl {
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.setParent(this);
     }
 
-    public String getClassName() {
-        return className;
+    public ClassName getClassName() {
+        return ClassName;
     }
 
-    public void setClassName(String className) {
-        this.className=className;
+    public void setClassName(ClassName ClassName) {
+        this.ClassName=ClassName;
     }
 
     public ClassExtends getClassExtends() {
@@ -59,6 +60,7 @@ public class ClassDeclarations extends ClassDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(ClassName!=null) ClassName.accept(visitor);
         if(ClassExtends!=null) ClassExtends.accept(visitor);
         if(VarListClass!=null) VarListClass.accept(visitor);
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.accept(visitor);
@@ -66,12 +68,14 @@ public class ClassDeclarations extends ClassDecl {
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(ClassName!=null) ClassName.traverseTopDown(visitor);
         if(ClassExtends!=null) ClassExtends.traverseTopDown(visitor);
         if(VarListClass!=null) VarListClass.traverseTopDown(visitor);
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(ClassName!=null) ClassName.traverseBottomUp(visitor);
         if(ClassExtends!=null) ClassExtends.traverseBottomUp(visitor);
         if(VarListClass!=null) VarListClass.traverseBottomUp(visitor);
         if(ClassMethodDeclItemList!=null) ClassMethodDeclItemList.traverseBottomUp(visitor);
@@ -83,7 +87,10 @@ public class ClassDeclarations extends ClassDecl {
         buffer.append(tab);
         buffer.append("ClassDeclarations(\n");
 
-        buffer.append(" "+tab+className);
+        if(ClassName!=null)
+            buffer.append(ClassName.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(ClassExtends!=null)

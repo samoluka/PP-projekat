@@ -102,7 +102,7 @@ nonterminal VarItemListClass VarItemListClass;
 nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
@@ -174,7 +174,8 @@ VarDeclListItem ::= (VarDeclListItem) VarDecl:V1 {: RESULT=new VarDeclListItem(V
 
 /* ʺrecordʺ ident ʺ{ʺ {VarDecl} ʺ}ʺ.  */
 
-RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList:V1 RBRACE {: RESULT=new RecordDeclarations(name, V1); RESULT.setLine(nameleft); :};
+RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE 
+ RBRACE {: RESULT=new RecordDeclarations(name); RESULT.setLine(nameleft); :};
 
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
@@ -199,7 +200,8 @@ VarItemListClass ::= (VarMultiItemListClass) VarItemListClass:V1 COMMA VarDeclDe
                     (VarSinglItemListClass) VarDeclDefinition:V1 {: RESULT=new VarSinglItemListClass(V1); RESULT.setLine(V1left); :}
                     ;
 
-ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends:C1 LBRACE VarListClass:V2 ClassMethodDeclItemList:C3 RBRACE {: RESULT=new ClassDeclarations(className, C1, V2, C3); RESULT.setLine(classNameleft); :};
+ClassDecl ::= (ClassDeclarations) ClassName:C1 ClassExtends:C2 LBRACE VarListClass:V3 ClassMethodDeclItemList:C4 RBRACE {: RESULT=new ClassDeclarations(C1, C2, V3, C4); RESULT.setLine(C1left); :};
+ClassName ::= (ClassName) CLASS IDENT:className {: RESULT=new ClassName(className); RESULT.setLine(classNameleft); :};
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassDeclarationsExtends(T1); RESULT.setLine(T1left); :}
 			|
 			(ClassExtendsError) EXTENDS error:e

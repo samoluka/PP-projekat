@@ -1,5 +1,6 @@
 package rs.ac.bg.etf.pp1;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,6 +76,32 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(ProgName progName) {
 		progName.obj = Tab.insert(Obj.Prog, progName.getProgName(), Tab.noType);
 		Tab.openScope();
+	}
+
+	@Override
+	public void visit(ClassName className) {
+		className.obj = Tab.insert(Obj.Type, className.getClassName(), new Struct(Struct.Class));
+		Tab.openScope();
+		report_info("Pronadjena deklaracija klase: " + className.getClassName(), className);
+	}
+
+	@Override
+	public void visit(ClassDeclarations classDeclarations) {
+		Tab.chainLocalSymbols(classDeclarations.getClassName().obj);
+		Tab.closeScope();
+		report_info("Zavrsena obrada klase: " + classDeclarations.getClassName().getClassName(), classDeclarations);
+	}
+
+	@Override
+	public void visit(ClassDeclarationsExtends classExtends) {
+		Type extendClassType = classExtends.getType();
+		Obj extendClassObj = Tab.find(extendClassType.getTypeName());
+		if (Tab.noObj != extendClassObj) {
+			Collection<Obj> listOfSimbols = extendClassObj.getLocalSymbols();
+			for (Obj simbol : listOfSimbols) {
+				Tab.insert(simbol.getKind(), simbol.getName(), simbol.getType());
+			}
+		}
 	}
 
 	public void visit(Program program) {

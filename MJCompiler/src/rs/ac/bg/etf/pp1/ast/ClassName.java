@@ -5,22 +5,24 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Label implements SyntaxNode {
+public class ClassName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private String name;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
-    public Label (String name) {
-        this.name=name;
+    private String className;
+
+    public ClassName (String className) {
+        this.className=className;
     }
 
-    public String getName() {
-        return name;
+    public String getClassName() {
+        return className;
     }
 
-    public void setName(String name) {
-        this.name=name;
+    public void setClassName(String className) {
+        this.className=className;
     }
 
     public SyntaxNode getParent() {
@@ -57,13 +59,13 @@ public class Label implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Label(\n");
+        buffer.append("ClassName(\n");
 
-        buffer.append(" "+tab+name);
+        buffer.append(" "+tab+className);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Label]");
+        buffer.append(") [ClassName]");
         return buffer.toString();
     }
 }

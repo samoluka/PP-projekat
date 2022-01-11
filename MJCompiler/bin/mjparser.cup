@@ -65,7 +65,7 @@ nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact,
 nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
@@ -137,7 +137,8 @@ VarDeclListItem ::= (VarDeclListItem) VarDecl;
 
 /* ʺrecordʺ ident ʺ{ʺ {VarDecl} ʺ}ʺ.  */
 
-RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE VarDeclList RBRACE;
+RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE 
+ RBRACE;
 
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
@@ -162,7 +163,8 @@ VarItemListClass ::= (VarMultiItemListClass) VarItemListClass COMMA VarDeclDefin
                     (VarSinglItemListClass) VarDeclDefinition
                     ;
 
-ClassDecl ::= (ClassDeclarations) CLASS IDENT:className ClassExtends LBRACE VarListClass ClassMethodDeclItemList RBRACE;
+ClassDecl ::= (ClassDeclarations) ClassName ClassExtends LBRACE VarListClass ClassMethodDeclItemList RBRACE;
+ClassName ::= (ClassName) CLASS IDENT:className;
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type
 			|
 			(ClassExtendsError) EXTENDS error:e
