@@ -58,7 +58,7 @@ terminal String IDENT;
 /* Operators */
 terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
 
-nonterminal DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, VarDeclDefinition, RecordDecl, VarDeclList, VarDeclListItem;
+nonterminal DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, RecordDecl, VarDeclList, VarDeclListItem;
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDeclItem, MethodDeclListNonEmpty;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact, FormalParamListItem;
@@ -66,7 +66,7 @@ nonterminal Addop, Mulop, ActualPars, DesignatorMulti;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
 

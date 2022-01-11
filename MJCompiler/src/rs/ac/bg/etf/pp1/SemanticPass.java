@@ -111,6 +111,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(MethodTypeNameVoid MethodTypeNameVoid) {
 		currentMethod = Tab.insert(Obj.Meth, MethodTypeNameVoid.getMethodName(), Tab.noType);
+		currentMethod.setFpPos(-1);
 		MethodTypeNameVoid.obj = currentMethod;
 		Tab.openScope();
 		report_info("Obradjuje se funkcija " + MethodTypeNameVoid.getMethodName(), MethodTypeNameVoid);
@@ -127,6 +128,13 @@ public class SemanticPass extends VisitorAdaptor {
 
 		returnFound = false;
 		currentMethod = null;
+	}
+
+	public void visit(FormalParametherListItem fItem) {
+		Struct paramType = fItem.getType().struct;
+		fItem.getVarDeclDefinition().struct = paramType;
+		currentMethod.setLevel(currentMethod.getLevel() + 1);
+		currentMethod.setFpPos(currentMethod.getFpPos() + 1);
 	}
 
 	@Override

@@ -65,7 +65,6 @@ nonterminal ConstDeclItemList ConstDeclItemList;
 nonterminal AssignmentDecl AssignmentDecl;
 nonterminal VarDecl VarDecl;
 nonterminal VarDeclItemList VarDeclItemList;
-nonterminal VarDeclDefinition VarDeclDefinition;
 nonterminal RecordDecl RecordDecl;
 nonterminal VarDeclList VarDeclList;
 nonterminal VarDeclListItem VarDeclListItem;
@@ -103,7 +102,7 @@ nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
 
