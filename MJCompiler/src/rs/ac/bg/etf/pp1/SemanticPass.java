@@ -21,6 +21,13 @@ public class SemanticPass extends VisitorAdaptor {
 
 	Logger log = Logger.getLogger(getClass());
 	private List<String> currDeclVar = new LinkedList<>();
+	private Struct currExprType = Tab.noType;
+
+	public SemanticPass() {
+		super();
+		Struct struct = new Struct(Struct.Int);
+		Tab.insert(Obj.Type, "bool", struct);
+	}
 
 	public void report_error(String message, SyntaxNode info) {
 		errorDetected = true;
@@ -89,6 +96,7 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 	}
 
+	@Override
 	public void visit(MethodTypeNameWithType methodTypeNameWithType) {
 		currentMethod = Tab.insert(Obj.Meth, methodTypeNameWithType.getMethodName(),
 				methodTypeNameWithType.getType().struct);
@@ -97,10 +105,17 @@ public class SemanticPass extends VisitorAdaptor {
 		report_info("Obradjuje se funkcija " + methodTypeNameWithType.getMethodName(), methodTypeNameWithType);
 	}
 
+	public void visit(MethodTypeNameVoid MethodTypeNameVoid) {
+		currentMethod = Tab.insert(Obj.Meth, MethodTypeNameVoid.getMethodName(), Tab.noType);
+		MethodTypeNameVoid.obj = currentMethod;
+		Tab.openScope();
+		report_info("Obradjuje se funkcija " + MethodTypeNameVoid.getMethodName(), MethodTypeNameVoid);
+	}
+
 	public void visit(MethodDeclaration MethodDeclaration) {
 		if (!returnFound && currentMethod.getType() != Tab.noType) {
-			report_error("Semanticka greska na liniji " + MethodDeclaration.getLine() + ": funkcija " + currentMethod.getName()
-					+ " nema return iskaz!", null);
+			report_error("Semanticka greska na liniji " + MethodDeclaration.getLine() + ": funkcija "
+					+ currentMethod.getName() + " nema return iskaz!", null);
 		}
 		log.info("Zatvoren skoup funkcije");
 		Tab.chainLocalSymbols(currentMethod);
@@ -108,6 +123,17 @@ public class SemanticPass extends VisitorAdaptor {
 
 		returnFound = false;
 		currentMethod = null;
+	}
+
+	
+	@Override
+	public void visit(SingleDesignator singleDesignator) {
+		Obj obj = Tab.find(singleDesignator.getName());
+		if (obj == Tab.noObj) {
+			report_error("Greska na liniji " + singleDesignator.getLine() + " : ime " + singleDesignator.getName()
+					+ " nije deklarisano! ", null);
+		}
+		singleDesignator.obj = obj;
 	}
 
 //	public void visit(Designator designator) {
@@ -135,24 +161,42 @@ public class SemanticPass extends VisitorAdaptor {
 		singleTerm.struct = singleTerm.getFactor().struct;
 	}
 
-//	public void visit(TermExpr termExpr) {
-//		termExpr.struct = termExpr.getTerm().struct;
-//	}
+	public void visit(TermExpr termExpr) {
+		termExpr.struct = termExpr.getTerm().struct;
+	}
+	
 
-//	public void visit(AddExpr addExpr) {
-//		Struct te = addExpr.getExpr().struct;
-//		Struct t = addExpr.getTerm().struct;
-//		if (te.equals(t) && te == Tab.intType) {
-//			addExpr.struct = te;
-//		} else {
-//			report_error("Greska na liniji " + addExpr.getLine() + " : nekompatibilni tipovi u izrazu za sabiranje.",
-//					null);
-//			addExpr.struct = Tab.noType;
-//		}
-//	}
+	@Override
+	public void visit(NegativeTermExpr NegativeTermExpr) {
+		NegativeTermExpr.struct = NegativeTermExpr.getTerm().struct;
+	}
+
+	public void visit(AddExpr addExpr) {
+		Struct te = addExpr.getExpr().struct;
+		Struct t = addExpr.getTerm().struct;
+		if (te.equals(t) && te == Tab.intType) {
+			addExpr.struct = te;
+		} else {
+			report_error("Greska na liniji " + addExpr.getLine() + " : nekompatibilni tipovi u izrazu za sabiranje.",
+					null);
+			addExpr.struct = Tab.noType;
+		}
+	}
 
 	public void visit(NumberConst cnst) {
 		cnst.struct = Tab.intType;
+	}
+
+	public void visit(BoolConst cnst) {
+		cnst.struct = Tab.find("bool").getType();
+	}
+
+	public void visit(CharConst cnst) {
+		cnst.struct = Tab.charType;
+	}
+
+	public void visit(ExprFactor exprFactor) {
+		exprFactor.struct = exprFactor.getExpr().struct;
 	}
 
 	public void visit(Variable var) {

@@ -62,7 +62,7 @@ nonterminal DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, Va
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDeclItem, MethodDeclListNonEmpty;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact, FormalParamListItem;
-nonterminal ExprPositive, Addop, Mulop, ActualPars, DesignatorMulti;
+nonterminal Addop, Mulop, ActualPars, DesignatorMulti;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, Program, MethodDecl, MethodTypeName, Designator;
@@ -339,14 +339,12 @@ DesignatorItem ::= (DesignatorItemAssign) Assignop Expr
 
 
 /* Expr = [ʺ-ʺ] Term {Addop Term}. */
-Expr ::= (NegativeExpr) MINUS ExprPositive
-		|
-		(PositiveExpr) ExprPositive
-		;
-ExprPositive ::= (AddExpr) ExprPositive:ex Addop Term:t
-	 			|
-	 			(TermExpr) Term:t
-	 			;
+Expr ::= (AddExpr) Expr:e Addop Term:t
+	 	|
+	 	(TermExpr) Term:t
+	 	|
+	 	(NegativeTermExpr) MINUS Term
+	 	;
 /* Term = Factor {Mulop Factor}. */
 Term ::=(MulopTerm) Factor:t1 Mulop Factor:t2
 		| 

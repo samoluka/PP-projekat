@@ -1,31 +1,31 @@
 // generated with ast extension for cup
 // version 0.8
-// 10/0/2022 1:41:22
+// 11/0/2022 15:44:31
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class AddExpr extends ExprPositive {
+public class AddExpr extends Expr {
 
-    private ExprPositive ExprPositive;
+    private Expr Expr;
     private Addop Addop;
     private Term Term;
 
-    public AddExpr (ExprPositive ExprPositive, Addop Addop, Term Term) {
-        this.ExprPositive=ExprPositive;
-        if(ExprPositive!=null) ExprPositive.setParent(this);
+    public AddExpr (Expr Expr, Addop Addop, Term Term) {
+        this.Expr=Expr;
+        if(Expr!=null) Expr.setParent(this);
         this.Addop=Addop;
         if(Addop!=null) Addop.setParent(this);
         this.Term=Term;
         if(Term!=null) Term.setParent(this);
     }
 
-    public ExprPositive getExprPositive() {
-        return ExprPositive;
+    public Expr getExpr() {
+        return Expr;
     }
 
-    public void setExprPositive(ExprPositive ExprPositive) {
-        this.ExprPositive=ExprPositive;
+    public void setExpr(Expr Expr) {
+        this.Expr=Expr;
     }
 
     public Addop getAddop() {
@@ -49,20 +49,20 @@ public class AddExpr extends ExprPositive {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(ExprPositive!=null) ExprPositive.accept(visitor);
+        if(Expr!=null) Expr.accept(visitor);
         if(Addop!=null) Addop.accept(visitor);
         if(Term!=null) Term.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(ExprPositive!=null) ExprPositive.traverseTopDown(visitor);
+        if(Expr!=null) Expr.traverseTopDown(visitor);
         if(Addop!=null) Addop.traverseTopDown(visitor);
         if(Term!=null) Term.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(ExprPositive!=null) ExprPositive.traverseBottomUp(visitor);
+        if(Expr!=null) Expr.traverseBottomUp(visitor);
         if(Addop!=null) Addop.traverseBottomUp(visitor);
         if(Term!=null) Term.traverseBottomUp(visitor);
         accept(visitor);
@@ -73,8 +73,8 @@ public class AddExpr extends ExprPositive {
         buffer.append(tab);
         buffer.append("AddExpr(\n");
 
-        if(ExprPositive!=null)
-            buffer.append(ExprPositive.toString("  "+tab));
+        if(Expr!=null)
+            buffer.append(Expr.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

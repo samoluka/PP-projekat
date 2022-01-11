@@ -1,0 +1,8 @@
+//definicija globalne promenljive – ignorisati karaktere do prvog znaka ";" ili sledećeg "," - valjda je dobro, ne radi int 123x, y;
+//konstrukcija iskaza dodele – ignorisati karaktere do ";" - valjda je dobro
+//NIVO B (2 poena, uključujući i A):
+//deklaracija formalnog parametra funkcije – ignorisati znakove do znaka "," ili ")"
+//logički izraz unutar if konstrukcije - ignorisati karaktere do prvog znaka ")"
+//NIVO C (3 poena, uključujući i sve za B):
+//deklaracija polja unutrašnje klase – ignorisati karaktere do prvog ";" ili "{" 
+//deklaracija proširenja natklase – ignorisati znakove do prvog znaka "{".

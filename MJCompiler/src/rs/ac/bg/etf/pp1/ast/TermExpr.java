@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 10/0/2022 1:41:22
+// 11/0/2022 15:44:31
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class TermExpr extends ExprPositive {
+public class TermExpr extends Expr {
 
     private Term Term;
 

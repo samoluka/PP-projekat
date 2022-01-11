@@ -92,7 +92,6 @@ nonterminal Condition Condition;
 nonterminal CondTerm CondTerm;
 nonterminal CondFact CondFact;
 nonterminal FormalParamListItem FormalParamListItem;
-nonterminal ExprPositive ExprPositive;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
 nonterminal ActualPars ActualPars;
@@ -377,14 +376,12 @@ DesignatorItem ::= (DesignatorItemAssign) Assignop:A1 Expr:E2 {: RESULT=new Desi
 
 
 /* Expr = [ʺ-ʺ] Term {Addop Term}. */
-Expr ::= (NegativeExpr) MINUS ExprPositive:E1 {: RESULT=new NegativeExpr(E1); RESULT.setLine(E1left); :}
-		|
-		(PositiveExpr) ExprPositive:E1 {: RESULT=new PositiveExpr(E1); RESULT.setLine(E1left); :}
-		;
-ExprPositive ::= (AddExpr) ExprPositive:ex Addop:A1 Term:t {: RESULT=new AddExpr(ex, A1, t); RESULT.setLine(exleft); :}
-	 			|
-	 			(TermExpr) Term:t {: RESULT=new TermExpr(t); RESULT.setLine(tleft); :}
-	 			;
+Expr ::= (AddExpr) Expr:e Addop:A1 Term:t {: RESULT=new AddExpr(e, A1, t); RESULT.setLine(eleft); :}
+	 	|
+	 	(TermExpr) Term:t {: RESULT=new TermExpr(t); RESULT.setLine(tleft); :}
+	 	|
+	 	(NegativeTermExpr) MINUS Term:T1 {: RESULT=new NegativeTermExpr(T1); RESULT.setLine(T1left); :}
+	 	;
 /* Term = Factor {Mulop Factor}. */
 Term ::=(MulopTerm) Factor:t1 Mulop:M1 Factor:t2 {: RESULT=new MulopTerm(t1, M1, t2); RESULT.setLine(t1left); :}
 		| 
