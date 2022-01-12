@@ -87,7 +87,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(ClassDeclarations classDeclarations) {
-		Tab.chainLocalSymbols(classDeclarations.getClassName().obj);
+		Tab.chainLocalSymbols(classDeclarations.getClassName().obj.getType());
 		Tab.closeScope();
 		report_info("Zavrsena obrada klase: " + classDeclarations.getClassName().getClassName(), classDeclarations);
 	}
@@ -103,8 +103,6 @@ public class SemanticPass extends VisitorAdaptor {
 			}
 		}
 	}
-	
-	
 
 	@Override
 	public void visit(VarListClassNonEmpty VarListClassNonEmpty) {
@@ -115,7 +113,7 @@ public class SemanticPass extends VisitorAdaptor {
 				continue;
 			}
 			report_info("Deklarisana promenljiva " + var.getName(), VarListClassNonEmpty);
-			Tab.insert(Obj.Var, var.getName(), currentType.struct);
+			Tab.insert(Obj.Fld, var.getName(), currentType.struct);
 		}
 		currDeclVar.clear();
 	}
