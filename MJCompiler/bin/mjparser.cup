@@ -65,7 +65,7 @@ nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact,
 nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
@@ -325,18 +325,16 @@ CondFact ::= (SingleCondFact) Expr
 
 
 /* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ‐‐ʺ) */
-DesignatorStatement ::= (DesignatorStatementNoAssigment) Designator DesignatorItem
+DesignatorStatement ::= (DesignatorItemFuncCallWithParam) MethodNameDesignator LPAREN ActualPars RPAREN
+					|
+					(DesignatorItemInc) Designator INCREMENT
+					|
+					(DesignatorItemDec) Designator DECREMENT
 					|
 					(DesignatorAssignmentStatement) Designator Assignop Expr
 					;
-DesignatorItem ::=
-				(DesignatorItemFuncCallWithParam) LPAREN ActualPars RPAREN
-				|
-				(DesignatorItemInc) INCREMENT
-				|
-				(DesignatorItemDec) DECREMENT
-				;
 
+MethodNameDesignator ::= (MethodNameDesignator) Designator;
 
 
 /* Expr = [ʺ-ʺ] Term {Addop Term}. */

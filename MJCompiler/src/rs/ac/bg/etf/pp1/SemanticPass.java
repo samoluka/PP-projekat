@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
+import rs.ac.bg.etf.pp1.ast.MethodNameDesignator;
 
 public class SemanticPass extends VisitorAdaptor {
 
@@ -25,8 +26,10 @@ public class SemanticPass extends VisitorAdaptor {
 
 	Logger log = Logger.getLogger(getClass());
 	private List<Definition> currDeclVar = new LinkedList<>();
+	private List<DefinitionArray> currDeclVarArray = new LinkedList<>();
 	private Struct currExprType = Tab.noType;
 	private List<Obj> allClasses = new LinkedList<>();
+	private Designator lastDesignator;
 
 	public SemanticPass() {
 		super();
@@ -57,12 +60,18 @@ public class SemanticPass extends VisitorAdaptor {
 		currDeclVar.add(varDefinition);
 	}
 
+	@Override
+	public void visit(DefinitionArray definitionArray) {
+		definitionArray.struct = new Struct(Struct.Array, currentType.struct);
+		currDeclVarArray.add(definitionArray);
+	}
+
 	public void visit(VarDeclItemList varDeclItemList) {
 		int x = 2;
 	}
 
 	public void visit(VarDeclarations varDeclarations) {
-		currentType = varDeclarations.getType();
+//		currentType = varDeclarations.getType();
 		for (Definition var : currDeclVar) {
 			if (Tab.currentScope.findSymbol(var.getName()) != null) {
 				log.error("Greska na liniji " + varDeclarations.getLine() + ". Varijabla " + var.getName()
@@ -70,8 +79,18 @@ public class SemanticPass extends VisitorAdaptor {
 				continue;
 			}
 			report_info("Deklarisana promenljiva " + var.getName(), varDeclarations);
-			Tab.insert(Obj.Var, var.getName(), currentType.struct);
+			Tab.insert(Obj.Var, var.getName(), var.struct);
 		}
+		for (DefinitionArray var : currDeclVarArray) {
+			if (Tab.currentScope.findSymbol(var.getName()) != null) {
+				log.error("Greska na liniji " + varDeclarations.getLine() + ". Varijabla " + var.getName()
+						+ " je vec definisana");
+				continue;
+			}
+			report_info("Deklarisan niz " + var.getName(), varDeclarations);
+			Tab.insert(Obj.Var, var.getName(), var.struct);
+		}
+		currDeclVarArray.clear();
 		currDeclVar.clear();
 	}
 
@@ -122,9 +141,19 @@ public class SemanticPass extends VisitorAdaptor {
 						+ " je vec definisana");
 				continue;
 			}
-			report_info("Deklarisana promenljiva " + var.getName(), VarListClassNonEmpty);
+			report_info("Deklarisano polje klase: promenljiva " + var.getName(), VarListClassNonEmpty);
 			Tab.insert(Obj.Fld, var.getName(), var.struct);
 		}
+		for (DefinitionArray var : currDeclVarArray) {
+			if (Tab.currentScope.findSymbol(var.getName()) != null) {
+				log.error("Greska na liniji " + VarListClassNonEmpty.getLine() + ". Varijabla " + var.getName()
+						+ " je vec definisana");
+				continue;
+			}
+			report_info("Deklarisano polje klase: niz " + var.getName(), VarListClassNonEmpty);
+			Tab.insert(Obj.Var, var.getName(), var.struct);
+		}
+		currDeclVarArray.clear();
 		currDeclVar.clear();
 	}
 
@@ -200,9 +229,21 @@ public class SemanticPass extends VisitorAdaptor {
 						"Greska na liniji " + fList.getLine() + ". Varijabla " + var.getName() + " je vec definisana");
 				continue;
 			}
-			report_info("Deklarisana promenljiva " + var.getName(), fList);
+			report_info("Deklarisan formalni parametar funkcije: promenljiva " + var.getName(), fList);
 			Tab.insert(Obj.Var, var.getName(), var.struct);
 		}
+
+		for (DefinitionArray var : currDeclVarArray) {
+			if (Tab.currentScope.findSymbol(var.getName()) != null) {
+				log.error(
+						"Greska na liniji " + fList.getLine() + ". Varijabla " + var.getName() + " je vec definisana");
+				continue;
+			}
+			report_info("Deklarisan formalni parametar funkcije: niz " + var.getName(), fList);
+			Tab.insert(Obj.Var, var.getName(), var.struct);
+		}
+		currDeclVarArray.clear();
+
 		currDeclVar.clear();
 	}
 
@@ -227,6 +268,28 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(DesignatorForMethodCall dsForMethodCall) {
 		methodCalled = dsForMethodCall.getDesignator().obj;
+	}
+
+	@Override
+	public void visit(MethodNameDesignator methodNameDesignator) {
+		methodCalled = methodNameDesignator.getDesignator().obj;
+	}
+
+	@Override
+	public void visit(DesignatorItemFuncCallWithParam dfParam) {
+		if ((dfParam.getActualPars() instanceof NoActualParam && methodCalled.getLevel() > 0)
+				|| (!(dfParam.getActualPars() instanceof NoActualParam) && methodCalled.getLevel() == 0)
+				|| (currentMethodParamNum != methodCalled.getLevel())) {
+			report_error("Broj prosledjenih parametara se ne slaze sa brojem definisanih parametara na liniji "
+					+ dfParam.getLine(), null);
+		}
+		if (Obj.Meth == methodCalled.getKind()) {
+			report_info("Pronadjen poziv funkcije " + methodCalled.getName() + " na liniji " + dfParam.getLine(), null);
+		} else {
+			report_error(
+					"Greska na liniji " + dfParam.getLine() + " : ime " + methodCalled.getName() + " nije funkcija!",
+					null);
+		}
 	}
 
 	public void visit(MethodCall funcCall) {

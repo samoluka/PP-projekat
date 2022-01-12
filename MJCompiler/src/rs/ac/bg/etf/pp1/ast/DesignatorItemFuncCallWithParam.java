@@ -1,17 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/0/2022 2:24:10
+// 12/0/2022 17:17:20
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorItemFuncCallWithParam extends DesignatorItem {
+public class DesignatorItemFuncCallWithParam extends DesignatorStatement {
 
+    private MethodNameDesignator MethodNameDesignator;
     private ActualPars ActualPars;
 
-    public DesignatorItemFuncCallWithParam (ActualPars ActualPars) {
+    public DesignatorItemFuncCallWithParam (MethodNameDesignator MethodNameDesignator, ActualPars ActualPars) {
+        this.MethodNameDesignator=MethodNameDesignator;
+        if(MethodNameDesignator!=null) MethodNameDesignator.setParent(this);
         this.ActualPars=ActualPars;
         if(ActualPars!=null) ActualPars.setParent(this);
+    }
+
+    public MethodNameDesignator getMethodNameDesignator() {
+        return MethodNameDesignator;
+    }
+
+    public void setMethodNameDesignator(MethodNameDesignator MethodNameDesignator) {
+        this.MethodNameDesignator=MethodNameDesignator;
     }
 
     public ActualPars getActualPars() {
@@ -27,15 +38,18 @@ public class DesignatorItemFuncCallWithParam extends DesignatorItem {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(MethodNameDesignator!=null) MethodNameDesignator.accept(visitor);
         if(ActualPars!=null) ActualPars.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(MethodNameDesignator!=null) MethodNameDesignator.traverseTopDown(visitor);
         if(ActualPars!=null) ActualPars.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(MethodNameDesignator!=null) MethodNameDesignator.traverseBottomUp(visitor);
         if(ActualPars!=null) ActualPars.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -44,6 +58,12 @@ public class DesignatorItemFuncCallWithParam extends DesignatorItem {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
         buffer.append("DesignatorItemFuncCallWithParam(\n");
+
+        if(MethodNameDesignator!=null)
+            buffer.append(MethodNameDesignator.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
 
         if(ActualPars!=null)
             buffer.append(ActualPars.toString("  "+tab));

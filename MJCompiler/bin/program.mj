@@ -1,38 +1,17 @@
 program Program
-	int a, b, c;
-	char x;
-	class B
-	{
-		int d,dd;
-		char chard;
-		{
-			int method1(){
-				return 1;
-			}
-			void method2(){}
-			void method3(){}
-		}
+	
+	class A{
 	}
-	
-	record RA
-	{
-		int x;
-		char y;
-	}
-	
-	class A extends B
-	{
-		int x;
-		RA r;
-	}
-	
-
-	
 	{	
+	
+		int f(int x){
+			return 1;
+		}
 		void metoda()
-		B a;
+		A a[];
+		int x;
 		{
-			b = 2;
+			f(x,a);
 		}
 	}
 

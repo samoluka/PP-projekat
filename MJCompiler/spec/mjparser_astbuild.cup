@@ -102,7 +102,7 @@ nonterminal VarItemListClass VarItemListClass;
 nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
@@ -362,18 +362,16 @@ CondFact ::= (SingleCondFact) Expr:E1 {: RESULT=new SingleCondFact(E1); RESULT.s
 
 
 /* DesignatorStatement = Designator (Assignop Expr | ʺ(ʺ [ActPars] ʺ)ʺ | ʺ++ʺ | ʺ�?�?ʺ) */
-DesignatorStatement ::= (DesignatorStatementNoAssigment) Designator:D1 DesignatorItem:D2 {: RESULT=new DesignatorStatementNoAssigment(D1, D2); RESULT.setLine(D1left); :}
+DesignatorStatement ::= (DesignatorItemFuncCallWithParam) MethodNameDesignator:M1 LPAREN ActualPars:A2 RPAREN {: RESULT=new DesignatorItemFuncCallWithParam(M1, A2); RESULT.setLine(M1left); :}
+					|
+					(DesignatorItemInc) Designator:D1 INCREMENT {: RESULT=new DesignatorItemInc(D1); RESULT.setLine(D1left); :}
+					|
+					(DesignatorItemDec) Designator:D1 DECREMENT {: RESULT=new DesignatorItemDec(D1); RESULT.setLine(D1left); :}
 					|
 					(DesignatorAssignmentStatement) Designator:D1 Assignop:A2 Expr:E3 {: RESULT=new DesignatorAssignmentStatement(D1, A2, E3); RESULT.setLine(D1left); :}
 					;
-DesignatorItem ::=
-				(DesignatorItemFuncCallWithParam) LPAREN ActualPars:A1 RPAREN {: RESULT=new DesignatorItemFuncCallWithParam(A1); RESULT.setLine(A1left); :}
-				|
-				(DesignatorItemInc) INCREMENT {: RESULT=new DesignatorItemInc(); :}
-				|
-				(DesignatorItemDec) DECREMENT {: RESULT=new DesignatorItemDec(); :}
-				;
 
+MethodNameDesignator ::= (MethodNameDesignator) Designator:D1 {: RESULT=new MethodNameDesignator(D1); RESULT.setLine(D1left); :};
 
 
 /* Expr = [ʺ-ʺ] Term {Addop Term}. */
