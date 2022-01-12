@@ -26,6 +26,7 @@ public class SemanticPass extends VisitorAdaptor {
 	Logger log = Logger.getLogger(getClass());
 	private List<Definition> currDeclVar = new LinkedList<>();
 	private Struct currExprType = Tab.noType;
+	private List<Obj> allClasses = new LinkedList<>();
 
 	public SemanticPass() {
 		super();
@@ -80,9 +81,14 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(ClassName className) {
+		if (Tab.find(className.getClassName()) != Tab.noObj) {
+			report_error("Greska na liniji " + className.getLine() + ". Klasa " + className.getClassName()
+					+ " je vec definisana", null);
+		}
 		className.obj = Tab.insert(Obj.Type, className.getClassName(), new Struct(Struct.Class));
 		Tab.openScope();
 		report_info("Pronadjena deklaracija klase: " + className.getClassName(), className);
+		allClasses.add(className.obj);
 	}
 
 	@Override
@@ -96,6 +102,9 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(ClassDeclarationsExtends classExtends) {
 		Type extendClassType = classExtends.getType();
 		Obj extendClassObj = Tab.find(extendClassType.getTypeName());
+		if (!allClasses.contains(extendClassObj)) {
+			report_error("Nije moguce izvodjenje iz tipa: " + extendClassObj.getName(), extendClassType);
+		}
 		if (Tab.noObj != extendClassObj) {
 			Collection<Obj> listOfSimbols = extendClassObj.getLocalSymbols();
 			for (Obj simbol : listOfSimbols) {
@@ -318,6 +327,20 @@ public class SemanticPass extends VisitorAdaptor {
 					+ "tip izraza u return naredbi ne slaze se sa tipom povratne vrednosti funkcije "
 					+ currentMethod.getName(), null);
 		}
+	}
+
+	@Override
+	public void visit(RecordName recordName) {
+		recordName.obj = Tab.insert(Obj.Type, recordName.getName(), new Struct(Struct.Class));
+		Tab.openScope();
+		report_info("Pronadjena deklaracija rekorda: " + recordName.getName(), recordName);
+	}
+
+	@Override
+	public void visit(RecordDeclarations recordDeclarations) {
+		Tab.chainLocalSymbols(recordDeclarations.getRecordName().obj.getType());
+		Tab.closeScope();
+		report_info("Zavrsena obrada klase: " + recordDeclarations.getRecordName().getName(), recordDeclarations);
 	}
 
 	public boolean passed() {

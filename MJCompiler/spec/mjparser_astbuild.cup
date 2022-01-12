@@ -102,7 +102,7 @@ nonterminal VarItemListClass VarItemListClass;
 nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
 
 
@@ -174,9 +174,8 @@ VarDeclListItem ::= (VarDeclListItem) VarDecl:V1 {: RESULT=new VarDeclListItem(V
 
 /* ʺrecordʺ ident ʺ{ʺ {VarDecl} ʺ}ʺ.  */
 
-RecordDecl ::= (RecordDeclarations) RECORD IDENT:name LBRACE 
- RBRACE {: RESULT=new RecordDeclarations(name); RESULT.setLine(nameleft); :};
-
+RecordDecl ::= (RecordDeclarations) RecordName:R1 LBRACE VarListClass:V2 RBRACE {: RESULT=new RecordDeclarations(R1, V2); RESULT.setLine(R1left); :};
+RecordName ::= (RecordName) RECORD IDENT:name {: RESULT=new RecordName(name); RESULT.setLine(nameleft); :};
 
 /* ClassDecl = ʺclassʺ ident [ʺextendsʺ Type] ʺ{ʺ {VarDecl} [ʺ{ʺ [ConstructorDecl] {MethodDecl} ʺ}ʺ] ʺ}ʺ. */
 

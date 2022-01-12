@@ -12,17 +12,26 @@ program Program
 			void method3(){}
 		}
 	}
-	class A extends B
+	
+	record RA
+	{
+		int x;
+		int y;
+	}
+	
+	class A extends RA
 	{
 		int x;
 	
 	}
 	
+
+	
 	{	
 		void metoda()
 		B a;
 		{
-			
+			b = 2;
 		}
 	}
 

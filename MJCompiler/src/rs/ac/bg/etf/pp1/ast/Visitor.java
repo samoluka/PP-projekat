@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/0/2022 1:14:45
+// 12/0/2022 2:14:1
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -156,6 +156,7 @@ public interface Visitor {
     public void visit(VarClassErrorEndPointDerived1 VarClassErrorEndPointDerived1);
     public void visit(VarErrorClass VarErrorClass);
     public void visit(VarClassNonError VarClassNonError);
+    public void visit(RecordName RecordName);
     public void visit(RecordDeclarations RecordDeclarations);
     public void visit(VarDeclListItem VarDeclListItem);
     public void visit(NoVarDeclList NoVarDeclList);

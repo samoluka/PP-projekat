@@ -1,29 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 12/0/2022 2:14:1
+// 12/0/2022 2:14:0
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorForMethodCall implements SyntaxNode {
+public class RecordName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
     public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
-    private Designator Designator;
+    private String name;
 
-    public DesignatorForMethodCall (Designator Designator) {
-        this.Designator=Designator;
-        if(Designator!=null) Designator.setParent(this);
+    public RecordName (String name) {
+        this.name=name;
     }
 
-    public Designator getDesignator() {
-        return Designator;
+    public String getName() {
+        return name;
     }
 
-    public void setDesignator(Designator Designator) {
-        this.Designator=Designator;
+    public void setName(String name) {
+        this.name=name;
     }
 
     public SyntaxNode getParent() {
@@ -47,32 +46,26 @@ public class DesignatorForMethodCall implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Designator!=null) Designator.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Designator!=null) Designator.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Designator!=null) Designator.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorForMethodCall(\n");
+        buffer.append("RecordName(\n");
 
-        if(Designator!=null)
-            buffer.append(Designator.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
+        buffer.append(" "+tab+name);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [DesignatorForMethodCall]");
+        buffer.append(") [RecordName]");
         return buffer.toString();
     }
 }
