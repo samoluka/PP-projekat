@@ -3,13 +3,16 @@ package rs.ac.bg.etf.pp1;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
+
+import javax.swing.text.html.parser.DTD;
 
 import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
-import rs.ac.bg.etf.pp1.ast.MethodNameDesignator;
 
 public class SemanticPass extends VisitorAdaptor {
 
@@ -27,9 +30,11 @@ public class SemanticPass extends VisitorAdaptor {
 	Logger log = Logger.getLogger(getClass());
 	private List<Definition> currDeclVar = new LinkedList<>();
 	private List<DefinitionArray> currDeclVarArray = new LinkedList<>();
-	private Struct currExprType = Tab.noType;
+	// private Struct currExprType = Tab.noType;
 	private List<Obj> allClasses = new LinkedList<>();
-	private Designator lastDesignator;
+	// private Designator lastDesignator;
+	// private boolean foundArray = false;
+	private Queue<DesignatorMulti> designatorQueue = new LinkedList<>();
 
 	public SemanticPass() {
 		super();
@@ -64,10 +69,6 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(DefinitionArray definitionArray) {
 		definitionArray.struct = new Struct(Struct.Array, currentType.struct);
 		currDeclVarArray.add(definitionArray);
-	}
-
-	public void visit(VarDeclItemList varDeclItemList) {
-		int x = 2;
 	}
 
 	public void visit(VarDeclarations varDeclarations) {
@@ -216,7 +217,10 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(FormalParametherListItem fItem) {
-		Struct paramType = fItem.getType().struct;
+		Struct paramType = fItem.getVarDeclDefinition().struct;
+//		if (fItem.getVarDeclDefinition() instanceof DefinitionArray)
+//			paramType = fItem
+
 		fItem.getVarDeclDefinition().struct = paramType;
 		currentMethod.setLevel(currentMethod.getLevel() + 1);
 		currentMethod.setFpPos(currentMethod.getFpPos() + 1);
@@ -245,6 +249,29 @@ public class SemanticPass extends VisitorAdaptor {
 		currDeclVarArray.clear();
 
 		currDeclVar.clear();
+	}
+
+	@Override
+	public void visit(ParenDesignator parenDesignator) {
+		if (parenDesignator.getExpr().struct != Tab.intType) {
+			report_error("Izraz za dohvatanje elemnta niza mora da bude tipa int ", parenDesignator);
+		}
+		designatorQueue.add(parenDesignator);
+	}
+
+	@Override
+	public void visit(DotDesignator dotDesignator) {
+		designatorQueue.add(dotDesignator);
+	}
+
+	@Override
+	public void visit(MultiDesignator multiDesignator) {
+		Obj obj = Tab.find(multiDesignator.getName());
+		if (obj == Tab.noObj) {
+			report_error("Greska na liniji " + multiDesignator.getLine() + " : ime " + multiDesignator.getName()
+					+ " nije deklarisano! ", null);
+		}
+		multiDesignator.obj = obj;
 	}
 
 	@Override
@@ -381,7 +408,41 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(Variable var) {
-		var.struct = var.getDesignator().obj.getType();
+		if (!designatorQueue.isEmpty()) {
+			Obj obj = var.getDesignator().obj;
+			Struct currStruct = Tab.noType;
+			while (!designatorQueue.isEmpty()) {
+				DesignatorMulti top = designatorQueue.poll();
+				if (top instanceof ParenDesignator) {
+					currStruct = obj.getType().getElemType();
+					break;
+				} else {
+					DotDesignator dTop = (DotDesignator) top;
+					Obj c = Tab.find(obj.getName());
+					Collection<Obj> cObj = c.getType().getMembers();
+					boolean found = false;
+					for (Obj o : cObj) {
+						if (o.getName().equals(dTop.getI1())) {
+							found = true;
+							currStruct = o.getType();
+							obj = o;
+//							if (!designatorQueue.isEmpty())
+//								top = designatorQueue.poll();
+							break;
+						}
+					}
+					if (!found) {
+						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+						break;
+					}
+				}
+			}
+			var.struct = currStruct;
+		} else {
+			var.struct = var.getDesignator().obj.getType();
+		}
+		designatorQueue.clear();
+
 	}
 
 	public void visit(ReturnStatementWithExpresion returnExpr) {

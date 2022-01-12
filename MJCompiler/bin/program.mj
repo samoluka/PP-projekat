@@ -1,17 +1,24 @@
 program Program
 	
 	class A{
+		int x[];
+	}
+	class B{
+		A a;
 	}
 	{	
 	
-		int f(int x){
+		int f(A x){
 			return 1;
 		}
 		void metoda()
-		A a[];
+		A a;
+		B b;
+		int xx[];
 		int x;
 		{
-			f(x,a);
+			f(a);
+			x = b.a.x[2];
 		}
 	}
 
