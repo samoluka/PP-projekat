@@ -3,6 +3,7 @@ program Program
 	char x;
 	class B
 	{
+		int d;
 		{
 			int method1(){
 				return 1;
@@ -13,6 +14,7 @@ program Program
 	}
 	class A extends B
 	{
+		int x;
 	
 	}
 	

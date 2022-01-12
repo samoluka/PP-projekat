@@ -103,6 +103,22 @@ public class SemanticPass extends VisitorAdaptor {
 			}
 		}
 	}
+	
+	
+
+	@Override
+	public void visit(VarListClassNonEmpty VarListClassNonEmpty) {
+		for (Definition var : currDeclVar) {
+			if (Tab.currentScope.findSymbol(var.getName()) != null) {
+				log.error("Greska na liniji " + VarListClassNonEmpty.getLine() + ". Varijabla " + var.getName()
+						+ " je vec definisana");
+				continue;
+			}
+			report_info("Deklarisana promenljiva " + var.getName(), VarListClassNonEmpty);
+			Tab.insert(Obj.Var, var.getName(), currentType.struct);
+		}
+		currDeclVar.clear();
+	}
 
 	public void visit(Program program) {
 		nVars = Tab.currentScope.getnVars();
