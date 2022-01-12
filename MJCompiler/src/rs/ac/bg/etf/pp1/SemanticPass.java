@@ -53,6 +53,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(Definition varDefinition) {
 		varDeclCount++;
+		varDefinition.struct = currentType.struct;
 		currDeclVar.add(varDefinition);
 	}
 
@@ -122,7 +123,7 @@ public class SemanticPass extends VisitorAdaptor {
 				continue;
 			}
 			report_info("Deklarisana promenljiva " + var.getName(), VarListClassNonEmpty);
-			Tab.insert(Obj.Fld, var.getName(), currentType.struct);
+			Tab.insert(Obj.Fld, var.getName(), var.struct);
 		}
 		currDeclVar.clear();
 	}
@@ -142,6 +143,7 @@ public class SemanticPass extends VisitorAdaptor {
 		} else {
 			if (Obj.Type == typeNode.getKind()) {
 				type.struct = typeNode.getType();
+				currentType = type;
 			} else {
 				report_error("Greska: Ime " + type.getTypeName() + " ne predstavlja tip!", type);
 				type.struct = Tab.noType;

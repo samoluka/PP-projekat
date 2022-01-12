@@ -3,7 +3,8 @@ program Program
 	char x;
 	class B
 	{
-		int d;
+		int d,dd;
+		char chard;
 		{
 			int method1(){
 				return 1;
@@ -16,13 +17,13 @@ program Program
 	record RA
 	{
 		int x;
-		int y;
+		char y;
 	}
 	
-	class A extends RA
+	class A extends B
 	{
 		int x;
-	
+		RA r;
 	}
 	
 
