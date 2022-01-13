@@ -60,7 +60,6 @@ terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LES
 
 nonterminal DeclList DeclList;
 nonterminal DeclItem DeclItem;
-nonterminal ConstDecl ConstDecl;
 nonterminal ConstDeclItemList ConstDeclItemList;
 nonterminal AssignmentDecl AssignmentDecl;
 nonterminal VarDecl VarDecl;
@@ -103,6 +102,7 @@ nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -129,13 +129,15 @@ DeclItem ::= (ConstDeclartionItem) ConstDecl:C1 {: RESULT=new ConstDeclartionIte
 
 /* ʺconstʺ Type identʺ=ʺ(numConst | charConst | boolConst) {, ident ʺ=ʺ (numConst |charConst | boolConst)} ʺ;ʺ.*/
 
-ConstDecl ::=(ConstDecl) CONST Type:T1 ConstDeclItemList:C2 SEMI {: RESULT=new ConstDecl(T1, C2); RESULT.setLine(T1left); :};
+ConstDecl ::=(ConstDecl) ConstDeclHeader:C1 ConstDeclItemList:C2 SEMI {: RESULT=new ConstDecl(C1, C2); RESULT.setLine(C1left); :};
+
+ConstDeclHeader ::= (ConstDeclHeader) CONST Type:T1 {: RESULT=new ConstDeclHeader(T1); RESULT.setLine(T1left); :};
 
 ConstDeclItemList ::= (ConstDeclMultiItemList) ConstDeclItemList:C1 COMMA AssignmentDecl:A2 {: RESULT=new ConstDeclMultiItemList(C1, A2); RESULT.setLine(C1left); :}
 				|
 				(ConstDeclSingleItemList) AssignmentDecl:A1 {: RESULT=new ConstDeclSingleItemList(A1); RESULT.setLine(A1left); :}
 				;
-AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Factor:F1 {: RESULT=new AssignmentDeclaration(varName, F1); RESULT.setLine(varNameleft); :}
+AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL FactorForConst:F1 {: RESULT=new AssignmentDeclaration(varName, F1); RESULT.setLine(varNameleft); :}
 				|
 				(AssignmentDeclError) error:e
 				{:
@@ -396,6 +398,13 @@ Factor = Designator [ʺ(ʺ [ActPars] ʺ)ʺ]
 | ʺnewʺ Type [ʺ[ʺ Expr ʺ]ʺ]
 | ʺ(ʺ Expr ʺ)ʺ.
 */
+
+FactorForConst ::= (ConstantNumberConst) NUMBER:val {: RESULT=new ConstantNumberConst(val); RESULT.setLine(valleft); :}
+				|
+				(ConstantBoolConst) BOOLEAN:val {: RESULT=new ConstantBoolConst(val); RESULT.setLine(valleft); :}
+				|
+				(ConstantCharConst) CHARACTER:val {: RESULT=new ConstantCharConst(val); RESULT.setLine(valleft); :}
+				;
 Factor ::= (NumberConst) NUMBER:val {: RESULT=new NumberConst(val); RESULT.setLine(valleft); :}
 		|
 		(BoolConst) BOOLEAN:val {: RESULT=new BoolConst(val); RESULT.setLine(valleft); :}

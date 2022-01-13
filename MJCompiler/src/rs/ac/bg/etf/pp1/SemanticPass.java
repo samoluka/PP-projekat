@@ -288,8 +288,12 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorAssignmentStatement designatorAssignmentStatement) {
+		Designator leftDesign = designatorAssignmentStatement.getDesignatorForAssign().getDesignator();
 		Struct left = designatorAssignmentStatement.getDesignatorForAssign().struct;
 		Struct right = designatorAssignmentStatement.getExpr().struct;
+		if (leftDesign != null && leftDesign.obj != null && leftDesign.obj.getKind() == Obj.Con) {
+			report_error("Leva strana operatora dodele ne sme da bude konsanta", designatorAssignmentStatement);
+		}
 		if (!right.assignableTo(left))
 			report_error("Greska na liniji " + designatorAssignmentStatement.getLine() + " : "
 					+ "nekompatibilni tipovi u dodeli vrednosti! ", null);
@@ -304,7 +308,8 @@ public class SemanticPass extends VisitorAdaptor {
 	@Override
 	public void visit(MethodNameDesignator methodNameDesignator) {
 		methodCalledStack.push(methodNameDesignator.getDesignator().obj);
-		currentMethodParamNumStack.push(0);;
+		currentMethodParamNumStack.push(0);
+		;
 		changed = false;
 	}
 
@@ -416,6 +421,24 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 	}
 
+	@Override
+	public void visit(NewFactor factor) {
+		Struct s = factor.getType().struct;
+		if (s.getKind() != Struct.Class) {
+			report_error("Tip operatora new mora da bude klasa", factor);
+		}
+		factor.struct = s;
+	}
+
+	@Override
+	public void visit(NewFactorWithBrackets factorBrackets) {
+		Struct s = factorBrackets.getType().struct;
+		if (factorBrackets.getExpr().struct != Tab.intType) {
+			report_error("Tip izraza unutar [] mora biti int", factorBrackets.getExpr());
+		}
+		factorBrackets.struct = new Struct(Struct.Array, s);
+	}
+
 	public void visit(NumberConst cnst) {
 		cnst.struct = Tab.intType;
 	}
@@ -426,6 +449,21 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(CharConst cnst) {
 		cnst.struct = Tab.charType;
+	}
+
+	public void visit(ConstantNumberConst cnst) {
+		cnst.obj = new Obj(Obj.Con, "", Tab.intType);
+		cnst.obj.setAdr(cnst.getVal());
+	}
+
+	public void visit(ConstantBoolConst cnst) {
+		cnst.obj = new Obj(Obj.Con, "", Tab.find("bool").getType());
+		cnst.obj.setAdr(cnst.getVal());
+	}
+
+	public void visit(ConstantCharConst cnst) {
+		cnst.obj = new Obj(Obj.Con, "", Tab.charType);
+		cnst.obj.setAdr(cnst.getVal());
 	}
 
 	public void visit(ExprFactor exprFactor) {
@@ -546,6 +584,18 @@ public class SemanticPass extends VisitorAdaptor {
 		Tab.chainLocalSymbols(recordDeclarations.getRecordName().obj.getType());
 		Tab.closeScope();
 		report_info("Zavrsena obrada klase: " + recordDeclarations.getRecordName().getName(), recordDeclarations);
+	}
+
+	public void visit(AssignmentDeclaration assignmentDeclaration) {
+		Struct left = currentType.struct;
+		Struct right = assignmentDeclaration.getFactorForConst().obj.getType();
+		if (!right.assignableTo(left)) {
+			report_error("Nekompatibilni tipovi pri izrazu dodele", assignmentDeclaration);
+		} else {
+			Obj con = Tab.insert(Obj.Con, assignmentDeclaration.getVarName(), right);
+			con.setAdr(assignmentDeclaration.getFactorForConst().obj.getAdr());
+			report_info("Deklarisana konsanta: " + assignmentDeclaration.getVarName(), assignmentDeclaration);
+		}
 	}
 
 	public boolean passed() {

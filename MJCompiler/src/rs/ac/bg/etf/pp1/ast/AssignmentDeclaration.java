@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 13/0/2022 14:27:5
+// 13/0/2022 16:56:9
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,12 +8,12 @@ package rs.ac.bg.etf.pp1.ast;
 public class AssignmentDeclaration extends AssignmentDecl {
 
     private String varName;
-    private Factor Factor;
+    private FactorForConst FactorForConst;
 
-    public AssignmentDeclaration (String varName, Factor Factor) {
+    public AssignmentDeclaration (String varName, FactorForConst FactorForConst) {
         this.varName=varName;
-        this.Factor=Factor;
-        if(Factor!=null) Factor.setParent(this);
+        this.FactorForConst=FactorForConst;
+        if(FactorForConst!=null) FactorForConst.setParent(this);
     }
 
     public String getVarName() {
@@ -24,12 +24,12 @@ public class AssignmentDeclaration extends AssignmentDecl {
         this.varName=varName;
     }
 
-    public Factor getFactor() {
-        return Factor;
+    public FactorForConst getFactorForConst() {
+        return FactorForConst;
     }
 
-    public void setFactor(Factor Factor) {
-        this.Factor=Factor;
+    public void setFactorForConst(FactorForConst FactorForConst) {
+        this.FactorForConst=FactorForConst;
     }
 
     public void accept(Visitor visitor) {
@@ -37,16 +37,16 @@ public class AssignmentDeclaration extends AssignmentDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Factor!=null) Factor.accept(visitor);
+        if(FactorForConst!=null) FactorForConst.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Factor!=null) Factor.traverseTopDown(visitor);
+        if(FactorForConst!=null) FactorForConst.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Factor!=null) Factor.traverseBottomUp(visitor);
+        if(FactorForConst!=null) FactorForConst.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -58,8 +58,8 @@ public class AssignmentDeclaration extends AssignmentDecl {
         buffer.append(" "+tab+varName);
         buffer.append("\n");
 
-        if(Factor!=null)
-            buffer.append(Factor.toString("  "+tab));
+        if(FactorForConst!=null)
+            buffer.append(FactorForConst.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

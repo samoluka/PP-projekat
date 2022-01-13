@@ -5,11 +5,15 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NewFactor extends Factor {
+public class ConstDeclHeader implements SyntaxNode {
+
+    private SyntaxNode parent;
+    private int line;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
     private Type Type;
 
-    public NewFactor (Type Type) {
+    public ConstDeclHeader (Type Type) {
         this.Type=Type;
         if(Type!=null) Type.setParent(this);
     }
@@ -20,6 +24,22 @@ public class NewFactor extends Factor {
 
     public void setType(Type Type) {
         this.Type=Type;
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -43,7 +63,7 @@ public class NewFactor extends Factor {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NewFactor(\n");
+        buffer.append("ConstDeclHeader(\n");
 
         if(Type!=null)
             buffer.append(Type.toString("  "+tab));
@@ -52,7 +72,7 @@ public class NewFactor extends Factor {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [NewFactor]");
+        buffer.append(") [ConstDeclHeader]");
         return buffer.toString();
     }
 }

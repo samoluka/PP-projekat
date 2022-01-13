@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 13/0/2022 14:27:5
+// 13/0/2022 16:56:9
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,22 +9,24 @@ public class ConstDecl implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private Type Type;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
+
+    private ConstDeclHeader ConstDeclHeader;
     private ConstDeclItemList ConstDeclItemList;
 
-    public ConstDecl (Type Type, ConstDeclItemList ConstDeclItemList) {
-        this.Type=Type;
-        if(Type!=null) Type.setParent(this);
+    public ConstDecl (ConstDeclHeader ConstDeclHeader, ConstDeclItemList ConstDeclItemList) {
+        this.ConstDeclHeader=ConstDeclHeader;
+        if(ConstDeclHeader!=null) ConstDeclHeader.setParent(this);
         this.ConstDeclItemList=ConstDeclItemList;
         if(ConstDeclItemList!=null) ConstDeclItemList.setParent(this);
     }
 
-    public Type getType() {
-        return Type;
+    public ConstDeclHeader getConstDeclHeader() {
+        return ConstDeclHeader;
     }
 
-    public void setType(Type Type) {
-        this.Type=Type;
+    public void setConstDeclHeader(ConstDeclHeader ConstDeclHeader) {
+        this.ConstDeclHeader=ConstDeclHeader;
     }
 
     public ConstDeclItemList getConstDeclItemList() {
@@ -56,18 +58,18 @@ public class ConstDecl implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Type!=null) Type.accept(visitor);
+        if(ConstDeclHeader!=null) ConstDeclHeader.accept(visitor);
         if(ConstDeclItemList!=null) ConstDeclItemList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Type!=null) Type.traverseTopDown(visitor);
+        if(ConstDeclHeader!=null) ConstDeclHeader.traverseTopDown(visitor);
         if(ConstDeclItemList!=null) ConstDeclItemList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Type!=null) Type.traverseBottomUp(visitor);
+        if(ConstDeclHeader!=null) ConstDeclHeader.traverseBottomUp(visitor);
         if(ConstDeclItemList!=null) ConstDeclItemList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -77,8 +79,8 @@ public class ConstDecl implements SyntaxNode {
         buffer.append(tab);
         buffer.append("ConstDecl(\n");
 
-        if(Type!=null)
-            buffer.append(Type.toString("  "+tab));
+        if(ConstDeclHeader!=null)
+            buffer.append(ConstDeclHeader.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

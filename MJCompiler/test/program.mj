@@ -1,35 +1,21 @@
 program Program
-	
+	const int jedan = 1, dva=2;
 	class A{
-		int x[];
 	}
 	class B{
-		A a;
-	}
-	class C{
-		B b[];
+		int a;
 	}
 	{	
 	
-		A ff(int x)
-		A a;
-		{
-			return a;
-		}
-		int fff(int x){
-			return 1;
-		}
-		int f(A x, int l){
-			return 1;
+		char f(){
+			return 'c';
 		}
 		void metoda()
+		int x[];
 		A a;
-		B b;
-		C c[];
-		int xx[];
-		int x;
 		{
-			f(ff(fff(1)),fff(1));
+			x = new int[f()];
+			x[12] = jedan;
 		}
 	}
 

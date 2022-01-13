@@ -1,15 +1,16 @@
 // generated with ast extension for cup
 // version 0.8
-// 13/0/2022 14:27:5
+// 13/0/2022 16:56:9
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
+    public void visit(FactorForConst FactorForConst) { }
     public void visit(MethodDecl MethodDecl) { }
-    public void visit(Mulop Mulop) { }
     public void visit(MethodDeclItem MethodDeclItem) { }
+    public void visit(Mulop Mulop) { }
     public void visit(ConstructorDecl ConstructorDecl) { }
     public void visit(VarClassErrorEndPoint VarClassErrorEndPoint) { }
     public void visit(Relop Relop) { }
@@ -83,6 +84,9 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(CharConst CharConst) { visit(); }
     public void visit(BoolConst BoolConst) { visit(); }
     public void visit(NumberConst NumberConst) { visit(); }
+    public void visit(ConstantCharConst ConstantCharConst) { visit(); }
+    public void visit(ConstantBoolConst ConstantBoolConst) { visit(); }
+    public void visit(ConstantNumberConst ConstantNumberConst) { visit(); }
     public void visit(SingleTerm SingleTerm) { visit(); }
     public void visit(MulopTerm MulopTerm) { visit(); }
     public void visit(NegativeTermExpr NegativeTermExpr) { visit(); }
@@ -173,6 +177,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(AssignmentDeclaration AssignmentDeclaration) { visit(); }
     public void visit(ConstDeclSingleItemList ConstDeclSingleItemList) { visit(); }
     public void visit(ConstDeclMultiItemList ConstDeclMultiItemList) { visit(); }
+    public void visit(ConstDeclHeader ConstDeclHeader) { visit(); }
     public void visit(ConstDecl ConstDecl) { visit(); }
     public void visit(ClassDeclarationItem ClassDeclarationItem) { visit(); }
     public void visit(RecordDeclarationItem RecordDeclarationItem) { visit(); }

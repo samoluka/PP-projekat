@@ -5,11 +5,13 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class ActualPars implements SyntaxNode {
+public abstract class FactorForConst implements SyntaxNode {
 
     private SyntaxNode parent;
 
     private int line;
+
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
     public SyntaxNode getParent() {
         return parent;

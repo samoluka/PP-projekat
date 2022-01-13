@@ -58,7 +58,7 @@ terminal String IDENT;
 /* Operators */
 terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LESSOREQUAL,AND,OR,EQUAL,INCREMENT,DECREMENT,SEMI,COLON,DOT,COMMA,LPAREN,RPAREN,LBRACKET,RBRACKET,LBRACE,RBRACE,LESS,GREATER;
 
-nonterminal DeclList, DeclItem, ConstDecl, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, RecordDecl, VarDeclList, VarDeclListItem;
+nonterminal DeclList, DeclItem, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, RecordDecl, VarDeclList, VarDeclListItem;
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDeclItem, MethodDeclListNonEmpty;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact, FormalParamListItem;
@@ -66,6 +66,7 @@ nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -92,13 +93,15 @@ DeclItem ::= (ConstDeclartionItem) ConstDecl
 
 /* ʺconstʺ Type identʺ=ʺ(numConst | charConst | boolConst) {, ident ʺ=ʺ (numConst |charConst | boolConst)} ʺ;ʺ.*/
 
-ConstDecl ::=(ConstDecl) CONST Type ConstDeclItemList SEMI;
+ConstDecl ::=(ConstDecl) ConstDeclHeader ConstDeclItemList SEMI;
+
+ConstDeclHeader ::= (ConstDeclHeader) CONST Type;
 
 ConstDeclItemList ::= (ConstDeclMultiItemList) ConstDeclItemList COMMA AssignmentDecl
 				|
 				(ConstDeclSingleItemList) AssignmentDecl
 				;
-AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL Factor
+AssignmentDecl ::= (AssignmentDeclaration) IDENT:varName EQUAL FactorForConst
 				|
 				(AssignmentDeclError) error:e
 				{:
@@ -359,6 +362,13 @@ Factor = Designator [ʺ(ʺ [ActPars] ʺ)ʺ]
 | ʺnewʺ Type [ʺ[ʺ Expr ʺ]ʺ]
 | ʺ(ʺ Expr ʺ)ʺ.
 */
+
+FactorForConst ::= (ConstantNumberConst) NUMBER:val
+				|
+				(ConstantBoolConst) BOOLEAN:val
+				|
+				(ConstantCharConst) CHARACTER:val
+				;
 Factor ::= (NumberConst) NUMBER:val
 		|
 		(BoolConst) BOOLEAN:val
