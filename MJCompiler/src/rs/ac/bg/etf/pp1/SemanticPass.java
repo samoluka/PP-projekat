@@ -20,11 +20,12 @@ public class SemanticPass extends VisitorAdaptor {
 	int varDeclCount = 0;
 	Obj currentMethod = null;
 
-	Obj methodCalled = null;
+	Stack<Obj> methodCalledStack = new Stack<>();
+	Obj currentMethodCalled = null;
 	boolean returnFound = false;
 	boolean errorDetected = false;
 	Type currentType;
-	int currentMethodParamNum = 0;
+	Stack<Integer> currentMethodParamNumStack = new Stack<>();
 	int nVars;
 
 	Logger log = Logger.getLogger(getClass());
@@ -35,6 +36,7 @@ public class SemanticPass extends VisitorAdaptor {
 	// private Designator lastDesignator;
 	// private boolean foundArray = false;
 	private Queue<DesignatorMulti> designatorQueue = new LinkedList<>();
+	private boolean changed = false;
 
 	public SemanticPass() {
 		super();
@@ -197,7 +199,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(MethodTypeNameVoid MethodTypeNameVoid) {
 		currentMethod = Tab.insert(Obj.Meth, MethodTypeNameVoid.getMethodName(), Tab.noType);
 		currentMethod.setFpPos(-1);
-		currentMethodParamNum = 0;
+		currentMethodParamNumStack.push(0);
 		MethodTypeNameVoid.obj = currentMethod;
 		Tab.openScope();
 		report_info("Obradjuje se funkcija " + MethodTypeNameVoid.getMethodName(), MethodTypeNameVoid);
@@ -294,49 +296,61 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(DesignatorForMethodCall dsForMethodCall) {
-		methodCalled = dsForMethodCall.getDesignator().obj;
+		methodCalledStack.push(dsForMethodCall.getDesignator().obj);
+		currentMethodParamNumStack.push(0);
+		changed = false;
 	}
 
 	@Override
 	public void visit(MethodNameDesignator methodNameDesignator) {
-		methodCalled = methodNameDesignator.getDesignator().obj;
+		methodCalledStack.push(methodNameDesignator.getDesignator().obj);
+		currentMethodParamNumStack.push(0);;
+		changed = false;
 	}
 
 	@Override
 	public void visit(DesignatorItemFuncCallWithParam dfParam) {
-		if ((dfParam.getActualPars() instanceof NoActualParam && methodCalled.getLevel() > 0)
-				|| (!(dfParam.getActualPars() instanceof NoActualParam) && methodCalled.getLevel() == 0)
-				|| (currentMethodParamNum != methodCalled.getLevel())) {
-			report_error("Broj prosledjenih parametara se ne slaze sa brojem definisanih parametara na liniji "
-					+ dfParam.getLine(), null);
+		currentMethodCalled = methodCalledStack.pop();
+		int currentMethodParamNum = currentMethodParamNumStack.pop();
+		if ((dfParam.getActualPars() instanceof NoActualParam && currentMethodCalled.getLevel() > 0)
+				|| (!(dfParam.getActualPars() instanceof NoActualParam) && currentMethodCalled.getLevel() == 0)
+				|| (currentMethodParamNum != currentMethodCalled.getLevel())) {
+			report_error("Broj prosledjenih parametara se ne slaze sa brojem definisanih parametara za metodu: "
+					+ currentMethodCalled.getName(), dfParam);
 		}
-		if (Obj.Meth == methodCalled.getKind()) {
-			report_info("Pronadjen poziv funkcije " + methodCalled.getName() + " na liniji " + dfParam.getLine(), null);
-		} else {
-			report_error(
-					"Greska na liniji " + dfParam.getLine() + " : ime " + methodCalled.getName() + " nije funkcija!",
+		if (Obj.Meth == currentMethodCalled.getKind()) {
+			report_info("Pronadjen poziv funkcije " + currentMethodCalled.getName() + " na liniji " + dfParam.getLine(),
 					null);
+		} else {
+			report_error("Greska na liniji " + dfParam.getLine() + " : ime " + currentMethodCalled.getName()
+					+ " nije funkcija!", null);
 		}
+		changed = false;
+		currentMethodParamNum = 0;
 	}
 
 	public void visit(MethodCall funcCall) {
-//		methodCalled = funcCall.getDesignatorForMethodCall().getDesignator().obj;
-		if ((funcCall.getActualPars() instanceof NoActualParam && methodCalled.getLevel() > 0)
-				|| (!(funcCall.getActualPars() instanceof NoActualParam) && methodCalled.getLevel() == 0)
-				|| (currentMethodParamNum != methodCalled.getLevel())) {
-			report_error("Broj prosledjenih parametara se ne slaze sa brojem definisanih parametara na liniji "
-					+ funcCall.getLine(), null);
+		currentMethodCalled = methodCalledStack.pop();
+		int currentMethodParamNum = currentMethodParamNumStack.pop();
+		if ((funcCall.getActualPars() instanceof NoActualParam && currentMethodCalled.getLevel() > 0)
+				|| (!(funcCall.getActualPars() instanceof NoActualParam) && currentMethodCalled.getLevel() == 0)
+				|| (currentMethodParamNum != currentMethodCalled.getLevel())) {
+			report_error("Broj prosledjenih parametara se ne slaze sa brojem definisanih parametara za metodu: "
+					+ currentMethodCalled.getName(), funcCall);
 		}
-		if (Obj.Meth == methodCalled.getKind()) {
-			report_info("Pronadjen poziv funkcije " + methodCalled.getName() + " na liniji " + funcCall.getLine(),
+		if (Obj.Meth == currentMethodCalled.getKind()) {
+			report_info(
+					"Pronadjen poziv funkcije " + currentMethodCalled.getName() + " na liniji " + funcCall.getLine(),
 					null);
-			funcCall.struct = methodCalled.getType();
+			funcCall.struct = currentMethodCalled.getType();
 		} else {
-			report_error(
-					"Greska na liniji " + funcCall.getLine() + " : ime " + methodCalled.getName() + " nije funkcija!",
-					null);
+			report_error("Greska na liniji " + funcCall.getLine() + " : ime " + currentMethodCalled.getName()
+					+ " nije funkcija!", null);
 			funcCall.struct = Tab.noType;
 		}
+		// currentMethodCalled = methodCalledStack.empty() ? null :
+		// methodCalledStack.pop();
+		currentMethodParamNum = 0;
 	}
 
 	@Override
@@ -367,16 +381,27 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(ActualParamSingleItem acSingleItem) {
 		Struct paramType = acSingleItem.getExpr().struct;
-		Object[] localSymbols = methodCalled.getLocalSymbols().toArray();
-		if (methodCalled.getLevel() <= currentMethodParamNum) {
-			report_error("Neispravan broj parametara pri pozivu metode " + methodCalled.getName() + " na liniji "
+		Obj currentMethodCalled = methodCalledStack.peek();
+		int currentMethodParamNum = currentMethodParamNumStack.peek();
+		Object[] localSymbols = currentMethodCalled.getLocalSymbols().toArray();
+		if (currentMethodCalled.getLevel() <= currentMethodParamNum) {
+			report_error("Neispravan broj parametara pri pozivu metode " + currentMethodCalled.getName() + " na liniji "
 					+ acSingleItem.getLine(), null);
 		} else {
 			if (!((Obj) localSymbols[currentMethodParamNum]).getType().equals(paramType))
 				report_error("Prosledjeni parametar broj " + currentMethodParamNum
 						+ " nije odgovarajuceg tipa na liniji " + acSingleItem.getLine(), null);
 		}
-		currentMethodParamNum++;
+		currentMethodParamNumStack.push(currentMethodParamNumStack.pop() + 1);
+//		if (currentMethodCalled.getLevel() <= currentMethodParamNum) {
+//			changed = true;
+//			currentMethodCalled = methodCalledStack.empty() ? null : methodCalledStack.pop();
+//		}
+	}
+
+	public void visit(NoActualParam noActualParam) {
+		// currentMethodCalled = methodCalledStack.empty() ? null :
+		// methodCalledStack.pop();
 	}
 
 	public void visit(AddExpr addExpr) {

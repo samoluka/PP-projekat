@@ -6,12 +6,20 @@ program Program
 	class B{
 		A a;
 	}
-	record C{
+	class C{
 		B b[];
 	}
 	{	
 	
-		int f(A x){
+		A ff(int x)
+		A a;
+		{
+			return a;
+		}
+		int fff(int x){
+			return 1;
+		}
+		int f(A x, int l){
 			return 1;
 		}
 		void metoda()
@@ -21,8 +29,7 @@ program Program
 		int xx[];
 		int x;
 		{
-			f(a);
-			c[2].b[3].a.x[2] = c[2].b[3].a.x;
+			f(ff(fff(1)),fff(1));
 		}
 	}
 
