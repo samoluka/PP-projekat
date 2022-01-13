@@ -86,9 +86,6 @@ nonterminal Assignop Assignop;
 nonterminal FormalParams FormalParams;
 nonterminal FormalParamList FormalParamList;
 nonterminal Relop Relop;
-nonterminal Condition Condition;
-nonterminal CondTerm CondTerm;
-nonterminal CondFact CondFact;
 nonterminal FormalParamListItem FormalParamListItem;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
@@ -102,7 +99,7 @@ nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
 
 

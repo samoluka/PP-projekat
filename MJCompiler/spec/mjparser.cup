@@ -61,12 +61,12 @@ terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LES
 nonterminal DeclList, DeclItem, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, RecordDecl, VarDeclList, VarDeclListItem;
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDeclItem, MethodDeclListNonEmpty;
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
-nonterminal FormalParams, FormalParamList, Relop, Condition, CondTerm, CondFact, FormalParamListItem;
+nonterminal FormalParams, FormalParamList, Relop, FormalParamListItem;
 nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
 
 

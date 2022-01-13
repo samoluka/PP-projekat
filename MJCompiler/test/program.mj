@@ -1,21 +1,21 @@
 program Program
-	const int jedan = 1, dva=2;
 	class A{
-	}
-	class B{
 		int a;
 	}
 	{	
-	
-		char f(){
-			return 'c';
+		int b(){
+		return 1;
+		}
+		int f(){
+		return 3;
 		}
 		void metoda()
-		int x[];
-		A a;
+		int x;
 		{
-			x = new int[f()];
-			x[12] = jedan;
+			if (b && 3>2 || b)
+				x = x+1;
+			else
+				x = x-1;
 		}
 	}
 

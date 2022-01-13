@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardDownRightHandler;
 import javax.swing.text.html.parser.DTD;
 
 import org.apache.log4j.Logger;
@@ -31,12 +32,10 @@ public class SemanticPass extends VisitorAdaptor {
 	Logger log = Logger.getLogger(getClass());
 	private List<Definition> currDeclVar = new LinkedList<>();
 	private List<DefinitionArray> currDeclVarArray = new LinkedList<>();
-	// private Struct currExprType = Tab.noType;
 	private List<Obj> allClasses = new LinkedList<>();
-	// private Designator lastDesignator;
-	// private boolean foundArray = false;
 	private Queue<DesignatorMulti> designatorQueue = new LinkedList<>();
 	private boolean changed = false;
+	private Type extendClassType = null;
 
 	public SemanticPass() {
 		super();
@@ -118,12 +117,16 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(ClassDeclarations classDeclarations) {
 		Tab.chainLocalSymbols(classDeclarations.getClassName().obj.getType());
 		Tab.closeScope();
+		if (extendClassType != null) {
+			classDeclarations.getClassName().obj.getType().setElementType(extendClassType.struct);
+			extendClassType = null;
+		}
 		report_info("Zavrsena obrada klase: " + classDeclarations.getClassName().getClassName(), classDeclarations);
 	}
 
 	@Override
 	public void visit(ClassDeclarationsExtends classExtends) {
-		Type extendClassType = classExtends.getType();
+		extendClassType = classExtends.getType();
 		Obj extendClassObj = Tab.find(extendClassType.getTypeName());
 		if (!allClasses.contains(extendClassObj)) {
 			report_error("Nije moguce izvodjenje iz tipa: " + extendClassObj.getName(), extendClassType);
@@ -133,6 +136,7 @@ public class SemanticPass extends VisitorAdaptor {
 			for (Obj simbol : listOfSimbols) {
 				Tab.insert(simbol.getKind(), simbol.getName(), simbol.getType());
 			}
+
 		}
 	}
 
@@ -589,12 +593,48 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(AssignmentDeclaration assignmentDeclaration) {
 		Struct left = currentType.struct;
 		Struct right = assignmentDeclaration.getFactorForConst().obj.getType();
+		if (Tab.find(assignmentDeclaration.getVarName()) != Tab.noObj) {
+			report_error("Ime konstante: " + assignmentDeclaration.getVarName() + " se vec koristi",
+					assignmentDeclaration);
+		}
 		if (!right.assignableTo(left)) {
 			report_error("Nekompatibilni tipovi pri izrazu dodele", assignmentDeclaration);
 		} else {
 			Obj con = Tab.insert(Obj.Con, assignmentDeclaration.getVarName(), right);
 			con.setAdr(assignmentDeclaration.getFactorForConst().obj.getAdr());
 			report_info("Deklarisana konsanta: " + assignmentDeclaration.getVarName(), assignmentDeclaration);
+		}
+	}
+
+	@Override
+	public void visit(MultiCondFact mcFact) {
+		mcFact.obj = Tab.noObj;
+		Expr left = mcFact.getExpr();
+		Expr right = mcFact.getExpr1();
+		Relop op = mcFact.getRelop();
+		Boolean error = false;
+		if (!left.struct.compatibleWith(right.struct)) {
+			report_error("Tipovi uslova moraju da budu kompatibilni", mcFact);
+			error = true;
+		}
+		if (!(op instanceof RelEqual || op instanceof RelNEqual)
+				&& (left.struct.getKind() == Struct.Class || left.struct.getKind() == Struct.Array
+						|| right.struct.getKind() == Struct.Class || right.struct.getKind() == Struct.Array)) {
+			report_error("Tip Class i tip Array mogu da se uporedjuju samo operatorima == i !=", op);
+			error = true;
+		}
+		if (!error)
+			mcFact.obj = new Obj(Obj.NO_VALUE, "", Tab.find("bool").getType());
+	}
+
+	@Override
+	public void visit(SingleCondFact scFact) {
+		Expr expr = scFact.getExpr();
+		if (expr.struct != Tab.find("bool").getType()) {
+			report_error("Tip izraza unutar uslovnog iskaza mora da bude boolean", expr);
+			scFact.obj = Tab.noObj;
+		} else {
+			scFact.obj = new Obj(Obj.NO_VALUE, "", Tab.find("bool").getType());
 		}
 	}
 
