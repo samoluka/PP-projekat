@@ -1,5 +1,13 @@
 program Program
-	class A{
+	class B{
+		int d;
+		{
+			int metoda1(){
+				return 1;
+			}
+		}
+	}
+	class A extends B{
 		int a;
 	}
 	{	
@@ -11,11 +19,13 @@ program Program
 		}
 		void metoda()
 		int x;
+		A a;
 		{
-			if (b && 3>2 || b)
-				x = x+1;
-			else
-				x = x-1;
+			x = 10;
+			do{
+				x = x - 1;
+				A.d = A.metoda1();
+			}while(x>0);
 		}
 	}
 

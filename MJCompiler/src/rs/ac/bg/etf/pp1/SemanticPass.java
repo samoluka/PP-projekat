@@ -132,7 +132,7 @@ public class SemanticPass extends VisitorAdaptor {
 			report_error("Nije moguce izvodjenje iz tipa: " + extendClassObj.getName(), extendClassType);
 		}
 		if (Tab.noObj != extendClassObj) {
-			Collection<Obj> listOfSimbols = extendClassObj.getLocalSymbols();
+			Collection<Obj> listOfSimbols = extendClassObj.getType().getMembers();
 			for (Obj simbol : listOfSimbols) {
 				Tab.insert(simbol.getKind(), simbol.getName(), simbol.getType());
 			}
