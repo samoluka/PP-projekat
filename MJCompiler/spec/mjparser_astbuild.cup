@@ -103,7 +103,7 @@ nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
 
@@ -368,9 +368,9 @@ DesignatorStatement ::= (DesignatorItemFuncCallWithParam) MethodNameDesignator:M
 					|
 					(DesignatorItemDec) Designator:D1 DECREMENT {: RESULT=new DesignatorItemDec(D1); RESULT.setLine(D1left); :}
 					|
-					(DesignatorAssignmentStatement) Designator:D1 Assignop:A2 Expr:E3 {: RESULT=new DesignatorAssignmentStatement(D1, A2, E3); RESULT.setLine(D1left); :}
+					(DesignatorAssignmentStatement) DesignatorForAssign:D1 Assignop:A2 Expr:E3 {: RESULT=new DesignatorAssignmentStatement(D1, A2, E3); RESULT.setLine(D1left); :}
 					;
-
+DesignatorForAssign ::=(DesignatorForAssign) Designator:D1 {: RESULT=new DesignatorForAssign(D1); RESULT.setLine(D1left); :};
 MethodNameDesignator ::= (MethodNameDesignator) Designator:D1 {: RESULT=new MethodNameDesignator(D1); RESULT.setLine(D1left); :};
 
 

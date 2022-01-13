@@ -5,24 +5,25 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Type implements SyntaxNode {
+public class DesignatorForAssign implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
     public rs.etf.pp1.symboltable.concepts.Struct struct = null;
 
-    private String typeName;
+    private Designator Designator;
 
-    public Type (String typeName) {
-        this.typeName=typeName;
+    public DesignatorForAssign (Designator Designator) {
+        this.Designator=Designator;
+        if(Designator!=null) Designator.setParent(this);
     }
 
-    public String getTypeName() {
-        return typeName;
+    public Designator getDesignator() {
+        return Designator;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName=typeName;
+    public void setDesignator(Designator Designator) {
+        this.Designator=Designator;
     }
 
     public SyntaxNode getParent() {
@@ -46,26 +47,32 @@ public class Type implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(Designator!=null) Designator.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(Designator!=null) Designator.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(Designator!=null) Designator.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Type(\n");
+        buffer.append("DesignatorForAssign(\n");
 
-        buffer.append(" "+tab+typeName);
+        if(Designator!=null)
+            buffer.append(Designator.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Type]");
+        buffer.append(") [DesignatorForAssign]");
         return buffer.toString();
     }
 }

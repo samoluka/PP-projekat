@@ -1,16 +1,28 @@
 program Program
 	
-	int niz[];
+	class A{
+		int x[];
+	}
+	class B{
+		A a;
+	}
+	record C{
+		B b[];
+	}
 	{	
 	
-		int f(int x){
+		int f(A x){
 			return 1;
 		}
 		void metoda()
+		A a;
+		B b;
+		C c[];
 		int xx[];
 		int x;
 		{
-			niz[2] = 1;
+			f(a);
+			c[2].b[3].a.x[2] = c[2].b[3].a.x;
 		}
 	}
 

@@ -286,7 +286,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorAssignmentStatement designatorAssignmentStatement) {
-		Struct left = designatorAssignmentStatement.getDesignator().obj.getType();
+		Struct left = designatorAssignmentStatement.getDesignatorForAssign().struct;
 		Struct right = designatorAssignmentStatement.getExpr().struct;
 		if (!right.assignableTo(left))
 			report_error("Greska na liniji " + designatorAssignmentStatement.getLine() + " : "
@@ -448,6 +448,52 @@ public class SemanticPass extends VisitorAdaptor {
 			var.struct = currStruct;
 		} else {
 			var.struct = var.getDesignator().obj.getType();
+		}
+		designatorQueue.clear();
+
+	}
+
+	public void visit(DesignatorForAssign deForAssign) {
+		if (!designatorQueue.isEmpty()) {
+			Obj obj = deForAssign.getDesignator().obj;
+			Struct currStruct = Tab.noType;
+			while (!designatorQueue.isEmpty()) {
+				DesignatorMulti top = designatorQueue.poll();
+				if (top instanceof ParenDesignator) {
+					currStruct = obj.getType().getElemType();
+					obj = Tab.find(obj.getName());
+				} else {
+					DotDesignator dTop = (DotDesignator) top;
+					Obj c = Tab.find(obj.getName());
+					Collection<Obj> cObj;
+					if (c.getType().getKind() == Struct.Array) {
+						if (currStruct.getKind() != Struct.Class) {
+							report_error("Mora da bude []", dTop);
+						}
+						cObj = c.getType().getElemType().getMembers();
+					} else {
+						cObj = c.getType().getMembers();
+					}
+					boolean found = false;
+					for (Obj o : cObj) {
+						if (o.getName().equals(dTop.getI1())) {
+							found = true;
+							currStruct = o.getType();
+							obj = o;
+//							if (!designatorQueue.isEmpty())
+//								top = designatorQueue.poll();
+							break;
+						}
+					}
+					if (!found) {
+						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+						break;
+					}
+				}
+			}
+			deForAssign.struct = currStruct;
+		} else {
+			deForAssign.struct = deForAssign.getDesignator().obj.getType();
 		}
 		designatorQueue.clear();
 
