@@ -415,11 +415,19 @@ public class SemanticPass extends VisitorAdaptor {
 				DesignatorMulti top = designatorQueue.poll();
 				if (top instanceof ParenDesignator) {
 					currStruct = obj.getType().getElemType();
-					break;
+					obj = Tab.find(obj.getName());
 				} else {
 					DotDesignator dTop = (DotDesignator) top;
 					Obj c = Tab.find(obj.getName());
-					Collection<Obj> cObj = c.getType().getMembers();
+					Collection<Obj> cObj;
+					if (c.getType().getKind() == Struct.Array) {
+						if (currStruct.getKind() != Struct.Class) {
+							report_error("Mora da bude []", dTop);
+						}
+						cObj = c.getType().getElemType().getMembers();
+					} else {
+						cObj = c.getType().getMembers();
+					}
 					boolean found = false;
 					for (Obj o : cObj) {
 						if (o.getName().equals(dTop.getI1())) {
