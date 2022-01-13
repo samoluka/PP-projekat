@@ -9,17 +9,19 @@ import rs.ac.bg.etf.pp1.ast.*;
 parser code {:
 
 	Logger log = Logger.getLogger(getClass());
-   
+   	boolean errorDetected = false;
    
     // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
      
     public void report_fatal_error(String message, Object info) throws java.lang.Exception {
       done_parsing();
       report_error(message, info);
+      errorDetected = true;
     }
   
     public void syntax_error(Symbol cur_token) {
         report_error("\nSintaksna greska", cur_token);
+        errorDetected = true;
     }
   
     public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
@@ -27,7 +29,8 @@ parser code {:
     }
 
     public void report_error(String message, Object info) {
-    	StringBuilder msg = new StringBuilder(message); 
+    	StringBuilder msg = new StringBuilder(message);
+    	errorDetected = true;
     	if (info instanceof Symbol)
             msg.append (" na liniji ").append(((Symbol)info).left);
         log.error(msg.toString());
