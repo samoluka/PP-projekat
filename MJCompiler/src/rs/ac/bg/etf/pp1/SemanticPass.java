@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
+import rs.ac.bg.etf.pp1.ast.ClassConstructorDeclaration;
+import rs.ac.bg.etf.pp1.ast.ConstructorDecl;
 import rs.ac.bg.etf.pp1.ast.SuperStatement;
 
 public class SemanticPass extends VisitorAdaptor {
@@ -41,6 +43,7 @@ public class SemanticPass extends VisitorAdaptor {
 	private List<String> allLabels = new LinkedList<>();
 	private boolean foundClassMethodCall = false;
 	private Obj currClass = null;
+	private boolean constructorFound = false;
 
 	public SemanticPass() {
 		super();
@@ -121,6 +124,16 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(ClassDeclarations classDeclarations) {
+		if (!constructorFound) {
+			report_info("Za klasu: " + classDeclarations.getClassName().getClassName()
+					+ " nije pronadjen konstruktor, dodaje se prazan podrazumevani", null);
+			Obj constructor = Tab.insert(Obj.Meth, classDeclarations.getClassName().getClassName(), Tab.noType);
+			Tab.openScope();
+			Tab.insert(Obj.Var, "this", classDeclarations.getClassName().obj.getType());
+			Tab.chainLocalSymbols(constructor);
+			Tab.closeScope();
+		}
+		constructorFound = false;
 		Tab.chainLocalSymbols(classDeclarations.getClassName().obj.getType());
 		Tab.closeScope();
 		if (extendClassType != null) {
@@ -207,8 +220,8 @@ public class SemanticPass extends VisitorAdaptor {
 					found = true;
 				}
 			}
-//			if (!found || foundMethod.getLevel() != foundMethod.getLocalSymbols().size())
-			if (!found)
+			if (!found || foundMethod.getLevel() == foundMethod.getLocalSymbols().size())
+//			if (!found)
 				report_error("Greska na liniji " + methodTypeNameWithType.getLine() + ". Metoda "
 						+ methodTypeNameWithType.getMethodName() + " je vec definisana", null);
 		}
@@ -235,8 +248,8 @@ public class SemanticPass extends VisitorAdaptor {
 					found = true;
 				}
 			}
-//			if (!found || foundMethod.getLevel() == foundMethod.getLocalSymbols().size())
-			if (!found)
+			if (!found || foundMethod.getLevel() == foundMethod.getLocalSymbols().size())
+//			if (!found)
 				report_error("Greska na liniji " + MethodTypeNameVoid.getLine() + ". Metoda "
 						+ MethodTypeNameVoid.getMethodName() + " je vec definisana", null);
 		}
@@ -724,6 +737,11 @@ public class SemanticPass extends VisitorAdaptor {
 		if (currClass == null || extendClassType == null) {
 			report_error("Ne postoji roditeljska metoda za poziv", superStatement);
 		} else {
+			if (currentMethod.getName().equals(currClass.getName())) {
+				report_info("Pronadjen poziv konstustruktora roditeljske klase: " + extendClassType.getTypeName(),
+						superStatement);
+				return;
+			}
 			Collection<Obj> cObj = extendClassType.struct.getMembers();
 			for (Obj o : cObj) {
 				if (o.getName().equals(currentMethod.getName())) {
@@ -748,6 +766,34 @@ public class SemanticPass extends VisitorAdaptor {
 		if (desDec.getDesignator().obj.getType().getKind() != Struct.Int) {
 			report_error("Operacija dekrementiranja je primenljiva samo na tipu int", desDec);
 		}
+	}
+
+	public void visit(ConstructorHeader cHeader) {
+		if (!currClass.getName().equals(cHeader.getI1())) {
+			report_error("Naziv konstruktora mora da se poklopi sa nazivom klase", cHeader);
+		}
+		Obj foundMethod = Tab.find(cHeader.getI1());
+		if (foundMethod != Tab.noObj && foundMethod.getKind() == Obj.Meth) {
+			report_error(
+					"Greska na liniji " + cHeader.getLine() + ". Konstruktor " + cHeader.getI1() + " je vec definisana",
+					cHeader);
+		}
+		currentMethod = Tab.insert(Obj.Meth, cHeader.getI1(), Tab.noType);
+		cHeader.obj = currentMethod;
+		Tab.openScope();
+		if (currClass != null) {
+			Tab.insert(Obj.Var, "this", currClass.getType());
+			constructorFound = true;
+		}
+		report_info("Obradjuje se konstruktor " + cHeader.getI1(), cHeader);
+	}
+
+	public void visit(ClassConstructorDeclaration ccDeclaration) {
+		log.info("Zatvoren skoup funkcije");
+		Tab.chainLocalSymbols(currentMethod);
+		Tab.closeScope();
+		returnFound = false;
+		currentMethod = null;
 	}
 
 	public boolean passed() {

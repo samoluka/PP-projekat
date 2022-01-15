@@ -1,30 +1,31 @@
 // generated with ast extension for cup
 // version 0.8
-// 15/0/2022 18:38:8
+// 15/0/2022 22:30:19
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ClassConstructorDeclaration extends ConstructorDecl {
 
-    private String I1;
+    private ConstructorHeader ConstructorHeader;
     private VarDeclList VarDeclList;
     private StatementList StatementList;
 
-    public ClassConstructorDeclaration (String I1, VarDeclList VarDeclList, StatementList StatementList) {
-        this.I1=I1;
+    public ClassConstructorDeclaration (ConstructorHeader ConstructorHeader, VarDeclList VarDeclList, StatementList StatementList) {
+        this.ConstructorHeader=ConstructorHeader;
+        if(ConstructorHeader!=null) ConstructorHeader.setParent(this);
         this.VarDeclList=VarDeclList;
         if(VarDeclList!=null) VarDeclList.setParent(this);
         this.StatementList=StatementList;
         if(StatementList!=null) StatementList.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public ConstructorHeader getConstructorHeader() {
+        return ConstructorHeader;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setConstructorHeader(ConstructorHeader ConstructorHeader) {
+        this.ConstructorHeader=ConstructorHeader;
     }
 
     public VarDeclList getVarDeclList() {
@@ -48,17 +49,20 @@ public class ClassConstructorDeclaration extends ConstructorDecl {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(ConstructorHeader!=null) ConstructorHeader.accept(visitor);
         if(VarDeclList!=null) VarDeclList.accept(visitor);
         if(StatementList!=null) StatementList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(ConstructorHeader!=null) ConstructorHeader.traverseTopDown(visitor);
         if(VarDeclList!=null) VarDeclList.traverseTopDown(visitor);
         if(StatementList!=null) StatementList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(ConstructorHeader!=null) ConstructorHeader.traverseBottomUp(visitor);
         if(VarDeclList!=null) VarDeclList.traverseBottomUp(visitor);
         if(StatementList!=null) StatementList.traverseBottomUp(visitor);
         accept(visitor);
@@ -69,7 +73,10 @@ public class ClassConstructorDeclaration extends ConstructorDecl {
         buffer.append(tab);
         buffer.append("ClassConstructorDeclaration(\n");
 
-        buffer.append(" "+tab+I1);
+        if(ConstructorHeader!=null)
+            buffer.append(ConstructorHeader.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(VarDeclList!=null)

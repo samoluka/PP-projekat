@@ -102,7 +102,7 @@ nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -228,8 +228,8 @@ ClassMethodDeclItemList ::= (FullClassMethodDeclarationsItemList) LBRACE Constru
 
 /*ConstructorDecl = ident ʺ(ʺ ʺ)ʺ {VarDecl} ʺ{ʺ {Statement} ʺ}". */
 
-ConstructorDecl ::= (ClassConstructorDeclaration) IDENT:I1 LPAREN RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new ClassConstructorDeclaration(I1, V2, S3); RESULT.setLine(I1left); :};
-
+ConstructorDecl ::= (ClassConstructorDeclaration) ConstructorHeader:C1 VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new ClassConstructorDeclaration(C1, V2, S3); RESULT.setLine(C1left); :};
+ConstructorHeader ::= (ConstructorHeader) IDENT:I1 LPAREN RPAREN {: RESULT=new ConstructorHeader(I1); RESULT.setLine(I1left); :};
 
 
 /*MethodDecl = (Type | ʺvoidʺ) ident ʺ(ʺ [FormPars] ʺ)ʺ {VarDecl} ʺ{ʺ {Statement} ʺ}ʺ.*/

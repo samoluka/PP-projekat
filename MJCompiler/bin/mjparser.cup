@@ -69,7 +69,7 @@ nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
 nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -195,8 +195,8 @@ ClassMethodDeclItemList ::= (FullClassMethodDeclarationsItemList) LBRACE Constru
 
 /*ConstructorDecl = ident ʺ(ʺ ʺ)ʺ {VarDecl} ʺ{ʺ {Statement} ʺ}". */
 
-ConstructorDecl ::= (ClassConstructorDeclaration) IDENT LPAREN RPAREN VarDeclList LBRACE StatementList RBRACE;
-
+ConstructorDecl ::= (ClassConstructorDeclaration) ConstructorHeader VarDeclList LBRACE StatementList RBRACE;
+ConstructorHeader ::= (ConstructorHeader) IDENT LPAREN RPAREN;
 
 
 /*MethodDecl = (Type | ʺvoidʺ) ident ʺ(ʺ [FormPars] ʺ)ʺ {VarDecl} ʺ{ʺ {Statement} ʺ}ʺ.*/

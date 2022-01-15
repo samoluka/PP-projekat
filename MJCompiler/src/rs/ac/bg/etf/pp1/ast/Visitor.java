@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 15/0/2022 18:38:8
+// 15/0/2022 22:30:19
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -143,6 +143,7 @@ public interface Visitor {
     public void visit(MethodDeclarationList MethodDeclarationList);
     public void visit(MethodDeclarationNonEmptySingleList MethodDeclarationNonEmptySingleList);
     public void visit(MethodDeclarationNonEmptyList MethodDeclarationNonEmptyList);
+    public void visit(ConstructorHeader ConstructorHeader);
     public void visit(ClassConstructorDeclaration ClassConstructorDeclaration);
     public void visit(NoClassMethodDeclItemList NoClassMethodDeclItemList);
     public void visit(OnlyMethodClassMethodDeclaration OnlyMethodClassMethodDeclaration);
