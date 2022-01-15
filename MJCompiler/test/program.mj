@@ -1,31 +1,26 @@
 program Program
-	class B{
-		int d;
-		{
-			int metoda1(){
-				return 1;
-			}
-		}
+
+
+	class A{
+		int x[];
 	}
-	class A extends B{
-		int a;
+	class B{
+		A a[];
+	}
+	class C{
+		B b;
 	}
 	{	
-		int b(){
-		return 1;
-		}
-		int f(){
-		return 3;
-		}
-		void metoda()
-		int x;
+	
+		void main()
 		A a;
+		C c[];
+		int k;
 		{
-			x = 10;
-			do{
-				x = x - 1;
-				A.d = A.metoda1();
-			}while(x>0);
+			labela:{
+				 k = c[1].b.a[1].x[1];
+			}
+			goto labela;	
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.Vector;
 
 import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardDownRightHandler;
 import javax.swing.text.html.parser.DTD;
@@ -36,6 +37,7 @@ public class SemanticPass extends VisitorAdaptor {
 	private Queue<DesignatorMulti> designatorQueue = new LinkedList<>();
 	private boolean changed = false;
 	private Type extendClassType = null;
+	private List<String> allLabels = new LinkedList<>();
 
 	public SemanticPass() {
 		super();
@@ -500,9 +502,6 @@ public class SemanticPass extends VisitorAdaptor {
 						if (o.getName().equals(dTop.getI1())) {
 							found = true;
 							currStruct = o.getType();
-							obj = o;
-//							if (!designatorQueue.isEmpty())
-//								top = designatorQueue.poll();
 							break;
 						}
 					}
@@ -638,6 +637,40 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 	}
 
+	@Override
+	public void visit(StatementLabel statementLabel) {
+		if (allLabels.contains(statementLabel.getLabel().getName())) {
+			report_error("Labela sa nazivom: " + statementLabel.getLabel().getName() + " je vec definisana",
+					statementLabel);
+		} else {
+			allLabels.add(statementLabel.getLabel().getName());
+			report_info("Pronadjena definicija lebele sa nazivom: " + statementLabel.getLabel().getName(),
+					statementLabel);
+		}
+	}
+
+	@Override
+	public void visit(GotoStatement gotoStatement) {
+		if (!allLabels.contains(gotoStatement.getLabel().getName())) {
+			report_error("Ne postoji labela sa nazivom: " + gotoStatement.getLabel().getName(), gotoStatement);
+		}
+	}
+
+	@Override
+	public void visit(DesignatorItemInc desInc) {
+		if (desInc.getDesignator().obj.getType().getKind() != Struct.Int) {
+			report_error("Operacija inkrementiranja je primenljiva samo na tipu int", desInc);
+		}
+	}
+
+	
+	@Override
+	public void visit(DesignatorItemDec desDec) {
+		if (desDec.getDesignator().obj.getType().getKind() != Struct.Int) {
+			report_error("Operacija dekrementiranja je primenljiva samo na tipu int", desDec);
+		}
+	}
+	
 	public boolean passed() {
 		return !errorDetected;
 	}
