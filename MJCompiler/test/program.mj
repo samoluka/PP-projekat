@@ -2,28 +2,31 @@
 
 program test302
 
-class A{
+class B{
+	int y;
+	{
+		void ff(){
+		}
+	}
+
+}
+
+class A extends B{
 	int x;
 	{
-		int f(int x){
-			this.x = x;
-			return x;
-		}
+		void f(int x){
+			y = x;
+		}		
 	}
 }
 
 {
-	
-	int sum(int z, int d)
-	{
-		return z + d;
-	}
-	
+
 	
 	void main()
 	A a;
 	{
-		a.x = sum(a.f(a.x),a.x);
+		a.ff();
 	}
 }
 

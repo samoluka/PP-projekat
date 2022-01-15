@@ -142,7 +142,6 @@ public class SemanticPass extends VisitorAdaptor {
 			for (Obj simbol : listOfSimbols) {
 				Tab.insert(simbol.getKind(), simbol.getName(), simbol.getType());
 			}
-
 		}
 	}
 
@@ -285,6 +284,16 @@ public class SemanticPass extends VisitorAdaptor {
 	@Override
 	public void visit(MultiDesignator multiDesignator) {
 		Obj obj = Tab.find(multiDesignator.getName());
+		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
+				&& obj.getLevel() != obj.getLocalSymbols().size()) {
+			Collection<Obj> cObj = extendClassType.struct.getMembers();
+			for (Obj o : cObj) {
+				if (o.getName().equals(multiDesignator.getName())) {
+					obj = o;
+					break;
+				}
+			}
+		}
 		if (obj == Tab.noObj) {
 			report_error("Greska na liniji " + multiDesignator.getLine() + " : ime " + multiDesignator.getName()
 					+ " nije deklarisano! ", null);
@@ -321,8 +330,21 @@ public class SemanticPass extends VisitorAdaptor {
 					for (Obj o : cObj) {
 						if (o.getName().equals(dTop.getI1())) {
 							found = true;
-							currStruct = o.getType();
+							Obj lastObj = obj;
 							obj = o;
+							currStruct = o.getType();
+							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
+									&& lastObj.getType().getElemType() != null
+									&& obj.getLevel() != obj.getLocalSymbols().size()) {
+								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
+								for (Obj oo : ccObj) {
+									if (oo.getName().equals(o.getName())) {
+										obj = oo;
+										currStruct = oo.getType();
+										break;
+									}
+								}
+							}
 							if (o.getKind() == Obj.Meth) {
 								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
 								foundClassMethodCall = true;
@@ -344,6 +366,16 @@ public class SemanticPass extends VisitorAdaptor {
 	@Override
 	public void visit(SingleDesignator singleDesignator) {
 		Obj obj = Tab.find(singleDesignator.getName());
+		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
+				&& obj.getLevel() != obj.getLocalSymbols().size()) {
+			Collection<Obj> cObj = extendClassType.struct.getMembers();
+			for (Obj o : cObj) {
+				if (o.getName().equals(singleDesignator.getName())) {
+					obj = o;
+					break;
+				}
+			}
+		}
 		if (obj == Tab.noObj) {
 			report_error("Greska na liniji " + singleDesignator.getLine() + " : ime " + singleDesignator.getName()
 					+ " nije deklarisano! ", null);
