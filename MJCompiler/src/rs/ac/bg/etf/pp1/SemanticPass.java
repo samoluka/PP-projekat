@@ -280,6 +280,47 @@ public class SemanticPass extends VisitorAdaptor {
 					+ " nije deklarisano! ", null);
 		}
 		multiDesignator.obj = obj;
+		if (!designatorQueue.isEmpty()) {
+			Struct currStruct = Tab.noType;
+			while (!designatorQueue.isEmpty()) {
+				DesignatorMulti top = designatorQueue.poll();
+				if (top instanceof ParenDesignator) {
+					if (obj.getType().getKind() != Struct.Array) {
+						report_error("Element: " + obj.getName() + " nije tipa niz", top);
+						currStruct = Tab.noType;
+					} else {
+						currStruct = obj.getType().getElemType();
+					}
+					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
+				} else {
+					DotDesignator dTop = (DotDesignator) top;
+					Collection<Obj> cObj;
+					if (obj.getType().getKind() == Struct.Array) {
+						if (currStruct.getKind() != Struct.Class) {
+							report_error("Mora da bude []", dTop);
+						}
+						cObj = obj.getType().getElemType().getMembers();
+					} else {
+						cObj = obj.getType().getMembers();
+					}
+					boolean found = false;
+					for (Obj o : cObj) {
+						if (o.getName().equals(dTop.getI1())) {
+							found = true;
+							currStruct = o.getType();
+							obj = o;
+							break;
+						}
+					}
+					if (!found) {
+						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+						break;
+					}
+				}
+			}
+			multiDesignator.obj = obj;
+		}
+		designatorQueue.clear();
 	}
 
 	@Override
@@ -477,92 +518,94 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(Variable var) {
-		if (!designatorQueue.isEmpty()) {
-			Obj obj = var.getDesignator().obj;
-			Struct currStruct = Tab.noType;
-			while (!designatorQueue.isEmpty()) {
-				DesignatorMulti top = designatorQueue.poll();
-				if (top instanceof ParenDesignator) {
-					currStruct = obj.getType().getElemType();
-					obj = Tab.find(obj.getName());
-				} else {
-					DotDesignator dTop = (DotDesignator) top;
-					Obj c = Tab.find(obj.getName());
-					Collection<Obj> cObj;
-					if (c.getType().getKind() == Struct.Array) {
-						if (currStruct.getKind() != Struct.Class) {
-							report_error("Mora da bude []", dTop);
-						}
-						cObj = c.getType().getElemType().getMembers();
-					} else {
-						cObj = c.getType().getMembers();
-					}
-					boolean found = false;
-					for (Obj o : cObj) {
-						if (o.getName().equals(dTop.getI1())) {
-							found = true;
-							currStruct = o.getType();
-							break;
-						}
-					}
-					if (!found) {
-						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-						break;
-					}
-				}
-			}
-			var.struct = currStruct;
-		} else {
-			var.struct = var.getDesignator().obj.getType();
-		}
-		designatorQueue.clear();
+//		if (!designatorQueue.isEmpty()) {
+//			Obj obj = var.getDesignator().obj;
+//			Struct currStruct = Tab.noType;
+//			while (!designatorQueue.isEmpty()) {
+//				DesignatorMulti top = designatorQueue.poll();
+//				if (top instanceof ParenDesignator) {
+//					currStruct = obj.getType().getElemType();
+//					obj = Tab.find(obj.getName());
+//				} else {
+//					DotDesignator dTop = (DotDesignator) top;
+////					Obj obj = Tab.find(obj.getName());
+//					Collection<Obj> cObj;
+//					if (obj.getType().getKind() == Struct.Array) {
+//						if (currStruct.getKind() != Struct.Class) {
+//							report_error("Mora da bude []", dTop);
+//						}
+//						cObj = obj.getType().getElemType().getMembers();
+//					} else {
+//						cObj = obj.getType().getMembers();
+//					}
+//					boolean found = false;
+//					for (Obj o : cObj) {
+//						if (o.getName().equals(dTop.getI1())) {
+//							found = true;
+//							currStruct = o.getType();
+//							obj = o;
+//							break;
+//						}
+//					}
+//					if (!found) {
+//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+//						break;
+//					}
+//				}
+//			}
+//			var.struct = currStruct;
+//		} else {
+//			var.struct = var.getDesignator().obj.getType();
+//		}
+//		designatorQueue.clear();
+		var.struct = var.getDesignator().obj.getType();
 
 	}
 
 	public void visit(DesignatorForAssign deForAssign) {
-		if (!designatorQueue.isEmpty()) {
-			Obj obj = deForAssign.getDesignator().obj;
-			Struct currStruct = Tab.noType;
-			while (!designatorQueue.isEmpty()) {
-				DesignatorMulti top = designatorQueue.poll();
-				if (top instanceof ParenDesignator) {
-					currStruct = obj.getType().getElemType();
-					obj = Tab.find(obj.getName());
-				} else {
-					DotDesignator dTop = (DotDesignator) top;
-					Obj c = Tab.find(obj.getName());
-					Collection<Obj> cObj;
-					if (c.getType().getKind() == Struct.Array) {
-						if (currStruct.getKind() != Struct.Class) {
-							report_error("Mora da bude []", dTop);
-						}
-						cObj = c.getType().getElemType().getMembers();
-					} else {
-						cObj = c.getType().getMembers();
-					}
-					boolean found = false;
-					for (Obj o : cObj) {
-						if (o.getName().equals(dTop.getI1())) {
-							found = true;
-							currStruct = o.getType();
-							obj = o;
-//							if (!designatorQueue.isEmpty())
-//								top = designatorQueue.poll();
-							break;
-						}
-					}
-					if (!found) {
-						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-						break;
-					}
-				}
-			}
-			deForAssign.struct = currStruct;
-		} else {
-			deForAssign.struct = deForAssign.getDesignator().obj.getType();
-		}
-		designatorQueue.clear();
-
+//		if (!designatorQueue.isEmpty()) {
+//			Obj obj = deForAssign.getDesignator().obj;
+//			Struct currStruct = Tab.noType;
+//			while (!designatorQueue.isEmpty()) {
+//				DesignatorMulti top = designatorQueue.poll();
+//				if (top instanceof ParenDesignator) {
+//					currStruct = obj.getType().getElemType();
+//					obj = Tab.find(obj.getName());
+//				} else {
+//					DotDesignator dTop = (DotDesignator) top;
+//					Obj c = Tab.find(obj.getName());
+//					Collection<Obj> cObj;
+//					if (c.getType().getKind() == Struct.Array) {
+//						if (currStruct.getKind() != Struct.Class) {
+//							report_error("Mora da bude []", dTop);
+//						}
+//						cObj = c.getType().getElemType().getMembers();
+//					} else {
+//						cObj = c.getType().getMembers();
+//					}
+//					boolean found = false;
+//					for (Obj o : cObj) {
+//						if (o.getName().equals(dTop.getI1())) {
+//							found = true;
+//							currStruct = o.getType();
+//							obj = o;
+////							if (!designatorQueue.isEmpty())
+////								top = designatorQueue.poll();
+//							break;
+//						}
+//					}
+//					if (!found) {
+//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+//						break;
+//					}
+//				}
+//			}
+//			deForAssign.struct = currStruct;
+//		} else {
+//			deForAssign.struct = deForAssign.getDesignator().obj.getType();
+//		}
+//		designatorQueue.clear();
+		deForAssign.struct = deForAssign.getDesignator().obj.getType();
 	}
 
 	public void visit(ReturnStatementWithExpresion returnExpr) {
@@ -663,14 +706,13 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 	}
 
-	
 	@Override
 	public void visit(DesignatorItemDec desDec) {
 		if (desDec.getDesignator().obj.getType().getKind() != Struct.Int) {
 			report_error("Operacija dekrementiranja je primenljiva samo na tipu int", desDec);
 		}
 	}
-	
+
 	public boolean passed() {
 		return !errorDetected;
 	}

@@ -5,10 +5,10 @@ program Program
 		int x[];
 	}
 	class B{
-		A a[];
+		A a;
 	}
 	class C{
-		B b;
+		B b[];
 	}
 	{	
 	
@@ -18,7 +18,7 @@ program Program
 		int k;
 		{
 			labela:{
-				 k = c[1].b.a[1].x[1];
+				k++;
 			}
 			goto labela;	
 		}
