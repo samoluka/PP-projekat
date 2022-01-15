@@ -33,7 +33,7 @@ class Sfera extends Predmet
 	int r;
 	{
 		Sfera() {
-		  super();
+		  //super();
 		  vrsta = 's';
 		}
 		
@@ -47,7 +47,7 @@ class Sfera extends Predmet
 		}
 		
 		void ispisi(){
-			super();
+			//super();
 			print(r);
 			print(eol);
 		}
@@ -59,7 +59,7 @@ class Kvadar extends Predmet
 	 int a, b, c;
 	{
 		Kvadar() {
-		  super();
+		  //super();
 		  vrsta = 'k';
 		}
 		
@@ -71,7 +71,7 @@ class Kvadar extends Predmet
 			return z;
 		}
 		void ispisi(){
-			super();
+			//super();
 			print(a);
 			print(b);
 			print(c);

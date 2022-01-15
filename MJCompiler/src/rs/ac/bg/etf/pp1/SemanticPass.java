@@ -206,7 +206,8 @@ public class SemanticPass extends VisitorAdaptor {
 					found = true;
 				}
 			}
-			if (!found || foundMethod.getLevel() != foundMethod.getLocalSymbols().size())
+//			if (!found || foundMethod.getLevel() != foundMethod.getLocalSymbols().size())
+			if (!found)
 				report_error("Greska na liniji " + methodTypeNameWithType.getLine() + ". Metoda "
 						+ methodTypeNameWithType.getMethodName() + " je vec definisana", null);
 		}
@@ -233,7 +234,8 @@ public class SemanticPass extends VisitorAdaptor {
 					found = true;
 				}
 			}
-			if (!found || foundMethod.getLevel() == foundMethod.getLocalSymbols().size())
+//			if (!found || foundMethod.getLevel() == foundMethod.getLocalSymbols().size())
+			if (!found)
 				report_error("Greska na liniji " + MethodTypeNameVoid.getLine() + ". Metoda "
 						+ MethodTypeNameVoid.getMethodName() + " je vec definisana", null);
 		}
