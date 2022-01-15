@@ -2,31 +2,13 @@
 
 program test302
 
-class B{
-	int y;
-	{
-		void ff(){
-		}
-	}
-
-}
-
-class A extends B{
-	int x;
-	{
-		void f(int x){
-			y = x;
-		}		
-	}
-}
-
 {
 
 	
 	void main()
-	A a;
+	int x,y,c;
 	{
-		a.ff();
+		x = x*y*c;
 	}
 }
 

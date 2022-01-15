@@ -351,7 +351,7 @@ Expr ::= (AddExpr) Expr:e Addop Term:t
 	 	(NegativeTermExpr) MINUS Term
 	 	;
 /* Term = Factor {Mulop Factor}. */
-Term ::=(MulopTerm) Factor:t1 Mulop Factor:t2
+Term ::=(MulopTerm) Term:t1 Mulop Factor:t2
 		| 
 		(SingleTerm) Factor:t
 		;

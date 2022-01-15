@@ -384,7 +384,7 @@ Expr ::= (AddExpr) Expr:e Addop:A1 Term:t {: RESULT=new AddExpr(e, A1, t); RESUL
 	 	(NegativeTermExpr) MINUS Term:T1 {: RESULT=new NegativeTermExpr(T1); RESULT.setLine(T1left); :}
 	 	;
 /* Term = Factor {Mulop Factor}. */
-Term ::=(MulopTerm) Factor:t1 Mulop:M1 Factor:t2 {: RESULT=new MulopTerm(t1, M1, t2); RESULT.setLine(t1left); :}
+Term ::=(MulopTerm) Term:t1 Mulop:M1 Factor:t2 {: RESULT=new MulopTerm(t1, M1, t2); RESULT.setLine(t1left); :}
 		| 
 		(SingleTerm) Factor:t {: RESULT=new SingleTerm(t); RESULT.setLine(tleft); :}
 		;

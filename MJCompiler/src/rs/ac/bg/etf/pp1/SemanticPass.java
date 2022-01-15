@@ -195,8 +195,19 @@ public class SemanticPass extends VisitorAdaptor {
 	@Override
 	public void visit(MethodTypeNameWithType methodTypeNameWithType) {
 		if (Tab.find(methodTypeNameWithType.getMethodName()) != Tab.noObj) {
-			report_error("Greska na liniji " + methodTypeNameWithType.getLine() + ". Metoda "
-					+ methodTypeNameWithType.getMethodName() + " je vec definisana", null);
+			Collection<Obj> cObj = null;
+			if (extendClassType != null)
+				cObj = extendClassType.struct.getMembers();
+			boolean found = false;
+			for (Obj c : cObj) {
+				if (c.getName().equals(methodTypeNameWithType.getMethodName())) {
+					report_info("Redefinisana metoda: " + c.getName(), methodTypeNameWithType);
+					found = true;
+				}
+			}
+			if (!found)
+				report_error("Greska na liniji " + methodTypeNameWithType.getLine() + ". Metoda "
+						+ methodTypeNameWithType.getMethodName() + " je vec definisana", null);
 		}
 		currentMethod = Tab.insert(Obj.Meth, methodTypeNameWithType.getMethodName(),
 				methodTypeNameWithType.getType().struct);
@@ -209,6 +220,21 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(MethodTypeNameVoid MethodTypeNameVoid) {
+		if (Tab.find(MethodTypeNameVoid.getMethodName()) != Tab.noObj) {
+			Collection<Obj> cObj = null;
+			if (extendClassType != null)
+				cObj = extendClassType.struct.getMembers();
+			boolean found = false;
+			for (Obj c : cObj) {
+				if (c.getName().equals(MethodTypeNameVoid.getMethodName())) {
+					report_info("Redefinisana metoda: " + c.getName(), MethodTypeNameVoid);
+					found = true;
+				}
+			}
+			if (!found)
+				report_error("Greska na liniji " + MethodTypeNameVoid.getLine() + ". Metoda "
+						+ MethodTypeNameVoid.getMethodName() + " je vec definisana", null);
+		}
 		currentMethod = Tab.insert(Obj.Meth, MethodTypeNameVoid.getMethodName(), Tab.noType);
 		currentMethod.setFpPos(-1);
 		currentMethodParamNumStack.push(0);
@@ -475,8 +501,8 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(MulopTerm mulopTerm) {
-		Struct leftT = mulopTerm.getFactor().struct;
-		Struct rightT = mulopTerm.getFactor1().struct;
+		Struct rightT = mulopTerm.getFactor().struct;
+		Struct leftT = mulopTerm.getTerm().struct;
 		if (leftT.equals(rightT) && leftT == Tab.intType) {
 			mulopTerm.struct = leftT;
 		} else {
