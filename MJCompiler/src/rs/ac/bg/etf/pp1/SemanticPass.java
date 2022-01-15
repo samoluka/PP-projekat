@@ -391,9 +391,18 @@ public class SemanticPass extends VisitorAdaptor {
 		if (leftDesign != null && leftDesign.obj != null && leftDesign.obj.getKind() == Obj.Con) {
 			report_error("Leva strana operatora dodele ne sme da bude konsanta", designatorAssignmentStatement);
 		}
-		if (!right.assignableTo(left))
+		if (!right.assignableTo(left) && !isExtended(right, left))
 			report_error("Greska na liniji " + designatorAssignmentStatement.getLine() + " : "
 					+ "nekompatibilni tipovi u dodeli vrednosti! ", null);
+	}
+
+	private boolean isExtended(Struct right, Struct left) {
+		while (right.getElemType() != null) {
+			if (right.getElemType().assignableTo(left))
+				return true;
+			right = right.getElemType();
+		}
+		return false;
 	}
 
 	public void visit(DesignatorForMethodCall dsForMethodCall) {

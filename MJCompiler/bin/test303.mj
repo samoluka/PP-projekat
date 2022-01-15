@@ -23,7 +23,7 @@ class Predmet
 class Sfera extends Predmet
 {
 	int r;
-	static int cinilac;
+	int cinilac;
 	{
 		 void postaviTezinu(int tezina) {this.tezina = tezina; vrsta = 's';}
 		 void postaviPoluprecnik(int r) {this.r = r; postaviVrstu('s');}
@@ -139,24 +139,6 @@ int tezinaK, tezinaS;
 		
 		i = 0;
 		do{
-			switch(i+1){
-				case 1:
-					print(1);
-					break;
-				case 3:
-					print(3);
-				case 2:
-					print(2);
-					break;
-				case 5:
-					print(5);
-					i = i + 2;
-					continue;
-				case 6:
-					print(6);
-				case 9:
-					print(9);
-			}
 			print(eol);
 			i++;
 		}while(i<10);
