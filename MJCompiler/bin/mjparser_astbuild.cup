@@ -327,6 +327,8 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
                 |
                 (GotoStatement) GOTO Label:L1 SEMI {: RESULT=new GotoStatement(L1); RESULT.setLine(L1left); :}
                 |
+                (SuperStatement) SUPER LPAREN RPAREN SEMI {: RESULT=new SuperStatement(); :}
+                |
 				(SingleMultiStatement) LBRACE StatementList:S1 RBRACE {: RESULT=new SingleMultiStatement(S1); RESULT.setLine(S1left); :}
 				|
 				(StatementError) error SEMI:e1

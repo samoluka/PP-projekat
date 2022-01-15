@@ -47,7 +47,7 @@ class Sfera extends Predmet
 		}
 		
 		void ispisi(){
-			//super();
+			super();
 			print(r);
 			print(eol);
 		}
@@ -71,7 +71,7 @@ class Kvadar extends Predmet
 			return z;
 		}
 		void ispisi(){
-			//super();
+			super();
 			print(a);
 			print(b);
 			print(c);

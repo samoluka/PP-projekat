@@ -5,9 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class RelGEqual extends Relop {
+public class SuperStatement extends SingleStatement {
 
-    public RelGEqual () {
+    public SuperStatement () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class RelGEqual extends Relop {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("RelGEqual(\n");
+        buffer.append("SuperStatement(\n");
 
         buffer.append(tab);
-        buffer.append(") [RelGEqual]");
+        buffer.append(") [SuperStatement]");
         return buffer.toString();
     }
 }

@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
+import rs.ac.bg.etf.pp1.ast.SuperStatement;
 
 public class SemanticPass extends VisitorAdaptor {
 
@@ -713,9 +714,26 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(GotoStatement gotoStatement) {
-		if (!allLabels.contains(gotoStatement.getLabel().getName())) {
-			report_error("Ne postoji labela sa nazivom: " + gotoStatement.getLabel().getName(), gotoStatement);
+//		if (!allLabels.contains(gotoStatement.getLabel().getName())) {
+//			report_error("Ne postoji labela sa nazivom: " + gotoStatement.getLabel().getName(), gotoStatement);
+//		}
+	}
+
+	@Override
+	public void visit(SuperStatement superStatement) {
+		if (currClass == null || extendClassType == null) {
+			report_error("Ne postoji roditeljska metoda za poziv", superStatement);
+		} else {
+			Collection<Obj> cObj = extendClassType.struct.getMembers();
+			for (Obj o : cObj) {
+				if (o.getName().equals(currentMethod.getName())) {
+					report_info("Pronadjen poziv roditeljske metode: " + currentMethod.getName(), superStatement);
+					return;
+				}
+			}
+			report_error("Roditeljska klasa ne sadrzi metodu: " + currentMethod.getName(), superStatement);
 		}
+
 	}
 
 	@Override

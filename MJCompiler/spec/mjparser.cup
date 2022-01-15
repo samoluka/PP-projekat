@@ -294,6 +294,8 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
                 |
                 (GotoStatement) GOTO Label SEMI
                 |
+                (SuperStatement) SUPER LPAREN RPAREN SEMI
+                |
 				(SingleMultiStatement) LBRACE StatementList RBRACE
 				|
 				(StatementError) error SEMI:e1
