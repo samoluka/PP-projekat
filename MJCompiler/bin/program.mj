@@ -3,24 +3,26 @@ program Program
 
 	class A{
 		int x[];
+		int y;
+		{
+			void f(int x, char c){
+			}
+		}
 	}
 	class B{
-		A a;
+		A a[];
 	}
 	class C{
-		B b[];
+		B b;
 	}
 	{	
-	
-		void main()
-		A a;
+		int ff(int xx){ return 1; }
+		int main(int x)
 		C c[];
-		int k;
 		{
-			labela:{
-				k++;
-			}
-			goto labela;	
+			x = ff(1);
+			c[1].b.a[2].f(1,'c') = 1;
+			return 1;
 		}
 	}
 

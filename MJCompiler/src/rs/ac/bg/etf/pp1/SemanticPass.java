@@ -38,6 +38,7 @@ public class SemanticPass extends VisitorAdaptor {
 	private boolean changed = false;
 	private Type extendClassType = null;
 	private List<String> allLabels = new LinkedList<>();
+	private boolean foundClassMethodCall = false;
 
 	public SemanticPass() {
 		super();
@@ -309,6 +310,10 @@ public class SemanticPass extends VisitorAdaptor {
 							found = true;
 							currStruct = o.getType();
 							obj = o;
+							if (o.getKind() == Obj.Meth) {
+								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
+								foundClassMethodCall = true;
+							}
 							break;
 						}
 					}
@@ -348,22 +353,21 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(DesignatorForMethodCall dsForMethodCall) {
 		methodCalledStack.push(dsForMethodCall.getDesignator().obj);
-		currentMethodParamNumStack.push(0);
+		currentMethodParamNumStack.push(foundClassMethodCall ? -1 : 0);
 		changed = false;
 	}
 
 	@Override
 	public void visit(MethodNameDesignator methodNameDesignator) {
 		methodCalledStack.push(methodNameDesignator.getDesignator().obj);
-		currentMethodParamNumStack.push(0);
-		;
+		currentMethodParamNumStack.push(foundClassMethodCall ? -1 : 0);
 		changed = false;
 	}
 
 	@Override
 	public void visit(DesignatorItemFuncCallWithParam dfParam) {
 		currentMethodCalled = methodCalledStack.pop();
-		int currentMethodParamNum = currentMethodParamNumStack.pop();
+		int currentMethodParamNum = Math.abs(currentMethodParamNumStack.pop());
 		if ((dfParam.getActualPars() instanceof NoActualParam && currentMethodCalled.getLevel() > 0)
 				|| (!(dfParam.getActualPars() instanceof NoActualParam) && currentMethodCalled.getLevel() == 0)
 				|| (currentMethodParamNum != currentMethodCalled.getLevel())) {
@@ -383,7 +387,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(MethodCall funcCall) {
 		currentMethodCalled = methodCalledStack.pop();
-		int currentMethodParamNum = currentMethodParamNumStack.pop();
+		int currentMethodParamNum = Math.abs(currentMethodParamNumStack.pop());
 		if ((funcCall.getActualPars() instanceof NoActualParam && currentMethodCalled.getLevel() > 0)
 				|| (!(funcCall.getActualPars() instanceof NoActualParam) && currentMethodCalled.getLevel() == 0)
 				|| (currentMethodParamNum != currentMethodCalled.getLevel())) {
@@ -434,9 +438,10 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(ActualParamSingleItem acSingleItem) {
 		Struct paramType = acSingleItem.getExpr().struct;
 		Obj currentMethodCalled = methodCalledStack.peek();
-		int currentMethodParamNum = currentMethodParamNumStack.peek();
+		int currentMethodParamNum = Math.abs(currentMethodParamNumStack.peek())
+				- (currentMethodParamNumStack.peek() < 0 ? 1 : 0);
 		Object[] localSymbols = currentMethodCalled.getLocalSymbols().toArray();
-		if (currentMethodCalled.getLevel() <= currentMethodParamNum) {
+		if (currentMethodCalled.getLevel() - (currentMethodParamNumStack.peek() < 0 ? 1 : 0) <= currentMethodParamNum) {
 			report_error("Neispravan broj parametara pri pozivu metode " + currentMethodCalled.getName() + " na liniji "
 					+ acSingleItem.getLine(), null);
 		} else {
@@ -444,7 +449,8 @@ public class SemanticPass extends VisitorAdaptor {
 				report_error("Prosledjeni parametar broj " + currentMethodParamNum
 						+ " nije odgovarajuceg tipa na liniji " + acSingleItem.getLine(), null);
 		}
-		currentMethodParamNumStack.push(currentMethodParamNumStack.pop() + 1);
+		currentMethodParamNumStack.push(
+				(currentMethodParamNumStack.peek() < 0 ? -1 : 1) * (Math.abs(currentMethodParamNumStack.pop()) + 1));
 //		if (currentMethodCalled.getLevel() <= currentMethodParamNum) {
 //			changed = true;
 //			currentMethodCalled = methodCalledStack.empty() ? null : methodCalledStack.pop();
@@ -518,93 +524,11 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(Variable var) {
-//		if (!designatorQueue.isEmpty()) {
-//			Obj obj = var.getDesignator().obj;
-//			Struct currStruct = Tab.noType;
-//			while (!designatorQueue.isEmpty()) {
-//				DesignatorMulti top = designatorQueue.poll();
-//				if (top instanceof ParenDesignator) {
-//					currStruct = obj.getType().getElemType();
-//					obj = Tab.find(obj.getName());
-//				} else {
-//					DotDesignator dTop = (DotDesignator) top;
-////					Obj obj = Tab.find(obj.getName());
-//					Collection<Obj> cObj;
-//					if (obj.getType().getKind() == Struct.Array) {
-//						if (currStruct.getKind() != Struct.Class) {
-//							report_error("Mora da bude []", dTop);
-//						}
-//						cObj = obj.getType().getElemType().getMembers();
-//					} else {
-//						cObj = obj.getType().getMembers();
-//					}
-//					boolean found = false;
-//					for (Obj o : cObj) {
-//						if (o.getName().equals(dTop.getI1())) {
-//							found = true;
-//							currStruct = o.getType();
-//							obj = o;
-//							break;
-//						}
-//					}
-//					if (!found) {
-//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-//						break;
-//					}
-//				}
-//			}
-//			var.struct = currStruct;
-//		} else {
-//			var.struct = var.getDesignator().obj.getType();
-//		}
-//		designatorQueue.clear();
 		var.struct = var.getDesignator().obj.getType();
 
 	}
 
 	public void visit(DesignatorForAssign deForAssign) {
-//		if (!designatorQueue.isEmpty()) {
-//			Obj obj = deForAssign.getDesignator().obj;
-//			Struct currStruct = Tab.noType;
-//			while (!designatorQueue.isEmpty()) {
-//				DesignatorMulti top = designatorQueue.poll();
-//				if (top instanceof ParenDesignator) {
-//					currStruct = obj.getType().getElemType();
-//					obj = Tab.find(obj.getName());
-//				} else {
-//					DotDesignator dTop = (DotDesignator) top;
-//					Obj c = Tab.find(obj.getName());
-//					Collection<Obj> cObj;
-//					if (c.getType().getKind() == Struct.Array) {
-//						if (currStruct.getKind() != Struct.Class) {
-//							report_error("Mora da bude []", dTop);
-//						}
-//						cObj = c.getType().getElemType().getMembers();
-//					} else {
-//						cObj = c.getType().getMembers();
-//					}
-//					boolean found = false;
-//					for (Obj o : cObj) {
-//						if (o.getName().equals(dTop.getI1())) {
-//							found = true;
-//							currStruct = o.getType();
-//							obj = o;
-////							if (!designatorQueue.isEmpty())
-////								top = designatorQueue.poll();
-//							break;
-//						}
-//					}
-//					if (!found) {
-//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-//						break;
-//					}
-//				}
-//			}
-//			deForAssign.struct = currStruct;
-//		} else {
-//			deForAssign.struct = deForAssign.getDesignator().obj.getType();
-//		}
-//		designatorQueue.clear();
 		deForAssign.struct = deForAssign.getDesignator().obj.getType();
 	}
 
