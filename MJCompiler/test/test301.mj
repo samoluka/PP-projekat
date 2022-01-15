@@ -39,23 +39,11 @@ program test301
 		print(nizch[jedan * 2]);
 			
 		
-		bodovi = bodovi + (pet * jedan - 1) * bodovi - (3 / 2 + 3 * 2 - 3); 
+		bodovi = bodovi + (pet * jedan - 1) * bodovi - (3 % 2 + 3 * 2 - 3); 
 		print(bodovi);
 			
 		read(bodovi);
-		bt = true;
-		
-		if(bt) {
-			print(bodovi);
-		} else {
-			print(bodovi + 10);
-		}
-		
-		if(bodovi > 10) {
-			print('+');
-		} else {
-			print('-');
-		}
+		print(bodovi);
 	}
 }
 

@@ -2,38 +2,54 @@
 
 program test_303
 
-const int delilac = 3;
+const int cinilac = 4, delilac = 3;
 
 class Predmet
 {
 	 int tezina;
+	 int koefTezine;
 	 char vrsta;
 
 	{
-		 void postaviTezinu(int tezina) {this.tezina = tezina;}  
+		 Predmet(){
+		   koefTezine = 1;	
+		 }
+		 void postaviTezinu(int tezina) {this.tezina = tezina * koefTezine;}  
 		 void ucitajTezinu() { read(tezina); }
 		 int zapremina() { return 0;}
 		 int Q() {return zapremina() * tezina;}
 		 void postaviVrstu(char vrsta) {this.vrsta = vrsta;}
 		 char dohvVrstu() { return vrsta; }
 		 int dohvTezinu() { return tezina; }
+		 void ispisi() {
+		 	print(vrsta);
+		 	print(Q());
+		 }
 	}
 }
 
 class Sfera extends Predmet
 {
 	int r;
-	int cinilac;
 	{
-		 void postaviTezinu(int tezina) {this.tezina = tezina; vrsta = 's';}
-		 void postaviPoluprecnik(int r) {this.r = r; postaviVrstu('s');}
-		 void postaviCinilac(int c) {cinilac = c;}
+		Sfera() {
+		  super();
+		  vrsta = 's';
+		}
+		
+		 void postaviPoluprecnik(int r) {this.r = r; }
 		 
 		 int zapremina()
 			int z;
 		{
 			z = cinilac;
 			return z *(r/delilac);
+		}
+		
+		void ispisi(){
+			super();
+			print(r);
+			print(eol);
 		}
 	}
 }
@@ -42,13 +58,24 @@ class Kvadar extends Predmet
 {
 	 int a, b, c;
 	{
-		 void postaviTezinu(int tezina) {this.tezina = tezina; vrsta = 'k';}
-		 void postaviStranice(int a, int b, int c) {this.a = a; this.b = b; this.c = c; vrsta = 'k';}
+		Kvadar() {
+		  super();
+		  vrsta = 'k';
+		}
+		
+		 void postaviStranice(int a, int b, int c) {this.a = a; this.b = b; this.c = c;}
 		 int zapremina()
 			int z;
 		{
 			z = a * b * c;
 			return z;
+		}
+		void ispisi(){
+			super();
+			print(a);
+			print(b);
+			print(c);
+			print(eol);
 		}
 	}
 }
@@ -59,9 +86,7 @@ int tezinaK, tezinaS;
 
 	void ispis( Predmet p)
 	{
-		if(p.dohvVrstu() == 's') print('S');
-		else if(p.dohvVrstu() == 'k') print('K');
-
+		p.ispisi();
 		print(eol); 
 		print(p.dohvTezinu());
 	}
@@ -77,13 +102,10 @@ int tezinaK, tezinaS;
 		k2 = new Kvadar;
 		k3 = new Kvadar;
 		
-		Sfera.cinilac = 4;
-
 		s1.postaviPoluprecnik(1);
 		s2.postaviPoluprecnik(2);
 		s3.postaviPoluprecnik(3);
 		
-		print(Sfera.cinilac);
 
 		k1.postaviStranice(1,2,3);
 		k2.postaviStranice(2,3,4);
@@ -136,11 +158,6 @@ int tezinaK, tezinaS;
 		print(zapreminaK); print(eol);
 		print(tezinaS); print(eol);
 		print(tezinaK); print(eol);
-		
-		i = 0;
-		do{
-			print(eol);
-			i++;
-		}while(i<10);
+
 	}
 }

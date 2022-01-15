@@ -2,13 +2,29 @@
 
 program test302
 
+class A{
+	
+	{
+		void f(){
+		}
+	}
+}
+
+class B extends A{
+
+	{
+		void f(){
+		}
+
+	}
+
+}
+
 {
 
 	
 	void main()
-	int x,y,c;
 	{
-		x = x*y*c;
 	}
 }
 

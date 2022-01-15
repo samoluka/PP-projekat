@@ -194,7 +194,8 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(MethodTypeNameWithType methodTypeNameWithType) {
-		if (Tab.find(methodTypeNameWithType.getMethodName()) != Tab.noObj) {
+		Obj foundMethod = Tab.find(methodTypeNameWithType.getMethodName());
+		if (foundMethod != Tab.noObj) {
 			Collection<Obj> cObj = null;
 			if (extendClassType != null)
 				cObj = extendClassType.struct.getMembers();
@@ -205,7 +206,7 @@ public class SemanticPass extends VisitorAdaptor {
 					found = true;
 				}
 			}
-			if (!found)
+			if (!found || foundMethod.getLevel() != foundMethod.getLocalSymbols().size())
 				report_error("Greska na liniji " + methodTypeNameWithType.getLine() + ". Metoda "
 						+ methodTypeNameWithType.getMethodName() + " je vec definisana", null);
 		}
@@ -220,7 +221,8 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(MethodTypeNameVoid MethodTypeNameVoid) {
-		if (Tab.find(MethodTypeNameVoid.getMethodName()) != Tab.noObj) {
+		Obj foundMethod = Tab.find(MethodTypeNameVoid.getMethodName());
+		if (foundMethod != Tab.noObj) {
 			Collection<Obj> cObj = null;
 			if (extendClassType != null)
 				cObj = extendClassType.struct.getMembers();
@@ -231,7 +233,7 @@ public class SemanticPass extends VisitorAdaptor {
 					found = true;
 				}
 			}
-			if (!found)
+			if (!found || foundMethod.getLevel() == foundMethod.getLocalSymbols().size())
 				report_error("Greska na liniji " + MethodTypeNameVoid.getLine() + ". Metoda "
 						+ MethodTypeNameVoid.getMethodName() + " je vec definisana", null);
 		}
