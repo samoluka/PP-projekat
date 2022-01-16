@@ -12,5 +12,4 @@
 Semanticka analiza:
 
 -proveriti goto labela da li postoji - ovo se proverava u rantajmu vrv?
--super()
--moguce vise puta redefinisati istu metodu
+- null?
