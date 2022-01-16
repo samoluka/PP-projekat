@@ -415,6 +415,11 @@ public class SemanticPass extends VisitorAdaptor {
 	@Override
 	public void visit(SingleDesign singleDesign) {
 		Obj obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
+//		if (singleDesign.getParent() instanceof MultiDesignator) {
+//			obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
+//		}else {
+//			obj = 
+//		}
 		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
 				&& obj.getLevel() != obj.getLocalSymbols().size()) {
 			Collection<Obj> cObj = extendClassType.struct.getMembers();
@@ -518,6 +523,9 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(DesignatorAssignmentStatement designatorAssignmentStatement) {
 		Designator leftDesign = designatorAssignmentStatement.getDesignatorForAssign().getDesignator();
 		Struct left = designatorAssignmentStatement.getDesignatorForAssign().struct;
+		if (leftDesign instanceof MultiDesignator) {
+			left = ((MultiDesignator) leftDesign).getDesignatorMultiList().obj.getType();
+		}
 		Struct right = designatorAssignmentStatement.getExpr().struct;
 		if (leftDesign != null && leftDesign.obj != null && leftDesign.obj.getKind() == Obj.Con) {
 			report_error("Leva strana operatora dodele ne sme da bude konsanta", designatorAssignmentStatement);
@@ -726,7 +734,11 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(Variable var) {
-		var.obj = var.getDesignator().obj;
+		if (var.getDesignator() instanceof MultiDesignator) {
+			var.obj = ((MultiDesignator) var.getDesignator()).getDesignatorMultiList().obj;
+		} else {
+			var.obj = var.getDesignator().obj;
+		}
 	}
 
 	public void visit(DesignatorForAssign deForAssign) {

@@ -7,21 +7,25 @@ class A{
 	int y;
 }
 
-
+class B{
+	A a;
+}
 {
 
 	
 	void main()
 	int x;
 	A a;
-	A b;
+	B b;
 	{
 		//x = 1;
-		a = new A;
-		a.y = 1;
+		b = new B;
+		b.a = new A;
+		b.a.x = 3;
 		//b = new A;
 		//print(x[1]);
-		//print(a);
+		//x = a.y;
+		//print(a.x);
 		//print(b);
 		return;
 	}

@@ -4,11 +4,13 @@ import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.CounterVisitor.FormParamCounter;
 import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
+import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
 import rs.ac.bg.etf.pp1.ast.DesignatorForAssign;
 import rs.ac.bg.etf.pp1.ast.DotDesignator;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeNameVoid;
+import rs.ac.bg.etf.pp1.ast.MultiDesign;
 import rs.ac.bg.etf.pp1.ast.MultiDesignator;
 import rs.ac.bg.etf.pp1.ast.NewFactor;
 import rs.ac.bg.etf.pp1.ast.NewFactorWithBrackets;
@@ -16,6 +18,7 @@ import rs.ac.bg.etf.pp1.ast.NumberConst;
 import rs.ac.bg.etf.pp1.ast.ParenDesignator;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithoutNumConst;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithoutExpresion;
+import rs.ac.bg.etf.pp1.ast.SingleDesign;
 import rs.ac.bg.etf.pp1.ast.SingleDesignator;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.Variable;
@@ -82,27 +85,52 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorAssignmentStatement designatorAssignmentStatement) {
-		Code.store(designatorAssignmentStatement.getDesignatorForAssign().getDesignator().obj);
+		Designator d = designatorAssignmentStatement.getDesignatorForAssign().getDesignator();
+		if (d instanceof MultiDesignator) {
+			//Code.load(d.obj);
+			Code.store(((MultiDesignator) d).getDesignatorMultiList().obj);
+		} else {
+			Code.store(d.obj);
+		}
 	}
 
 	@Override
 	public void visit(DesignatorForAssign designator) {
 		SyntaxNode parent = designator.getParent();
-		Code.load(designator.getDesignator().obj);
+//		if (designator.getDesignator() instanceof MultiDesignator) {
+//			Code.load(((MultiDesignator) designator.getDesignator()).getDesignatorMultiList().obj);
+//		} else {
+//			Code.load(designator.getDesignator().obj);
+//		}
+//		Code.load(designator.getDesignator().obj);
 	}
 
 	@Override
 	public void visit(Variable variable) {
-		//Code.load(variable.getDesignator().obj);
+		if (variable.getDesignator() instanceof MultiDesignator) {
+			Code.load(((MultiDesignator) variable.getDesignator()).getDesignatorMultiList().obj);
+		} else {
+			Code.load(variable.getDesignator().obj);
+		}
 	}
 
 	@Override
 	public void visit(MultiDesignator multiDesignator) {
 //		Obj o = Tab.find(multiDesignator.getName());
-		Code.put(Code.load_1);
 //		Code.put(Code.load_1);
-		//Code.load(multiDesignator.obj);
+//		Code.put(Code.load_1);
+		Code.load(multiDesignator.obj);
+		// Code.load(multiDesignator.getDesignatorMultiList().obj);
 	}
+
+//	public void visit(MultiDesign multiDesign) {
+//		Code.load(multiDesign.obj);
+//	}
+//	
+//
+//	public void visit(SingleDesign singleDesign) {
+//		Code.load(singleDesign.obj);
+//	}
 
 //	@Override
 //	public void visit(SingleDesignator singleDesignator) {
