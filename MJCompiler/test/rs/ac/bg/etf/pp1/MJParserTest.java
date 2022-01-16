@@ -59,6 +59,7 @@ public class MJParserTest {
 			Tab.dump();
 
 			if (!p.errorDetected && v.passed()) {
+				log.info("Parsiranje uspesno zavrseno!");
 				File objFile = new File("test/objOutput/" + fileName + ".obj");
 				if (objFile.exists())
 					objFile.delete();
@@ -67,7 +68,7 @@ public class MJParserTest {
 				Code.dataSize = v.nVars;
 				Code.mainPc = codeGenerator.getMainPc();
 				Code.write(new FileOutputStream(objFile));
-				log.info("Parsiranje uspesno zavrseno!");
+				log.info("Generisanje koda uspesno zavrseno!");
 			} else {
 				log.error("Parsiranje NIJE uspesno zavrseno!");
 			}

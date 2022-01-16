@@ -95,15 +95,14 @@ nonterminal Mulop Mulop;
 nonterminal ActualPars ActualPars;
 nonterminal DesignatorMulti DesignatorMulti;
 nonterminal ActualParamSingleItem ActualParamSingleItem;
-nonterminal DesignatorMultiList DesignatorMultiList;
 nonterminal VarListClass VarListClass;
 nonterminal VarItemListClass VarItemListClass;
 nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
 

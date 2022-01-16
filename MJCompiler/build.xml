@@ -75,4 +75,13 @@
 			</classpath>
 		</java>
 	</target>
+	<target name="debug" depends="disasm">
+		<java classname="rs.etf.pp1.mj.runtime.Run">
+			<arg value="-debug" />
+			<arg value="test/objOutput/program.obj" />
+			<classpath>
+				<pathelement location="lib/mj-runtime.jar" />
+			</classpath>
+		</java>
+	</target>
 </project>

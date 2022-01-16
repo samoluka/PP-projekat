@@ -2,12 +2,27 @@
 
 program test302
 
+class A{
+	int x;
+	int y;
+}
+
+
 {
 
 	
 	void main()
+	int x;
+	A a;
+	A b;
 	{
-		print(1);
+		//x = 1;
+		a = new A;
+		a.y = 1;
+		//b = new A;
+		//print(x[1]);
+		//print(a);
+		//print(b);
 		return;
 	}
 }

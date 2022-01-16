@@ -66,11 +66,11 @@ nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, M
 nonterminal StatementList, StatementLabel, Label, SingleStatement, Statement, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, FormalParamListItem;
 nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
-nonterminal DesignatorMultiList, VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
+nonterminal VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Factor, Expr, VarDeclDefinition, DesignatorForAssign;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
 

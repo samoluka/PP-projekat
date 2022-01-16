@@ -327,22 +327,27 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(MultiDesignator multiDesignator) {
-		Obj obj = Tab.find(multiDesignator.getName());
+		multiDesignator.obj = Tab.find(multiDesignator.getName());
+	}
+
+	@Override
+	public void visit(MultiDesign multiDesign) {
+		Obj obj = Tab.find(((MultiDesignator) multiDesign.getParent()).getName());
 		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
 				&& obj.getLevel() != obj.getLocalSymbols().size()) {
 			Collection<Obj> cObj = extendClassType.struct.getMembers();
 			for (Obj o : cObj) {
-				if (o.getName().equals(multiDesignator.getName())) {
+				if (o.getName().equals(((MultiDesignator) multiDesign.getParent()).getName())) {
 					obj = o;
 					break;
 				}
 			}
 		}
 		if (obj == Tab.noObj) {
-			report_error("Greska na liniji " + multiDesignator.getLine() + " : ime " + multiDesignator.getName()
-					+ " nije deklarisano! ", null);
+			report_error("Greska na liniji " + multiDesign.getLine() + " : ime "
+					+ ((MultiDesignator) multiDesign.getParent()).getName() + " nije deklarisano! ", null);
 		}
-		multiDesignator.obj = obj;
+		multiDesign.obj = obj;
 		if (!designatorQueue.isEmpty()) {
 			Struct currStruct = Tab.noType;
 			while (!designatorQueue.isEmpty()) {
@@ -402,7 +407,89 @@ public class SemanticPass extends VisitorAdaptor {
 					}
 				}
 			}
-			multiDesignator.obj = obj;
+			multiDesign.obj = obj;
+		}
+		designatorQueue.clear();
+	}
+
+	@Override
+	public void visit(SingleDesign singleDesign) {
+		Obj obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
+		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
+				&& obj.getLevel() != obj.getLocalSymbols().size()) {
+			Collection<Obj> cObj = extendClassType.struct.getMembers();
+			for (Obj o : cObj) {
+				if (o.getName().equals(((MultiDesignator) singleDesign.getParent()).getName())) {
+					obj = o;
+					break;
+				}
+			}
+		}
+		if (obj == Tab.noObj) {
+			report_error("Greska na liniji " + singleDesign.getLine() + " : ime "
+					+ ((MultiDesignator) singleDesign.getParent()).getName() + " nije deklarisano! ", null);
+		}
+		singleDesign.obj = obj;
+		if (!designatorQueue.isEmpty()) {
+			Struct currStruct = Tab.noType;
+			while (!designatorQueue.isEmpty()) {
+				DesignatorMulti top = designatorQueue.poll();
+				if (top instanceof ParenDesignator) {
+					if (obj.getType().getKind() != Struct.Array) {
+						report_error("Element: " + obj.getName() + " nije tipa niz", top);
+						currStruct = Tab.noType;
+					} else {
+						currStruct = obj.getType().getElemType();
+					}
+					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
+				} else {
+					DotDesignator dTop = (DotDesignator) top;
+					Collection<Obj> cObj;
+					if (obj.getType().getKind() == Struct.Array) {
+						if (currStruct.getKind() != Struct.Class) {
+							report_error("Mora da bude []", dTop);
+						}
+						cObj = obj.getType().getElemType().getMembers();
+					} else {
+						if (obj.getName().equals("this")) {
+							cObj = Tab.currentScope().getOuter().getLocals().symbols();
+						} else {
+							cObj = obj.getType().getMembers();
+						}
+					}
+					boolean found = false;
+					for (Obj o : cObj) {
+						if (o.getName().equals(dTop.getI1())) {
+							found = true;
+							Obj lastObj = obj;
+							obj = o;
+							currStruct = o.getType();
+							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
+									&& lastObj.getType().getElemType() != null
+									&& obj.getLevel() != obj.getLocalSymbols().size()) {
+								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
+								for (Obj oo : ccObj) {
+									if (oo.getName().equals(o.getName())) {
+										obj = oo;
+										currStruct = oo.getType();
+										break;
+									}
+								}
+							}
+							if (o.getKind() == Obj.Meth) {
+								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
+								foundClassMethodCall = true;
+							}
+							break;
+						}
+					}
+					if (!found) {
+						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+						break;
+					}
+				}
+			}
+			singleDesign.obj = obj;
 		}
 		designatorQueue.clear();
 	}
@@ -506,11 +593,11 @@ public class SemanticPass extends VisitorAdaptor {
 			report_info(
 					"Pronadjen poziv funkcije " + currentMethodCalled.getName() + " na liniji " + funcCall.getLine(),
 					null);
-			funcCall.struct = currentMethodCalled.getType();
+			funcCall.obj = currentMethodCalled;
 		} else {
 			report_error("Greska na liniji " + funcCall.getLine() + " : ime " + currentMethodCalled.getName()
 					+ " nije funkcija!", null);
-			funcCall.struct = Tab.noType;
+			funcCall.obj = Tab.noObj;
 		}
 		// currentMethodCalled = methodCalledStack.empty() ? null :
 		// methodCalledStack.pop();
@@ -519,7 +606,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(MulopTerm mulopTerm) {
-		Struct rightT = mulopTerm.getFactor().struct;
+		Struct rightT = mulopTerm.getFactor().obj.getType();
 		Struct leftT = mulopTerm.getTerm().struct;
 		if (leftT.equals(rightT) && leftT == Tab.intType) {
 			mulopTerm.struct = leftT;
@@ -531,7 +618,7 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(SingleTerm singleTerm) {
-		singleTerm.struct = singleTerm.getFactor().struct;
+		singleTerm.struct = singleTerm.getFactor().obj.getType();
 	}
 
 	public void visit(TermExpr termExpr) {
@@ -589,7 +676,8 @@ public class SemanticPass extends VisitorAdaptor {
 		if (s.getKind() != Struct.Class) {
 			report_error("Tip operatora new mora da bude klasa", factor);
 		}
-		factor.struct = s;
+		// factor.struct = s;
+		factor.obj = new Obj(Obj.Var, "", factor.getType().struct);
 	}
 
 	@Override
@@ -598,19 +686,23 @@ public class SemanticPass extends VisitorAdaptor {
 		if (factorBrackets.getExpr().struct != Tab.intType) {
 			report_error("Tip izraza unutar [] mora biti int", factorBrackets.getExpr());
 		}
-		factorBrackets.struct = new Struct(Struct.Array, s);
+		// factorBrackets.struct = new Struct(Struct.Array, s);
+		factorBrackets.obj = new Obj(Obj.Var, "", new Struct(Struct.Array, s));
 	}
 
 	public void visit(NumberConst cnst) {
-		cnst.struct = Tab.intType;
+		cnst.obj = new Obj(Obj.Con, "", Tab.intType);
+		cnst.obj.setAdr(cnst.getVal());
 	}
 
 	public void visit(BoolConst cnst) {
-		cnst.struct = Tab.find("bool").getType();
+		cnst.obj = new Obj(Obj.Con, "", Tab.find("bool").getType());
+		cnst.obj.setAdr(cnst.getVal());
 	}
 
 	public void visit(CharConst cnst) {
-		cnst.struct = Tab.charType;
+		cnst.obj = new Obj(Obj.Con, "", Tab.charType);
+		cnst.obj.setAdr(cnst.getVal());
 	}
 
 	public void visit(ConstantNumberConst cnst) {
@@ -629,12 +721,12 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(ExprFactor exprFactor) {
-		exprFactor.struct = exprFactor.getExpr().struct;
+		exprFactor.obj = new Obj(Obj.NO_VALUE, "", exprFactor.getExpr().struct);
+//		exprFactor.struct = exprFactor.getExpr().struct;
 	}
 
 	public void visit(Variable var) {
-		var.struct = var.getDesignator().obj.getType();
-
+		var.obj = var.getDesignator().obj;
 	}
 
 	public void visit(DesignatorForAssign deForAssign) {
