@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.CounterVisitor.FormParamCounter;
 import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
+import rs.ac.bg.etf.pp1.ast.ActualParamSingleItem;
 import rs.ac.bg.etf.pp1.ast.AddExpr;
 import rs.ac.bg.etf.pp1.ast.AddMinus;
 import rs.ac.bg.etf.pp1.ast.AddPlus;
@@ -11,11 +12,16 @@ import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
 import rs.ac.bg.etf.pp1.ast.DesignatorForAssign;
+import rs.ac.bg.etf.pp1.ast.DesignatorForMethodCall;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemDec;
+import rs.ac.bg.etf.pp1.ast.DesignatorItemFuncCallWithParam;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemInc;
 import rs.ac.bg.etf.pp1.ast.DotDesignator;
+import rs.ac.bg.etf.pp1.ast.MethodCall;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
+import rs.ac.bg.etf.pp1.ast.MethodNameDesignator;
 import rs.ac.bg.etf.pp1.ast.MethodTypeNameVoid;
+import rs.ac.bg.etf.pp1.ast.MethodTypeNameWithType;
 import rs.ac.bg.etf.pp1.ast.MulDiv;
 import rs.ac.bg.etf.pp1.ast.MulMod;
 import rs.ac.bg.etf.pp1.ast.MulMul;
@@ -26,6 +32,7 @@ import rs.ac.bg.etf.pp1.ast.NewFactor;
 import rs.ac.bg.etf.pp1.ast.NewFactorWithBrackets;
 import rs.ac.bg.etf.pp1.ast.NumberConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithoutNumConst;
+import rs.ac.bg.etf.pp1.ast.ReturnStatementWithExpresion;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithoutExpresion;
 import rs.ac.bg.etf.pp1.ast.SingleDesignator;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
@@ -40,6 +47,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	private int mainPc;
 	Logger log = Logger.getLogger(getClass());
 	private boolean forced = false;
+	private Obj lastClassObj;
+	private Obj thisObj;
 
 	public int getMainPc() {
 		return mainPc;
@@ -48,13 +57,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(PrintStatementWithoutNumConst printStmt) {
 		Code.loadConst(5);
 		Code.put(Code.print);
-//		if (printStmt.getExpr().struct == Tab.intType) {
-//			Code.loadConst(5);
-//			Code.put(Code.print);
-//		} else {
-//			Code.loadConst(1);
-//			Code.put(Code.bprint);
-//		}
 	}
 
 	public void visit(NumberConst cnst) {
@@ -74,16 +76,34 @@ public class CodeGenerator extends VisitorAdaptor {
 		// Collect arguments and local variables
 		SyntaxNode methodNode = methodTypeName.getParent();
 
-		VarCounter varCnt = new VarCounter();
-		methodNode.traverseTopDown(varCnt);
+		int varCnt = methodTypeName.obj.getLocalSymbols().size();
 
-		FormParamCounter fpCnt = new FormParamCounter();
-		methodNode.traverseTopDown(fpCnt);
+		int fpCnt = methodTypeName.obj.getLevel();
 
 		// Generate the entry
 		Code.put(Code.enter);
-		Code.put(fpCnt.getCount());
-		Code.put(fpCnt.getCount() + varCnt.getCount());
+		Code.put(fpCnt);
+		Code.put(varCnt);
+
+	}
+
+	public void visit(MethodTypeNameWithType methodTypeName) {
+
+		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
+			mainPc = Code.pc;
+		}
+		methodTypeName.obj.setAdr(Code.pc);
+		// Collect arguments and local variables
+		SyntaxNode methodNode = methodTypeName.getParent();
+
+		int varCnt = methodTypeName.obj.getLocalSymbols().size();
+
+		int fpCnt = methodTypeName.obj.getLevel();
+
+		// Generate the entry
+		Code.put(Code.enter);
+		Code.put(fpCnt);
+		Code.put(varCnt);
 
 	}
 
@@ -134,6 +154,15 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(SingleDesignator singleDesignator) {
+		if (singleDesignator.obj.getKind() == Obj.Fld) {
+			Code.put(Code.load_n + 0);
+		}
+		if (singleDesignator.getParent() instanceof MethodNameDesignator) {
+			return;
+		}
+		if (singleDesignator.getParent() instanceof DesignatorForMethodCall) {
+			return;
+		}
 		if ((singleDesignator.getParent() instanceof DesignatorItemInc
 				|| singleDesignator.getParent() instanceof DesignatorItemDec) && !forced) {
 			return;
@@ -145,6 +174,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(DotDesignator dotDesignator) {
+		if (dotDesignator.getParent() instanceof MethodNameDesignator) {
+			return;
+		}
+		if (dotDesignator.getParent() instanceof DesignatorForMethodCall) {
+			return;
+		}
 		if ((dotDesignator.getParent() instanceof DesignatorItemInc
 				|| dotDesignator.getParent() instanceof DesignatorItemDec) && !forced) {
 			return;
@@ -156,6 +191,13 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(ArrayDesignator arrayDesignator) {
+//		ovo verovatno nikad ne moze da se desi
+//		if (arrayDesignator.getParent() instanceof MethodNameDesignator) {
+//			return;
+//		}
+//		if (arrayDesignator.getParent() instanceof DesignatorForMethodCall) {
+//			return;
+//		}
 		if ((arrayDesignator.getParent() instanceof DesignatorItemInc
 				|| arrayDesignator.getParent() instanceof DesignatorItemDec) && !forced) {
 			return;
@@ -187,32 +229,38 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.newarray);
 		Code.put(1);
 	}
-//	public void visit(FuncCall funcCall) {
-//		Obj functionObj = funcCall.getDesignator().obj;
-//		int offset = functionObj.getAdr() - Code.pc;
-//		Code.put(Code.call);
-//
-//		Code.put2(offset);
-//	}
-//
-//	public void visit(ProcCall procCall) {
-//		Obj functionObj = procCall.getDesignator().obj;
-//		int offset = functionObj.getAdr() - Code.pc;
-//		Code.put(Code.call);
-//		Code.put2(offset);
-//		if (procCall.getDesignator().obj.getType() != Tab.noType) {
-//)		Code.put(Code.pop);
-//		}
-//	}
 
-//	public void visit(ReturnExpr returnExpr) {
-//		Code.put(Code.exit);
-//		Code.put(Code.return_);
-//	}
+	public void visit(MethodCall methodCall) {
+		Obj functionObj = methodCall.getDesignatorForMethodCall().obj;
+		int offset = functionObj.getAdr() - Code.pc;
+		Code.put(Code.call);
+		Code.put2(offset);
+//		if (functionObj.getType() != Tab.noType) {
+//			Code.put(Code.pop);
+//		}
+	}
+
+	public void visit(DesignatorItemFuncCallWithParam diFunCall) {
+		thisObj = lastClassObj;
+		Obj functionObj = diFunCall.getMethodNameDesignator().obj;
+		int offset = functionObj.getAdr() - Code.pc;
+		Code.put(Code.call);
+		Code.put2(offset);
+		if (functionObj.getType() != Tab.noType) {
+			Code.put(Code.pop);
+		}
+	}
+
+	public void visit(ReturnStatementWithExpresion returnExpr) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+		thisObj = null;
+	}
 
 	public void visit(ReturnStatementWithoutExpresion returnNoExpr) {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
+		thisObj = null;
 	}
 
 	@Override

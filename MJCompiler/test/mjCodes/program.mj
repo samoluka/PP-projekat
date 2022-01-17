@@ -1,28 +1,43 @@
 //Test 302
 
 program test302
-
-int global;
-
+class C{
+	int k;
+}
+class A{
+	C c;
+	{
+		int ff(int x){
+			c.k = x;
+			return x+1;
+		}
+	}
+}
 class B{
-	int x;
-	int y;
+	A a;
+	{
+		void f(int x)
+		{
+			a = new A;
+			a.c = new C;
+			a.ff(x);
+			x = a.ff(x);
+			print(a.c.k);
+			print(x);
+			return;
+		}
+	}
 }
 {	
+	
+
 	void main()
+	int x;
 	B b;
-	int y,a,c;
-	int x[];
 	{
-		global++;
-		x = new int[10];
-		x[0] = -global;
-		print(global);
-		print(x[0]);
-		global--;
-		x[0]--;
-		print(global);
-		print(x[0]);
+		b = new B;
+		b.f(4);
+		print(b.a.c.k);
 		return;
 	}
 }

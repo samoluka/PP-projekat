@@ -527,7 +527,12 @@ public class SemanticPass extends VisitorAdaptor {
 	@Override
 	public void visit(DotDesignator dotDesignator) {
 		dotDesignator.obj = Tab.noObj;
-		Collection<Obj> cObj = currClassInsideDesignator.getType().getMembers();
+		Collection<Obj> cObj = null;
+		if (currClassInsideDesignator.getName().equals("this")) {
+			cObj = Tab.currentScope().getOuter().getLocals().symbols();
+		} else {
+			cObj = currClassInsideDesignator.getType().getMembers();
+		}
 		for (Obj o : cObj) {
 			if (o.getName().equals(dotDesignator.getName())) {
 				dotDesignator.obj = o;
@@ -591,6 +596,7 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(DesignatorForMethodCall dsForMethodCall) {
+		dsForMethodCall.obj = dsForMethodCall.getDesignator().obj;
 		methodCalledStack.push(dsForMethodCall.getDesignator().obj);
 		// currentMethodParamNumStack.push(foundClassMethodCall ? -1 : 0);
 		currentMethodParamNumStack.push(0);
@@ -599,6 +605,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	@Override
 	public void visit(MethodNameDesignator methodNameDesignator) {
+		methodNameDesignator.obj = methodNameDesignator.getDesignator().obj;
 		methodCalledStack.push(methodNameDesignator.getDesignator().obj);
 		// currentMethodParamNumStack.push(foundClassMethodCall ? -1 : 0);
 		currentMethodParamNumStack.push(0);
