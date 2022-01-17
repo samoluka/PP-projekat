@@ -436,19 +436,29 @@ ActualParamSingleItem ::= (ActualParamSingleItem) Expr:E1 {: RESULT=new ActualPa
 
 DesignatorForMethodCall ::= (DesignatorForMethodCall) Designator:D1 {: RESULT=new DesignatorForMethodCall(D1); RESULT.setLine(D1left); :};
 		
-Designator ::= (MultiDesignator) IDENT:name DesignatorMultiList:D1 {: RESULT=new MultiDesignator(name, D1); RESULT.setLine(nameleft); :}
+		
+Designator ::= (SingleDesignator) IDENT:name {: RESULT=new SingleDesignator(name); RESULT.setLine(nameleft); :}
 			|
-			(SingleDesignator) IDENT:name {: RESULT=new SingleDesignator(name); RESULT.setLine(nameleft); :}
+			(DotDesignator) Designator:D1 DOT IDENT:name {: RESULT=new DotDesignator(D1, name); RESULT.setLine(D1left); :}
+			| 
+			(ArrayDesignator)Designator:D1 LBRACKET Expr:E2 RBRACKET {: RESULT=new ArrayDesignator(D1, E2); RESULT.setLine(D1left); :}
 			;
-DesignatorMultiList ::= (MultiDesign) DesignatorMultiList:D1 DesignatorMulti:D2 {: RESULT=new MultiDesign(D1, D2); RESULT.setLine(D1left); :}
+			
+/*
+Designator ::= (MultiDesignator) IDENT:name DesignatorMultiList
+			|
+			(SingleDesignator) IDENT:name
+			;
+DesignatorMultiList ::= (MultiDesign) DesignatorMultiList DesignatorMulti
 					|
-					(SingleDesign) DesignatorMulti:D1 {: RESULT=new SingleDesign(D1); RESULT.setLine(D1left); :}
+					(SingleDesign) DesignatorMulti
 					;
-DesignatorMulti ::= (DotDesignator) DOT IDENT:I1 {: RESULT=new DotDesignator(I1); RESULT.setLine(I1left); :}
+DesignatorMulti ::= (DotDesignator) DOT IDENT
 				|
-				(ParenDesignator) LBRACKET Expr:E1 RBRACKET {: RESULT=new ParenDesignator(E1); RESULT.setLine(E1left); :}
+				(ParenDesignator) LBRACKET Expr RBRACKET
 				;
 
+*/
 /*
 Relop = ʺ==ʺ | ʺ!=ʺ | ʺ>ʺ | ʺ>=ʺ | ʺ<ʺ | ʺ<=ʺ.
 Addop = ʺ+ʺ | ʺ�?ʺ.

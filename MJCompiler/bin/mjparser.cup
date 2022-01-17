@@ -404,6 +404,15 @@ ActualParamSingleItem ::= (ActualParamSingleItem) Expr;
 
 DesignatorForMethodCall ::= (DesignatorForMethodCall) Designator;
 		
+		
+Designator ::= (SingleDesignator) IDENT:name
+			|
+			(DotDesignator) Designator DOT IDENT:name
+			| 
+			(ArrayDesignator)Designator LBRACKET Expr RBRACKET
+			;
+			
+/*
 Designator ::= (MultiDesignator) IDENT:name DesignatorMultiList
 			|
 			(SingleDesignator) IDENT:name
@@ -417,6 +426,7 @@ DesignatorMulti ::= (DotDesignator) DOT IDENT
 				(ParenDesignator) LBRACKET Expr RBRACKET
 				;
 
+*/
 /*
 Relop = ʺ==ʺ | ʺ!=ʺ | ʺ>ʺ | ʺ>=ʺ | ʺ<ʺ | ʺ<=ʺ.
 Addop = ʺ+ʺ | ʺ‐ʺ.

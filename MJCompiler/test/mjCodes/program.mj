@@ -3,30 +3,42 @@
 program test302
 
 class A{
-	int x;
-	int y;
+	int k;
+	int j;
 }
 
 class B{
-	A a;
+	A nizA[];
 }
 {
 
 	
 	void main()
 	int x;
+	int nizX[];
 	A a;
 	B b;
 	{
-		//x = 1;
 		b = new B;
-		b.a = new A;
-		b.a.x = 3;
-		//b = new A;
-		//print(x[1]);
-		//x = a.y;
-		//print(a.x);
-		//print(b);
+		b.nizA = new A[10];
+		b.nizA[1] = new A;
+		b.nizA[1].k = 112;
+		b.nizA[1].j = 113;
+		b.nizA[2] = new A;
+		b.nizA[2].k = 12;
+		b.nizA[2].j = 13;
+		print(b.nizA[1].k);
+		print(b.nizA[1].j);
+		print(b.nizA[2].k);
+		print(b.nizA[2].j);
+		
+		
+		nizX = new int[100];
+		nizX[2] = 10;
+		x = nizX[2];
+		print(x);
+		print(nizX[33]);
+		
 		return;
 	}
 }

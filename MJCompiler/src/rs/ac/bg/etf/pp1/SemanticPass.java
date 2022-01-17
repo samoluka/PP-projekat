@@ -44,6 +44,7 @@ public class SemanticPass extends VisitorAdaptor {
 	private boolean foundClassMethodCall = false;
 	private Obj currClass = null;
 	private boolean constructorFound = false;
+	private Obj currClassInsideDesignator = null;
 
 	public SemanticPass() {
 		super();
@@ -177,7 +178,7 @@ public class SemanticPass extends VisitorAdaptor {
 				continue;
 			}
 			report_info("Deklarisano polje klase: niz " + var.getName(), VarListClassNonEmpty);
-			Tab.insert(Obj.Var, var.getName(), var.struct);
+			Tab.insert(Obj.Fld, var.getName(), var.struct);
 		}
 		currDeclVarArray.clear();
 		currDeclVar.clear();
@@ -312,192 +313,192 @@ public class SemanticPass extends VisitorAdaptor {
 		currDeclVar.clear();
 	}
 
-	@Override
-	public void visit(ParenDesignator parenDesignator) {
-		if (parenDesignator.getExpr().struct != Tab.intType) {
-			report_error("Izraz za dohvatanje elemnta niza mora da bude tipa int ", parenDesignator);
-		}
-		designatorQueue.add(parenDesignator);
-	}
-
-	@Override
-	public void visit(DotDesignator dotDesignator) {
-		designatorQueue.add(dotDesignator);
-	}
-
-	@Override
-	public void visit(MultiDesignator multiDesignator) {
-		multiDesignator.obj = Tab.find(multiDesignator.getName());
-	}
-
-	@Override
-	public void visit(MultiDesign multiDesign) {
-		Obj obj = Tab.find(((MultiDesignator) multiDesign.getParent()).getName());
-		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
-				&& obj.getLevel() != obj.getLocalSymbols().size()) {
-			Collection<Obj> cObj = extendClassType.struct.getMembers();
-			for (Obj o : cObj) {
-				if (o.getName().equals(((MultiDesignator) multiDesign.getParent()).getName())) {
-					obj = o;
-					break;
-				}
-			}
-		}
-		if (obj == Tab.noObj) {
-			report_error("Greska na liniji " + multiDesign.getLine() + " : ime "
-					+ ((MultiDesignator) multiDesign.getParent()).getName() + " nije deklarisano! ", null);
-		}
-		multiDesign.obj = obj;
-		if (!designatorQueue.isEmpty()) {
-			Struct currStruct = Tab.noType;
-			while (!designatorQueue.isEmpty()) {
-				DesignatorMulti top = designatorQueue.poll();
-				if (top instanceof ParenDesignator) {
-					if (obj.getType().getKind() != Struct.Array) {
-						report_error("Element: " + obj.getName() + " nije tipa niz", top);
-						currStruct = Tab.noType;
-					} else {
-						currStruct = obj.getType().getElemType();
-					}
-					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
-				} else {
-					DotDesignator dTop = (DotDesignator) top;
-					Collection<Obj> cObj;
-					if (obj.getType().getKind() == Struct.Array) {
-						if (currStruct.getKind() != Struct.Class) {
-							report_error("Mora da bude []", dTop);
-						}
-						cObj = obj.getType().getElemType().getMembers();
-					} else {
-						if (obj.getName().equals("this")) {
-							cObj = Tab.currentScope().getOuter().getLocals().symbols();
-						} else {
-							cObj = obj.getType().getMembers();
-						}
-					}
-					boolean found = false;
-					for (Obj o : cObj) {
-						if (o.getName().equals(dTop.getI1())) {
-							found = true;
-							Obj lastObj = obj;
-							obj = o;
-							currStruct = o.getType();
-							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
-									&& lastObj.getType().getElemType() != null
-									&& obj.getLevel() != obj.getLocalSymbols().size()) {
-								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
-								for (Obj oo : ccObj) {
-									if (oo.getName().equals(o.getName())) {
-										obj = oo;
-										currStruct = oo.getType();
-										break;
-									}
-								}
-							}
-							if (o.getKind() == Obj.Meth) {
-								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
-								foundClassMethodCall = true;
-							}
-							break;
-						}
-					}
-					if (!found) {
-						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-						break;
-					}
-				}
-			}
-			multiDesign.obj = obj;
-		}
-		designatorQueue.clear();
-	}
-
-	@Override
-	public void visit(SingleDesign singleDesign) {
-		Obj obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
-//		if (singleDesign.getParent() instanceof MultiDesignator) {
-//			obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
-//		}else {
-//			obj = 
+//	@Override
+//	public void visit(ParenDesignator parenDesignator) {
+//		if (parenDesignator.getExpr().struct != Tab.intType) {
+//			report_error("Izraz za dohvatanje elemnta niza mora da bude tipa int ", parenDesignator);
 //		}
-		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
-				&& obj.getLevel() != obj.getLocalSymbols().size()) {
-			Collection<Obj> cObj = extendClassType.struct.getMembers();
-			for (Obj o : cObj) {
-				if (o.getName().equals(((MultiDesignator) singleDesign.getParent()).getName())) {
-					obj = o;
-					break;
-				}
-			}
-		}
-		if (obj == Tab.noObj) {
-			report_error("Greska na liniji " + singleDesign.getLine() + " : ime "
-					+ ((MultiDesignator) singleDesign.getParent()).getName() + " nije deklarisano! ", null);
-		}
-		singleDesign.obj = obj;
-		if (!designatorQueue.isEmpty()) {
-			Struct currStruct = Tab.noType;
-			while (!designatorQueue.isEmpty()) {
-				DesignatorMulti top = designatorQueue.poll();
-				if (top instanceof ParenDesignator) {
-					if (obj.getType().getKind() != Struct.Array) {
-						report_error("Element: " + obj.getName() + " nije tipa niz", top);
-						currStruct = Tab.noType;
-					} else {
-						currStruct = obj.getType().getElemType();
-					}
-					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
-				} else {
-					DotDesignator dTop = (DotDesignator) top;
-					Collection<Obj> cObj;
-					if (obj.getType().getKind() == Struct.Array) {
-						if (currStruct.getKind() != Struct.Class) {
-							report_error("Mora da bude []", dTop);
-						}
-						cObj = obj.getType().getElemType().getMembers();
-					} else {
-						if (obj.getName().equals("this")) {
-							cObj = Tab.currentScope().getOuter().getLocals().symbols();
-						} else {
-							cObj = obj.getType().getMembers();
-						}
-					}
-					boolean found = false;
-					for (Obj o : cObj) {
-						if (o.getName().equals(dTop.getI1())) {
-							found = true;
-							Obj lastObj = obj;
-							obj = o;
-							currStruct = o.getType();
-							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
-									&& lastObj.getType().getElemType() != null
-									&& obj.getLevel() != obj.getLocalSymbols().size()) {
-								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
-								for (Obj oo : ccObj) {
-									if (oo.getName().equals(o.getName())) {
-										obj = oo;
-										currStruct = oo.getType();
-										break;
-									}
-								}
-							}
-							if (o.getKind() == Obj.Meth) {
-								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
-								foundClassMethodCall = true;
-							}
-							break;
-						}
-					}
-					if (!found) {
-						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-						break;
-					}
-				}
-			}
-			singleDesign.obj = obj;
-		}
-		designatorQueue.clear();
-	}
+//		designatorQueue.add(parenDesignator);
+//	}
+
+//	@Override
+//	public void visit(DotDesignator dotDesignator) {
+//		designatorQueue.add(dotDesignator);
+//	}
+
+//	@Override
+//	public void visit(MultiDesignator multiDesignator) {
+//		multiDesignator.obj = Tab.find(multiDesignator.getName());
+//	}
+
+//	@Override
+//	public void visit(MultiDesign multiDesign) {
+//		Obj obj = Tab.find(((MultiDesignator) multiDesign.getParent()).getName());
+//		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
+//				&& obj.getLevel() != obj.getLocalSymbols().size()) {
+//			Collection<Obj> cObj = extendClassType.struct.getMembers();
+//			for (Obj o : cObj) {
+//				if (o.getName().equals(((MultiDesignator) multiDesign.getParent()).getName())) {
+//					obj = o;
+//					break;
+//				}
+//			}
+//		}
+//		if (obj == Tab.noObj) {
+//			report_error("Greska na liniji " + multiDesign.getLine() + " : ime "
+//					+ ((MultiDesignator) multiDesign.getParent()).getName() + " nije deklarisano! ", null);
+//		}
+//		multiDesign.obj = obj;
+//		if (!designatorQueue.isEmpty()) {
+//			Struct currStruct = Tab.noType;
+//			while (!designatorQueue.isEmpty()) {
+//				DesignatorMulti top = designatorQueue.poll();
+//				if (top instanceof ParenDesignator) {
+//					if (obj.getType().getKind() != Struct.Array) {
+//						report_error("Element: " + obj.getName() + " nije tipa niz", top);
+//						currStruct = Tab.noType;
+//					} else {
+//						currStruct = obj.getType().getElemType();
+//					}
+//					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
+//				} else {
+//					DotDesignator dTop = (DotDesignator) top;
+//					Collection<Obj> cObj;
+//					if (obj.getType().getKind() == Struct.Array) {
+//						if (currStruct.getKind() != Struct.Class) {
+//							report_error("Mora da bude []", dTop);
+//						}
+//						cObj = obj.getType().getElemType().getMembers();
+//					} else {
+//						if (obj.getName().equals("this")) {
+//							cObj = Tab.currentScope().getOuter().getLocals().symbols();
+//						} else {
+//							cObj = obj.getType().getMembers();
+//						}
+//					}
+//					boolean found = false;
+//					for (Obj o : cObj) {
+//						if (o.getName().equals(dTop.getI1())) {
+//							found = true;
+//							Obj lastObj = obj;
+//							obj = o;
+//							currStruct = o.getType();
+//							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
+//									&& lastObj.getType().getElemType() != null
+//									&& obj.getLevel() != obj.getLocalSymbols().size()) {
+//								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
+//								for (Obj oo : ccObj) {
+//									if (oo.getName().equals(o.getName())) {
+//										obj = oo;
+//										currStruct = oo.getType();
+//										break;
+//									}
+//								}
+//							}
+//							if (o.getKind() == Obj.Meth) {
+//								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
+//								foundClassMethodCall = true;
+//							}
+//							break;
+//						}
+//					}
+//					if (!found) {
+//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+//						break;
+//					}
+//				}
+//			}
+//			multiDesign.obj = obj;
+//		}
+//		designatorQueue.clear();
+//	}
+//
+//	@Override
+//	public void visit(SingleDesign singleDesign) {
+//		Obj obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
+////		if (singleDesign.getParent() instanceof MultiDesignator) {
+////			obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
+////		}else {
+////			obj = 
+////		}
+//		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
+//				&& obj.getLevel() != obj.getLocalSymbols().size()) {
+//			Collection<Obj> cObj = extendClassType.struct.getMembers();
+//			for (Obj o : cObj) {
+//				if (o.getName().equals(((MultiDesignator) singleDesign.getParent()).getName())) {
+//					obj = o;
+//					break;
+//				}
+//			}
+//		}
+//		if (obj == Tab.noObj) {
+//			report_error("Greska na liniji " + singleDesign.getLine() + " : ime "
+//					+ ((MultiDesignator) singleDesign.getParent()).getName() + " nije deklarisano! ", null);
+//		}
+//		singleDesign.obj = obj;
+//		if (!designatorQueue.isEmpty()) {
+//			Struct currStruct = Tab.noType;
+//			while (!designatorQueue.isEmpty()) {
+//				DesignatorMulti top = designatorQueue.poll();
+//				if (top instanceof ParenDesignator) {
+//					if (obj.getType().getKind() != Struct.Array) {
+//						report_error("Element: " + obj.getName() + " nije tipa niz", top);
+//						currStruct = Tab.noType;
+//					} else {
+//						currStruct = obj.getType().getElemType();
+//					}
+//					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
+//				} else {
+//					DotDesignator dTop = (DotDesignator) top;
+//					Collection<Obj> cObj;
+//					if (obj.getType().getKind() == Struct.Array) {
+//						if (currStruct.getKind() != Struct.Class) {
+//							report_error("Mora da bude []", dTop);
+//						}
+//						cObj = obj.getType().getElemType().getMembers();
+//					} else {
+//						if (obj.getName().equals("this")) {
+//							cObj = Tab.currentScope().getOuter().getLocals().symbols();
+//						} else {
+//							cObj = obj.getType().getMembers();
+//						}
+//					}
+//					boolean found = false;
+//					for (Obj o : cObj) {
+//						if (o.getName().equals(dTop.getI1())) {
+//							found = true;
+//							Obj lastObj = obj;
+//							obj = o;
+//							currStruct = o.getType();
+//							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
+//									&& lastObj.getType().getElemType() != null
+//									&& obj.getLevel() != obj.getLocalSymbols().size()) {
+//								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
+//								for (Obj oo : ccObj) {
+//									if (oo.getName().equals(o.getName())) {
+//										obj = oo;
+//										currStruct = oo.getType();
+//										break;
+//									}
+//								}
+//							}
+//							if (o.getKind() == Obj.Meth) {
+//								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
+//								foundClassMethodCall = true;
+//							}
+//							break;
+//						}
+//					}
+//					if (!found) {
+//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
+//						break;
+//					}
+//				}
+//			}
+//			singleDesign.obj = obj;
+//		}
+//		designatorQueue.clear();
+//	}
 
 	@Override
 	public void visit(SingleDesignator singleDesignator) {
@@ -516,16 +517,67 @@ public class SemanticPass extends VisitorAdaptor {
 			report_error("Greska na liniji " + singleDesignator.getLine() + " : ime " + singleDesignator.getName()
 					+ " nije deklarisano! ", null);
 		}
+		if (obj.getType().getKind() == Struct.Class)
+			currClassInsideDesignator = obj;
+//		else
+//			currClassInsideDesignator = null;
+		if (!(singleDesignator.getParent() instanceof Designator))
+			currClassInsideDesignator = null;
 		singleDesignator.obj = obj;
+	}
+
+	@Override
+	public void visit(DotDesignator dotDesignator) {
+		dotDesignator.obj = Tab.noObj;
+		Collection<Obj> cObj = currClassInsideDesignator.getType().getMembers();
+		for (Obj o : cObj) {
+			if (o.getName().equals(dotDesignator.getName())) {
+				dotDesignator.obj = o;
+				if (dotDesignator.obj.getType().getKind() == Struct.Class)
+					currClassInsideDesignator = o;
+//				else
+//					currClassInsideDesignator = null;
+				if (!(dotDesignator.getParent() instanceof Designator))
+					currClassInsideDesignator = null;
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void visit(ArrayDesignator arrayDesignator) {
+		arrayDesignator.obj = Tab.noObj;
+		String name = "";
+		if (arrayDesignator.getDesignator() instanceof DotDesignator) {
+			name = ((DotDesignator) arrayDesignator.getDesignator()).getName();
+		} else {
+			name = ((SingleDesignator) arrayDesignator.getDesignator()).getName();
+		}
+		if (currClassInsideDesignator != null) {
+			Collection<Obj> cObj = currClassInsideDesignator.getType().getMembers();
+			for (Obj o : cObj) {
+				if (o.getName().equals(name)) {
+					arrayDesignator.obj = new Obj(o.getType().getElemType().getKind(), "", o.getType().getElemType());
+					break;
+				}
+			}
+		} else {
+			arrayDesignator.obj = Tab.find(name);
+			arrayDesignator.obj = new Obj(arrayDesignator.obj.getType().getElemType().getKind(), "",
+					arrayDesignator.obj.getType().getElemType());
+		}
+		if (arrayDesignator.obj.getType().getKind() == Struct.Class)
+			currClassInsideDesignator = arrayDesignator.obj;
+//		else
+//			currClassInsideDesignator = null;
+		if (!(arrayDesignator.getParent() instanceof Designator))
+			currClassInsideDesignator = null;
 	}
 
 	@Override
 	public void visit(DesignatorAssignmentStatement designatorAssignmentStatement) {
 		Designator leftDesign = designatorAssignmentStatement.getDesignatorForAssign().getDesignator();
 		Struct left = designatorAssignmentStatement.getDesignatorForAssign().struct;
-		if (leftDesign instanceof MultiDesignator) {
-			left = ((MultiDesignator) leftDesign).getDesignatorMultiList().obj.getType();
-		}
 		Struct right = designatorAssignmentStatement.getExpr().struct;
 		if (leftDesign != null && leftDesign.obj != null && leftDesign.obj.getKind() == Obj.Con) {
 			report_error("Leva strana operatora dodele ne sme da bude konsanta", designatorAssignmentStatement);
@@ -734,11 +786,12 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	public void visit(Variable var) {
-		if (var.getDesignator() instanceof MultiDesignator) {
-			var.obj = ((MultiDesignator) var.getDesignator()).getDesignatorMultiList().obj;
-		} else {
-			var.obj = var.getDesignator().obj;
-		}
+//		if (var.getDesignator() instanceof MultiDesignator) {
+//			var.obj = ((MultiDesignator) var.getDesignator()).getDesignatorMultiList().obj;
+//		} else {
+//			var.obj = var.getDesignator().obj;
+//		}
+		var.obj = var.getDesignator().obj;
 	}
 
 	public void visit(DesignatorForAssign deForAssign) {
