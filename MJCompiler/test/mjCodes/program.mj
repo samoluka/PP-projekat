@@ -2,43 +2,27 @@
 
 program test302
 
-class A{
-	int k;
-	int j;
-}
+int global;
 
 class B{
-	A nizA[];
-}
-{
-
-	
-	void main()
 	int x;
-	int nizX[];
-	A a;
+	int y;
+}
+{	
+	void main()
 	B b;
+	int y,a,c;
+	int x[];
 	{
-		b = new B;
-		b.nizA = new A[10];
-		b.nizA[1] = new A;
-		b.nizA[1].k = 112;
-		b.nizA[1].j = 113;
-		b.nizA[2] = new A;
-		b.nizA[2].k = 12;
-		b.nizA[2].j = 13;
-		print(b.nizA[1].k);
-		print(b.nizA[1].j);
-		print(b.nizA[2].k);
-		print(b.nizA[2].j);
-		
-		
-		nizX = new int[100];
-		nizX[2] = 10;
-		x = nizX[2];
-		print(x);
-		print(nizX[33]);
-		
+		global++;
+		x = new int[10];
+		x[0] = -global;
+		print(global);
+		print(x[0]);
+		global--;
+		x[0]--;
+		print(global);
+		print(x[0]);
 		return;
 	}
 }

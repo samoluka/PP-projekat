@@ -4,13 +4,24 @@ import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.CounterVisitor.FormParamCounter;
 import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
+import rs.ac.bg.etf.pp1.ast.AddExpr;
+import rs.ac.bg.etf.pp1.ast.AddMinus;
+import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
 import rs.ac.bg.etf.pp1.ast.DesignatorForAssign;
+import rs.ac.bg.etf.pp1.ast.DesignatorItemDec;
+import rs.ac.bg.etf.pp1.ast.DesignatorItemInc;
 import rs.ac.bg.etf.pp1.ast.DotDesignator;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodTypeNameVoid;
+import rs.ac.bg.etf.pp1.ast.MulDiv;
+import rs.ac.bg.etf.pp1.ast.MulMod;
+import rs.ac.bg.etf.pp1.ast.MulMul;
+import rs.ac.bg.etf.pp1.ast.Mulop;
+import rs.ac.bg.etf.pp1.ast.MulopTerm;
+import rs.ac.bg.etf.pp1.ast.NegativeTermExpr;
 import rs.ac.bg.etf.pp1.ast.NewFactor;
 import rs.ac.bg.etf.pp1.ast.NewFactorWithBrackets;
 import rs.ac.bg.etf.pp1.ast.NumberConst;
@@ -28,6 +39,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	private int mainPc;
 	Logger log = Logger.getLogger(getClass());
+	private boolean forced = false;
 
 	public int getMainPc() {
 		return mainPc;
@@ -81,13 +93,38 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 
 	@Override
+	public void visit(DesignatorItemInc desInc) {
+		Designator d = desInc.getDesignator();
+		forced = true;
+		d.traverseBottomUp(this);
+		forced = false;
+		Code.put(Code.const_1);
+		Code.put(Code.add);
+		if (d instanceof ArrayDesignator) {
+			Code.put(Code.astore);
+		} else {
+			Code.store(d.obj);
+		}
+	}
+
+	@Override
+	public void visit(DesignatorItemDec desDec) {
+		Designator d = desDec.getDesignator();
+		forced = true;
+		d.traverseBottomUp(this);
+		forced = false;
+		Code.put(Code.const_1);
+		Code.put(Code.sub);
+		if (d instanceof ArrayDesignator) {
+			Code.put(Code.astore);
+		} else {
+			Code.store(d.obj);
+		}
+	}
+
+	@Override
 	public void visit(DesignatorAssignmentStatement designatorAssignmentStatement) {
 		Designator d = designatorAssignmentStatement.getDesignatorForAssign().getDesignator();
-//		if (d.obj.getType().getKind() == Struct.Array) {
-//			Code.put(Code.astore);
-//		} else {
-//			Code.store(d.obj);
-//		}
 		if (d instanceof ArrayDesignator) {
 			Code.put(Code.astore);
 		} else {
@@ -97,6 +134,10 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(SingleDesignator singleDesignator) {
+		if ((singleDesignator.getParent() instanceof DesignatorItemInc
+				|| singleDesignator.getParent() instanceof DesignatorItemDec) && !forced) {
+			return;
+		}
 		if (!(singleDesignator.getParent() instanceof DesignatorForAssign)) {
 			Code.load(singleDesignator.obj);
 		}
@@ -104,6 +145,10 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(DotDesignator dotDesignator) {
+		if ((dotDesignator.getParent() instanceof DesignatorItemInc
+				|| dotDesignator.getParent() instanceof DesignatorItemDec) && !forced) {
+			return;
+		}
 		if (!(dotDesignator.getParent() instanceof DesignatorForAssign)) {
 			Code.load(dotDesignator.obj);
 		}
@@ -111,6 +156,10 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(ArrayDesignator arrayDesignator) {
+		if ((arrayDesignator.getParent() instanceof DesignatorItemInc
+				|| arrayDesignator.getParent() instanceof DesignatorItemDec) && !forced) {
+			return;
+		}
 		if (!(arrayDesignator.getParent() instanceof DesignatorForAssign)) {
 			Code.put(Code.aload);
 		}
@@ -127,10 +176,10 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		Code.put(Code.new_);
 		Code.put2((nFactor.obj.getType().getNumberOfFields() + 1) * 4);
-//		Code.put(Code.dup);
-//		Code.loadConst(vTableAddress); // v_table value
-//		Code.put(Code.putfield);
-//		Code.put2(0);
+		// Code.put(Code.dup);
+		// Code.loadConst(vTableAddress); // v_table value
+		// Code.put(Code.putfield);
+		// Code.put2(0);
 	}
 
 	@Override
@@ -152,7 +201,7 @@ public class CodeGenerator extends VisitorAdaptor {
 //		Code.put(Code.call);
 //		Code.put2(offset);
 //		if (procCall.getDesignator().obj.getType() != Tab.noType) {
-//			Code.put(Code.pop);
+//)		Code.put(Code.pop);
 //		}
 //	}
 
@@ -166,7 +215,28 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.return_);
 	}
 
-//	public void visit(AddExpr addExpr) {
-//		Code.put(Code.add);
-//	}
+	@Override
+	public void visit(NegativeTermExpr negativeTermExpr) {
+		Code.loadConst(-1);
+		Code.put(Code.mul);
+	}
+
+	@Override
+	public void visit(AddExpr exprOperand) {
+		if (exprOperand.getAddop() instanceof AddPlus)
+			Code.put(Code.add);
+		else
+			Code.put(Code.sub);
+	}
+
+	@Override
+	public void visit(MulopTerm exprOperand) {
+		if (exprOperand.getMulop() instanceof MulMul)
+			Code.put(Code.mul);
+		if (exprOperand.getMulop() instanceof MulDiv)
+			Code.put(Code.div);
+		if (exprOperand.getMulop() instanceof MulMod)
+			Code.put(Code.rem);
+	}
+
 }

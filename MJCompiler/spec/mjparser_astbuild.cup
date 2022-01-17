@@ -455,7 +455,7 @@ DesignatorMultiList ::= (MultiDesign) DesignatorMultiList DesignatorMulti
 					;
 DesignatorMulti ::= (DotDesignator) DOT IDENT
 				|
-				(ParenDesignator) LBRACKET Expr RBRACKET
+				(ArrayDesignator) LBRACKET Expr RBRACKET
 				;
 
 */

@@ -519,8 +519,6 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 		if (obj.getType().getKind() == Struct.Class)
 			currClassInsideDesignator = obj;
-//		else
-//			currClassInsideDesignator = null;
 		if (!(singleDesignator.getParent() instanceof Designator))
 			currClassInsideDesignator = null;
 		singleDesignator.obj = obj;
@@ -535,8 +533,6 @@ public class SemanticPass extends VisitorAdaptor {
 				dotDesignator.obj = o;
 				if (dotDesignator.obj.getType().getKind() == Struct.Class)
 					currClassInsideDesignator = o;
-//				else
-//					currClassInsideDesignator = null;
 				if (!(dotDesignator.getParent() instanceof Designator))
 					currClassInsideDesignator = null;
 				break;
@@ -568,8 +564,6 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 		if (arrayDesignator.obj.getType().getKind() == Struct.Class)
 			currClassInsideDesignator = arrayDesignator.obj;
-//		else
-//			currClassInsideDesignator = null;
 		if (!(arrayDesignator.getParent() instanceof Designator))
 			currClassInsideDesignator = null;
 	}
