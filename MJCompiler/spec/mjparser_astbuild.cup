@@ -78,10 +78,9 @@ nonterminal MethodDeclList MethodDeclList;
 nonterminal MethodDeclItem MethodDeclItem;
 nonterminal MethodDeclListNonEmpty MethodDeclListNonEmpty;
 nonterminal StatementList StatementList;
-nonterminal StatementLabel StatementLabel;
-nonterminal Label Label;
 nonterminal SingleStatement SingleStatement;
 nonterminal Statement Statement;
+nonterminal StatementLabel StatementLabel;
 nonterminal ElseStatement ElseStatement;
 nonterminal DesignatorStatement DesignatorStatement;
 nonterminal DesignatorItem DesignatorItem;
@@ -101,7 +100,7 @@ nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, VarDeclDefinition, DesignatorForAssign;
 
 

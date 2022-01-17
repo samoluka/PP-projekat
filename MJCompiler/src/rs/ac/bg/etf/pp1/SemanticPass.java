@@ -1,23 +1,80 @@
 package rs.ac.bg.etf.pp1;
 
+import java.awt.Component;
+import java.awt.Label;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
-import java.util.Vector;
-
-import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardDownRightHandler;
-import javax.swing.text.html.parser.DTD;
 
 import org.apache.log4j.Logger;
 
-import rs.ac.bg.etf.pp1.ast.*;
-import rs.etf.pp1.symboltable.*;
-import rs.etf.pp1.symboltable.concepts.*;
+import rs.ac.bg.etf.pp1.ast.ActualParamSingleItem;
+import rs.ac.bg.etf.pp1.ast.AddExpr;
+import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
+import rs.ac.bg.etf.pp1.ast.AssignmentDeclaration;
+import rs.ac.bg.etf.pp1.ast.BoolConst;
+import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.ClassConstructorDeclaration;
-import rs.ac.bg.etf.pp1.ast.ConstructorDecl;
+import rs.ac.bg.etf.pp1.ast.ClassDeclarations;
+import rs.ac.bg.etf.pp1.ast.ClassDeclarationsExtends;
+import rs.ac.bg.etf.pp1.ast.ClassName;
+import rs.ac.bg.etf.pp1.ast.ConstantBoolConst;
+import rs.ac.bg.etf.pp1.ast.ConstantCharConst;
+import rs.ac.bg.etf.pp1.ast.ConstantNumberConst;
+import rs.ac.bg.etf.pp1.ast.ConstructorHeader;
+import rs.ac.bg.etf.pp1.ast.Definition;
+import rs.ac.bg.etf.pp1.ast.DefinitionArray;
+import rs.ac.bg.etf.pp1.ast.Designator;
+import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
+import rs.ac.bg.etf.pp1.ast.DesignatorForAssign;
+import rs.ac.bg.etf.pp1.ast.DesignatorForMethodCall;
+import rs.ac.bg.etf.pp1.ast.DesignatorItemDec;
+import rs.ac.bg.etf.pp1.ast.DesignatorItemFuncCallWithParam;
+import rs.ac.bg.etf.pp1.ast.DesignatorItemInc;
+import rs.ac.bg.etf.pp1.ast.DesignatorMulti;
+import rs.ac.bg.etf.pp1.ast.DotDesignator;
+import rs.ac.bg.etf.pp1.ast.Expr;
+import rs.ac.bg.etf.pp1.ast.ExprFactor;
+import rs.ac.bg.etf.pp1.ast.FormalParametherListItem;
+import rs.ac.bg.etf.pp1.ast.FormalParamsList;
+import rs.ac.bg.etf.pp1.ast.GotoStatement;
+import rs.ac.bg.etf.pp1.ast.MethodCall;
+import rs.ac.bg.etf.pp1.ast.MethodDeclaration;
+import rs.ac.bg.etf.pp1.ast.MethodNameDesignator;
+import rs.ac.bg.etf.pp1.ast.MethodTypeNameVoid;
+import rs.ac.bg.etf.pp1.ast.MethodTypeNameWithType;
+import rs.ac.bg.etf.pp1.ast.MulopTerm;
+import rs.ac.bg.etf.pp1.ast.MultiCondFact;
+import rs.ac.bg.etf.pp1.ast.NegativeTermExpr;
+import rs.ac.bg.etf.pp1.ast.NewFactor;
+import rs.ac.bg.etf.pp1.ast.NewFactorWithBrackets;
+import rs.ac.bg.etf.pp1.ast.NoActualParam;
+import rs.ac.bg.etf.pp1.ast.NumberConst;
+import rs.ac.bg.etf.pp1.ast.ProgName;
+import rs.ac.bg.etf.pp1.ast.Program;
+import rs.ac.bg.etf.pp1.ast.RecordDeclarations;
+import rs.ac.bg.etf.pp1.ast.RecordName;
+import rs.ac.bg.etf.pp1.ast.RelEqual;
+import rs.ac.bg.etf.pp1.ast.RelNEqual;
+import rs.ac.bg.etf.pp1.ast.Relop;
+import rs.ac.bg.etf.pp1.ast.ReturnStatementWithExpresion;
+import rs.ac.bg.etf.pp1.ast.SingleCondFact;
+import rs.ac.bg.etf.pp1.ast.SingleDesignator;
+import rs.ac.bg.etf.pp1.ast.SingleTerm;
+import rs.ac.bg.etf.pp1.ast.StatementLabel;
 import rs.ac.bg.etf.pp1.ast.SuperStatement;
+import rs.ac.bg.etf.pp1.ast.SyntaxNode;
+import rs.ac.bg.etf.pp1.ast.TermExpr;
+import rs.ac.bg.etf.pp1.ast.Type;
+import rs.ac.bg.etf.pp1.ast.VarDeclarations;
+import rs.ac.bg.etf.pp1.ast.VarListClassNonEmpty;
+import rs.ac.bg.etf.pp1.ast.Variable;
+import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class SemanticPass extends VisitorAdaptor {
 
@@ -45,6 +102,7 @@ public class SemanticPass extends VisitorAdaptor {
 	private Obj currClass = null;
 	private boolean constructorFound = false;
 	private Obj currClassInsideDesignator = null;
+	private List<GotoStatement> allGotoStatements = new LinkedList<>();
 
 	public SemanticPass() {
 		super();
@@ -872,22 +930,27 @@ public class SemanticPass extends VisitorAdaptor {
 	}
 
 	@Override
-	public void visit(StatementLabel statementLabel) {
-		if (allLabels.contains(statementLabel.getLabel().getName())) {
-			report_error("Labela sa nazivom: " + statementLabel.getLabel().getName() + " je vec definisana",
-					statementLabel);
-		} else {
-			allLabels.add(statementLabel.getLabel().getName());
-			report_info("Pronadjena definicija lebele sa nazivom: " + statementLabel.getLabel().getName(),
-					statementLabel);
+	public void visit(rs.ac.bg.etf.pp1.ast.Label label) {
+		if (label.getParent() instanceof StatementLabel) {
+			if (allLabels.contains(label.getName())) {
+				report_error("Labela sa nazivom: " + label.getName() + " je vec definisana", label);
+			} else {
+				label.obj = Tab.insert(Obj.Elem, label.getName(), Tab.noType);
+				allLabels.add(label.getName());
+				for (GotoStatement g : allGotoStatements) {
+					if (g.getLabel().getName().equals(label.getName())) {
+						g.getLabel().obj = label.obj;
+					}
+				}
+				report_info("Pronadjena definicija lebele sa nazivom: " + label.getName(), label);
+			}
 		}
 	}
 
 	@Override
 	public void visit(GotoStatement gotoStatement) {
-//		if (!allLabels.contains(gotoStatement.getLabel().getName())) {
-//			report_error("Ne postoji labela sa nazivom: " + gotoStatement.getLabel().getName(), gotoStatement);
-//		}
+		gotoStatement.getLabel().obj = Tab.find(gotoStatement.getLabel().getName());
+		allGotoStatements.add(gotoStatement);
 	}
 
 	@Override

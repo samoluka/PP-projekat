@@ -1,12 +1,12 @@
 package rs.ac.bg.etf.pp1;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
-import rs.ac.bg.etf.pp1.CounterVisitor.FormParamCounter;
-import rs.ac.bg.etf.pp1.CounterVisitor.VarCounter;
-import rs.ac.bg.etf.pp1.ast.ActualParamSingleItem;
 import rs.ac.bg.etf.pp1.ast.AddExpr;
-import rs.ac.bg.etf.pp1.ast.AddMinus;
 import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.Designator;
@@ -17,6 +17,8 @@ import rs.ac.bg.etf.pp1.ast.DesignatorItemDec;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemFuncCallWithParam;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemInc;
 import rs.ac.bg.etf.pp1.ast.DotDesignator;
+import rs.ac.bg.etf.pp1.ast.GotoStatement;
+import rs.ac.bg.etf.pp1.ast.Label;
 import rs.ac.bg.etf.pp1.ast.MethodCall;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodNameDesignator;
@@ -25,7 +27,6 @@ import rs.ac.bg.etf.pp1.ast.MethodTypeNameWithType;
 import rs.ac.bg.etf.pp1.ast.MulDiv;
 import rs.ac.bg.etf.pp1.ast.MulMod;
 import rs.ac.bg.etf.pp1.ast.MulMul;
-import rs.ac.bg.etf.pp1.ast.Mulop;
 import rs.ac.bg.etf.pp1.ast.MulopTerm;
 import rs.ac.bg.etf.pp1.ast.NegativeTermExpr;
 import rs.ac.bg.etf.pp1.ast.NewFactor;
@@ -35,12 +36,12 @@ import rs.ac.bg.etf.pp1.ast.PrintStatementWithoutNumConst;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithExpresion;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithoutExpresion;
 import rs.ac.bg.etf.pp1.ast.SingleDesignator;
+import rs.ac.bg.etf.pp1.ast.StatementLabel;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
-import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class CodeGenerator extends VisitorAdaptor {
 
@@ -49,6 +50,10 @@ public class CodeGenerator extends VisitorAdaptor {
 	private boolean forced = false;
 	private Obj lastClassObj;
 	private Obj thisObj;
+	private String imeLabele = "";
+	private int fixuUpPc = 0;
+	private HashMap<String, Integer> labelPcMap = new HashMap<>();
+	private HashMap<String, LinkedList<Integer>> labelFixUpMap = new HashMap<>();
 
 	public int getMainPc() {
 		return mainPc;
@@ -287,4 +292,39 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.rem);
 	}
 
+	@Override
+	public void visit(GotoStatement gotoStatement) {
+		String name = gotoStatement.getLabel().getName();
+		if (labelPcMap.containsKey(name)) {
+			Code.putJump(labelPcMap.get(name));
+		} else {
+			LinkedList<Integer> l = null;
+			if (labelFixUpMap.containsKey(name)) {
+				l = labelFixUpMap.get(name);
+			} else {
+				l = new LinkedList<>();
+			}
+			Code.loadConst(0);
+			Code.loadConst(0);
+			Code.putFalseJump(Code.ne, 0);
+			l.add(Code.pc - 2);
+			labelFixUpMap.put(name, l);
+		}
+	}
+
+	@Override
+	public void visit(Label label) {
+		if (label.getParent() instanceof StatementLabel) {
+			labelPcMap.put(label.getName(), Code.pc);
+			LinkedList<Integer> l = null;
+			if (labelFixUpMap.containsKey(label.getName())) {
+				l = labelFixUpMap.get(label.getName());
+			} else {
+				l = new LinkedList<>();
+			}
+			for (Integer fixUpAdr : l) {
+				Code.fixup(fixUpAdr);
+			}
+		}
+	}
 }
