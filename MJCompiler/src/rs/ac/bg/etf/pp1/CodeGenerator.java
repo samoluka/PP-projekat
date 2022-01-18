@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import rs.ac.bg.etf.pp1.ast.AddExpr;
 import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
+import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
 import rs.ac.bg.etf.pp1.ast.DesignatorForAssign;
@@ -33,6 +34,7 @@ import rs.ac.bg.etf.pp1.ast.NewFactor;
 import rs.ac.bg.etf.pp1.ast.NewFactorWithBrackets;
 import rs.ac.bg.etf.pp1.ast.NumberConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithoutNumConst;
+import rs.ac.bg.etf.pp1.ast.ReadStatement;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithExpresion;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithoutExpresion;
 import rs.ac.bg.etf.pp1.ast.SingleDesignator;
@@ -60,18 +62,46 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 
 	public void visit(PrintStatementWithoutNumConst printStmt) {
-		Code.loadConst(5);
-		Code.put(Code.print);
+		if (printStmt.getExpr().struct == Tab.intType) {
+			Code.put(Code.const_5);
+			Code.put(Code.print);
+		} else {
+			Code.put(Code.const_1);
+			Code.put(Code.bprint);
+		}
+	}
+
+	public void visit(ReadStatement readStatement) {
+		if (readStatement.getDesignator().obj.getType() == Tab.intType) {
+			Code.put(Code.read);
+			Code.store(readStatement.getDesignator().obj);
+		} else {
+			Code.put(Code.bread);
+			Code.store(readStatement.getDesignator().obj);
+		}
 	}
 
 	public void visit(NumberConst cnst) {
 		Obj con = Tab.insert(Obj.Con, "$", cnst.obj.getType());
 		con.setLevel(0);
 		con.setAdr(cnst.getVal());
-
 		Code.load(con);
 	}
 
+	public void visit(CharConst cnst) {
+		Obj con = Tab.insert(Obj.Con, "$", cnst.obj.getType());
+		con.setLevel(0);
+		con.setAdr(cnst.getVal());
+		Code.load(con);
+	}
+
+//	public void visit(NumberConst cnst) {
+//		Obj con = Tab.insert(Obj.Con, "$", cnst.obj.getType());
+//		con.setLevel(0);
+//		con.setAdr(cnst.getVal());
+//
+//		Code.load(con);
+//	}
 	public void visit(MethodTypeNameVoid methodTypeName) {
 
 		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
@@ -162,6 +192,9 @@ public class CodeGenerator extends VisitorAdaptor {
 		if (singleDesignator.obj.getKind() == Obj.Fld) {
 			Code.put(Code.load_n + 0);
 		}
+		if (singleDesignator.getParent() instanceof ReadStatement) {
+			return;
+		}
 		if (singleDesignator.getParent() instanceof MethodNameDesignator) {
 			return;
 		}
@@ -179,6 +212,9 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(DotDesignator dotDesignator) {
+		if (dotDesignator.getParent() instanceof ReadStatement) {
+			return;
+		}
 		if (dotDesignator.getParent() instanceof MethodNameDesignator) {
 			return;
 		}
@@ -201,6 +237,9 @@ public class CodeGenerator extends VisitorAdaptor {
 //			return;
 //		}
 //		if (arrayDesignator.getParent() instanceof DesignatorForMethodCall) {
+//			return;
+//		}
+//		if (arrayDesignator.getParent() instanceof ReadStatement) {
 //			return;
 //		}
 		if ((arrayDesignator.getParent() instanceof DesignatorItemInc

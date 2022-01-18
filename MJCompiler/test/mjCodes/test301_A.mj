@@ -41,8 +41,8 @@ program test301
 		bodovi = bodovi + (pet * jedan - 1) * bodovi - (3 % 2 + 3 * 2 - 3); 
 		print(bodovi);
 			
-		read(bodovi);
-		print(bodovi);
+		//read(bodovi);
+		//print(bodovi);
 		
 		bodovi++;
 		goto labela1;
@@ -59,3 +59,4 @@ program test301
 }
 
 
+// rezultat   9    6    6bc   26   30-

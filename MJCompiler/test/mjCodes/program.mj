@@ -1,18 +1,20 @@
 //Test 302
 
 program test302
+
+class A{
+	int x;
+}
+
 {	
 	
 
 	void main()
+	A a;
 	{
-		print(0);
-		goto labela1;
-		print(1);
-		labela1: 
-			print(2);
-		
-		goto labela1;
+		a = new A;
+		read(a.x);
+		print(a.x);
 		return;
 	}
 }
