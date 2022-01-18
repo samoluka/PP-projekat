@@ -2,19 +2,16 @@
 
 program test302
 
-class A{
-	int x;
-}
-
 {	
 	
 
 	void main()
-	A a;
+	bool b;
 	{
-		a = new A;
-		read(a.x);
-		print(a.x);
+		b = false;
+		print(1);
+		print(b,2);
+		print(2);
 		return;
 	}
 }

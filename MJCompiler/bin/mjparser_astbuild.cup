@@ -321,7 +321,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
 				|
 				(PrintStatementWithoutNumConst) PRINT LPAREN Expr:E1 RPAREN SEMI {: RESULT=new PrintStatementWithoutNumConst(E1); RESULT.setLine(E1left); :}
                 |   
-                (PrintStatementWithNumConst) PRINT LPAREN Expr:E1 COMMA NUMBER:n RPAREN SEMI {: RESULT=new PrintStatementWithNumConst(E1, n); RESULT.setLine(E1left); :}
+                (PrintStatementWithNumConst) PRINT LPAREN Expr:E1 COMMA FactorForConst:f RPAREN SEMI {: RESULT=new PrintStatementWithNumConst(E1, f); RESULT.setLine(E1left); :}
                 |
                 (GotoStatement) GOTO Label:L1 SEMI {: RESULT=new GotoStatement(L1); RESULT.setLine(L1left); :}
                 |

@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/0/2022 16:10:51
+// 18/0/2022 16:29:27
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,12 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public class PrintStatementWithNumConst extends SingleStatement {
 
     private Expr Expr;
-    private Integer n;
+    private FactorForConst FactorForConst;
 
-    public PrintStatementWithNumConst (Expr Expr, Integer n) {
+    public PrintStatementWithNumConst (Expr Expr, FactorForConst FactorForConst) {
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
-        this.n=n;
+        this.FactorForConst=FactorForConst;
+        if(FactorForConst!=null) FactorForConst.setParent(this);
     }
 
     public Expr getExpr() {
@@ -24,12 +25,12 @@ public class PrintStatementWithNumConst extends SingleStatement {
         this.Expr=Expr;
     }
 
-    public Integer getN() {
-        return n;
+    public FactorForConst getFactorForConst() {
+        return FactorForConst;
     }
 
-    public void setN(Integer n) {
-        this.n=n;
+    public void setFactorForConst(FactorForConst FactorForConst) {
+        this.FactorForConst=FactorForConst;
     }
 
     public void accept(Visitor visitor) {
@@ -38,15 +39,18 @@ public class PrintStatementWithNumConst extends SingleStatement {
 
     public void childrenAccept(Visitor visitor) {
         if(Expr!=null) Expr.accept(visitor);
+        if(FactorForConst!=null) FactorForConst.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
+        if(FactorForConst!=null) FactorForConst.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Expr!=null) Expr.traverseBottomUp(visitor);
+        if(FactorForConst!=null) FactorForConst.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -61,7 +65,10 @@ public class PrintStatementWithNumConst extends SingleStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+n);
+        if(FactorForConst!=null)
+            buffer.append(FactorForConst.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);

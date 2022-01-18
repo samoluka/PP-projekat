@@ -290,7 +290,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
 				|
 				(PrintStatementWithoutNumConst) PRINT LPAREN Expr RPAREN SEMI
                 |   
-                (PrintStatementWithNumConst) PRINT LPAREN Expr COMMA NUMBER:n RPAREN SEMI
+                (PrintStatementWithNumConst) PRINT LPAREN Expr COMMA FactorForConst:f RPAREN SEMI
                 |
                 (GotoStatement) GOTO Label SEMI
                 |

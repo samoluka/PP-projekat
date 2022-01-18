@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import rs.ac.bg.etf.pp1.ast.AddExpr;
 import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
+import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
@@ -33,6 +34,7 @@ import rs.ac.bg.etf.pp1.ast.NegativeTermExpr;
 import rs.ac.bg.etf.pp1.ast.NewFactor;
 import rs.ac.bg.etf.pp1.ast.NewFactorWithBrackets;
 import rs.ac.bg.etf.pp1.ast.NumberConst;
+import rs.ac.bg.etf.pp1.ast.PrintStatementWithNumConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithoutNumConst;
 import rs.ac.bg.etf.pp1.ast.ReadStatement;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithExpresion;
@@ -44,6 +46,7 @@ import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class CodeGenerator extends VisitorAdaptor {
 
@@ -61,13 +64,33 @@ public class CodeGenerator extends VisitorAdaptor {
 		return mainPc;
 	}
 
+	@Override
+	public void visit(PrintStatementWithNumConst printStmt) {
+		switch (printStmt.getExpr().struct.getKind()) {
+		case Struct.Int:
+		case Struct.Bool:
+			Code.load(printStmt.getFactorForConst().obj);
+			Code.put(Code.print);
+			break;
+		default:
+			Code.load(printStmt.getFactorForConst().obj);
+			Code.put(Code.bprint);
+			break;
+		}
+	}
+
+	@Override
 	public void visit(PrintStatementWithoutNumConst printStmt) {
-		if (printStmt.getExpr().struct == Tab.intType) {
+		switch (printStmt.getExpr().struct.getKind()) {
+		case Struct.Int:
+		case Struct.Bool:
 			Code.put(Code.const_5);
 			Code.put(Code.print);
-		} else {
+			break;
+		default:
 			Code.put(Code.const_1);
 			Code.put(Code.bprint);
+			break;
 		}
 	}
 
@@ -95,13 +118,14 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.load(con);
 	}
 
-//	public void visit(NumberConst cnst) {
-//		Obj con = Tab.insert(Obj.Con, "$", cnst.obj.getType());
-//		con.setLevel(0);
-//		con.setAdr(cnst.getVal());
-//
-//		Code.load(con);
-//	}
+	public void visit(BoolConst cnst) {
+		Obj con = Tab.insert(Obj.Con, "$", cnst.obj.getType());
+		con.setLevel(0);
+		con.setAdr(cnst.getVal());
+
+		Code.load(con);
+	}
+
 	public void visit(MethodTypeNameVoid methodTypeName) {
 
 		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
