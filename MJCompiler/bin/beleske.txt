@@ -18,3 +18,8 @@ Na nivou sintaksne analize???
 
 -proveriti goto labela da li postoji - ovo se proverava u rantajmu vrv?
 - null?
+
+
+
+Generisanje koda:
+--ugnjezdeni if

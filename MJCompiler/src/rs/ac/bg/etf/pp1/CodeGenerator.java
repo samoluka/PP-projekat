@@ -3,6 +3,7 @@ package rs.ac.bg.etf.pp1;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
 
@@ -63,6 +64,7 @@ import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
+import rs.ac.bg.etf.pp1.ast.IfStart;
 import rs.ac.bg.etf.pp1.ast.IfHeader;
 
 public class CodeGenerator extends VisitorAdaptor {
@@ -82,6 +84,12 @@ public class CodeGenerator extends VisitorAdaptor {
 	private List<Integer> conditionFixupListForTrue = new LinkedList<>();
 	private List<Integer> condtionFixupListForAnd = new LinkedList<>();
 	private List<Integer> conditionFixupForOr = new LinkedList<>();
+
+	private Stack<List<Integer>> stackConditionFixupListForFalse = new Stack<>();
+	private Stack<List<Integer>> stackConditionFixupListForElse = new Stack<>();
+	private Stack<List<Integer>> stackConditionFixupListForTrue = new Stack<>();
+	private Stack<List<Integer>> stackCondtionFixupListForAnd = new Stack<>();
+	private Stack<List<Integer>> stackConditionFixupForOr = new Stack<>();
 
 	public int getMainPc() {
 		return mainPc;
@@ -569,6 +577,24 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.fixup(adr);
 		}
 		conditionFixupListForElse.clear();
+
+		stackConditionFixupListForFalse.pop();
+		stackConditionFixupListForTrue.pop();
+		stackConditionFixupForOr.pop();
+		stackCondtionFixupListForAnd.pop();
+		stackConditionFixupListForElse.pop();
+
+		if (!stackConditionFixupListForFalse.empty())
+			conditionFixupListForFalse = stackConditionFixupListForFalse.peek();
+		if (!stackConditionFixupListForTrue.empty())
+			conditionFixupListForTrue = stackConditionFixupListForTrue.peek();
+		if (!stackConditionFixupForOr.empty())
+			conditionFixupForOr = stackConditionFixupForOr.peek();
+		if (!stackCondtionFixupListForAnd.empty())
+			condtionFixupListForAnd = stackCondtionFixupListForAnd.peek();
+		if (!stackConditionFixupListForElse.empty())
+			conditionFixupListForElse = stackConditionFixupListForElse.peek();
+
 	}
 
 	public void visit(NoElseStatement noElseStatement) {
@@ -576,5 +602,39 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.fixup(adr);
 		}
 		conditionFixupListForElse.clear();
+		
+		stackConditionFixupListForFalse.pop();
+		stackConditionFixupListForTrue.pop();
+		stackConditionFixupForOr.pop();
+		stackCondtionFixupListForAnd.pop();
+		stackConditionFixupListForElse.pop();
+
+		if (!stackConditionFixupListForFalse.empty())
+			conditionFixupListForFalse = stackConditionFixupListForFalse.peek();
+		if (!stackConditionFixupListForTrue.empty())
+			conditionFixupListForTrue = stackConditionFixupListForTrue.peek();
+		if (!stackConditionFixupForOr.empty())
+			conditionFixupForOr = stackConditionFixupForOr.peek();
+		if (!stackCondtionFixupListForAnd.empty())
+			condtionFixupListForAnd = stackCondtionFixupListForAnd.peek();
+		if (!stackConditionFixupListForElse.empty())
+			conditionFixupListForElse = stackConditionFixupListForElse.peek();
+		
+		
 	}
+
+	public void visit(IfStart ifStart) {
+		stackConditionFixupListForFalse.push(new LinkedList<>());
+		stackConditionFixupListForTrue.push(new LinkedList<>());
+		stackConditionFixupForOr.push(new LinkedList<>());
+		stackCondtionFixupListForAnd.push(new LinkedList<>());
+		stackConditionFixupListForElse.push(new LinkedList<>());
+
+		conditionFixupListForFalse = stackConditionFixupListForFalse.peek();
+		conditionFixupListForTrue = stackConditionFixupListForTrue.peek();
+		conditionFixupForOr = stackConditionFixupForOr.peek();
+		condtionFixupListForAnd = stackCondtionFixupListForAnd.peek();
+		conditionFixupListForElse = stackConditionFixupListForElse.peek();
+	};
+
 }
