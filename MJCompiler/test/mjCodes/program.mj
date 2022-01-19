@@ -3,16 +3,13 @@
 program test302
 
 {	
-	
-
 	void main()
-	bool b;
 	{
-		b = false;
-		print(1);
-		print(b,2);
-		print(2);
-		return;
+		if (3>2 && 4>3 && -1>0){
+			print(1);
+		}else{
+			print(2);
+		}
 	}
 }
 

@@ -5,24 +5,18 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DoStatement extends SingleStatement {
+public class IfPart implements SyntaxNode {
 
-    private StatementList StatementList;
+    private SyntaxNode parent;
+    private int line;
     private Condition Condition;
+    private Statement Statement;
 
-    public DoStatement (StatementList StatementList, Condition Condition) {
-        this.StatementList=StatementList;
-        if(StatementList!=null) StatementList.setParent(this);
+    public IfPart (Condition Condition, Statement Statement) {
         this.Condition=Condition;
         if(Condition!=null) Condition.setParent(this);
-    }
-
-    public StatementList getStatementList() {
-        return StatementList;
-    }
-
-    public void setStatementList(StatementList StatementList) {
-        this.StatementList=StatementList;
+        this.Statement=Statement;
+        if(Statement!=null) Statement.setParent(this);
     }
 
     public Condition getCondition() {
@@ -33,37 +27,55 @@ public class DoStatement extends SingleStatement {
         this.Condition=Condition;
     }
 
+    public Statement getStatement() {
+        return Statement;
+    }
+
+    public void setStatement(Statement Statement) {
+        this.Statement=Statement;
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
+    }
+
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(StatementList!=null) StatementList.accept(visitor);
         if(Condition!=null) Condition.accept(visitor);
+        if(Statement!=null) Statement.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(StatementList!=null) StatementList.traverseTopDown(visitor);
         if(Condition!=null) Condition.traverseTopDown(visitor);
+        if(Statement!=null) Statement.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(StatementList!=null) StatementList.traverseBottomUp(visitor);
         if(Condition!=null) Condition.traverseBottomUp(visitor);
+        if(Statement!=null) Statement.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DoStatement(\n");
-
-        if(StatementList!=null)
-            buffer.append(StatementList.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
+        buffer.append("IfPart(\n");
 
         if(Condition!=null)
             buffer.append(Condition.toString("  "+tab));
@@ -71,8 +83,14 @@ public class DoStatement extends SingleStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
+        if(Statement!=null)
+            buffer.append(Statement.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
         buffer.append(tab);
-        buffer.append(") [DoStatement]");
+        buffer.append(") [IfPart]");
         return buffer.toString();
     }
 }

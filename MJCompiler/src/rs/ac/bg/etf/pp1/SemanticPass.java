@@ -332,6 +332,8 @@ public class SemanticPass extends VisitorAdaptor {
 		Tab.chainLocalSymbols(currentMethod);
 		Tab.closeScope();
 
+		MethodDeclaration.obj = MethodDeclaration.getMethodTypeName().obj;
+		
 		returnFound = false;
 		currentMethod = null;
 	}

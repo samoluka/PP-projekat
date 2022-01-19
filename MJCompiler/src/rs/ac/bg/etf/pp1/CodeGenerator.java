@@ -11,6 +11,7 @@ import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.CharConst;
+import rs.ac.bg.etf.pp1.ast.ConditionTermList;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
 import rs.ac.bg.etf.pp1.ast.DesignatorForAssign;
@@ -19,10 +20,13 @@ import rs.ac.bg.etf.pp1.ast.DesignatorItemDec;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemFuncCallWithParam;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemInc;
 import rs.ac.bg.etf.pp1.ast.DotDesignator;
+import rs.ac.bg.etf.pp1.ast.ElseStatementStatement;
 import rs.ac.bg.etf.pp1.ast.GotoStatement;
+import rs.ac.bg.etf.pp1.ast.IfPart;
 import rs.ac.bg.etf.pp1.ast.Label;
 import rs.ac.bg.etf.pp1.ast.MethodCall;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
+import rs.ac.bg.etf.pp1.ast.MethodDeclaration;
 import rs.ac.bg.etf.pp1.ast.MethodNameDesignator;
 import rs.ac.bg.etf.pp1.ast.MethodTypeNameVoid;
 import rs.ac.bg.etf.pp1.ast.MethodTypeNameWithType;
@@ -30,15 +34,26 @@ import rs.ac.bg.etf.pp1.ast.MulDiv;
 import rs.ac.bg.etf.pp1.ast.MulMod;
 import rs.ac.bg.etf.pp1.ast.MulMul;
 import rs.ac.bg.etf.pp1.ast.MulopTerm;
+import rs.ac.bg.etf.pp1.ast.MultiCondFact;
 import rs.ac.bg.etf.pp1.ast.NegativeTermExpr;
 import rs.ac.bg.etf.pp1.ast.NewFactor;
 import rs.ac.bg.etf.pp1.ast.NewFactorWithBrackets;
+import rs.ac.bg.etf.pp1.ast.NoElseStatement;
 import rs.ac.bg.etf.pp1.ast.NumberConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithNumConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithoutNumConst;
 import rs.ac.bg.etf.pp1.ast.ReadStatement;
+import rs.ac.bg.etf.pp1.ast.RelEqual;
+import rs.ac.bg.etf.pp1.ast.RelGEqual;
+import rs.ac.bg.etf.pp1.ast.RelGREATER;
+import rs.ac.bg.etf.pp1.ast.RelLEqual;
+import rs.ac.bg.etf.pp1.ast.RelLess;
+import rs.ac.bg.etf.pp1.ast.RelNEqual;
+import rs.ac.bg.etf.pp1.ast.Relop;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithExpresion;
 import rs.ac.bg.etf.pp1.ast.ReturnStatementWithoutExpresion;
+import rs.ac.bg.etf.pp1.ast.SingleConditionList;
+import rs.ac.bg.etf.pp1.ast.SingleConditionTermList;
 import rs.ac.bg.etf.pp1.ast.SingleDesignator;
 import rs.ac.bg.etf.pp1.ast.StatementLabel;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
@@ -59,6 +74,9 @@ public class CodeGenerator extends VisitorAdaptor {
 	private int fixuUpPc = 0;
 	private HashMap<String, Integer> labelPcMap = new HashMap<>();
 	private HashMap<String, LinkedList<Integer>> labelFixUpMap = new HashMap<>();
+	private boolean returnFound = false;
+	private List<Integer> conditionFixupListForTrue = new LinkedList<>();
+	private List<Integer> conditionFixupListForElse = new LinkedList<>();
 
 	public int getMainPc() {
 		return mainPc;
@@ -124,6 +142,14 @@ public class CodeGenerator extends VisitorAdaptor {
 		con.setAdr(cnst.getVal());
 
 		Code.load(con);
+	}
+
+	public void visit(MethodDeclaration methodDeclaration) {
+		if (!returnFound && methodDeclaration.obj.getType() == Tab.noType) {
+			Code.put(Code.exit);
+			Code.put(Code.return_);
+		}
+		returnFound = false;
 	}
 
 	public void visit(MethodTypeNameVoid methodTypeName) {
@@ -323,11 +349,13 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
 		thisObj = null;
+		returnFound = true;
 	}
 
 	public void visit(ReturnStatementWithoutExpresion returnNoExpr) {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
+		returnFound = true;
 		thisObj = null;
 	}
 
@@ -389,5 +417,90 @@ public class CodeGenerator extends VisitorAdaptor {
 				Code.fixup(fixUpAdr);
 			}
 		}
+	}
+
+	@Override
+	public void visit(SingleConditionTermList singleConditionTermList) {
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		conditionFixupListForTrue.add(Code.pc - 2);
+	}
+
+	@Override
+	public void visit(ConditionTermList conditionTermList) {
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		conditionFixupListForTrue.add(Code.pc - 2);
+	}
+	private void putRelOp(int opCode) {
+			// test and jmp if yes
+			Code.put(Code.jcc + opCode);
+			Code.put2(7);
+						
+			// no: put 0, jmp next
+			Code.loadConst(0);
+			Code.put(Code.jmp);
+			Code.put2(4);
+						
+			// yes: put 1
+			Code.loadConst(1);
+		
+	}
+
+	@Override
+	public void visit(MultiCondFact multiCondFact) {
+		int opCode = -1;
+		Relop relop = multiCondFact.getRelop();
+
+		if (relop instanceof RelEqual) {
+			opCode = Code.eq;
+		}
+
+		if (relop instanceof RelNEqual) {
+			opCode = Code.ne;
+		}
+
+		if (relop instanceof RelGREATER) {
+			opCode = Code.gt;
+		}
+
+		if (relop instanceof RelLess) {
+			opCode = Code.lt;
+		}
+
+		if (relop instanceof RelGEqual) {
+			opCode = Code.ge;
+		}
+
+		if (relop instanceof RelLEqual) {
+			opCode = Code.le;
+		}
+		putRelOp(opCode);
+	}
+
+	// kraj if dela
+	public void visit(IfPart ifPart) {
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		conditionFixupListForElse.add(Code.pc - 2);
+		for (Integer adr : conditionFixupListForTrue) {
+			Code.fixup(adr);
+		}
+		conditionFixupListForTrue.clear();
+	}
+
+	public void visit(ElseStatementStatement elseStatement) {
+		for (Integer adr : conditionFixupListForElse) {
+			Code.fixup(adr);
+		}
+		conditionFixupListForElse.clear();
+	}
+
+	public void visit(NoElseStatement noElseStatement) {
+		for (Integer adr : conditionFixupListForElse) {
+			Code.fixup(adr);
+		}
+		conditionFixupListForElse.clear();
 	}
 }
