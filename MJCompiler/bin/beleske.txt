@@ -10,6 +10,11 @@
 
 
 Semanticka analiza:
+-Da li je ovo greska:
+		if ( ( (false||true) && true ) || false ){
+			print(3);
+		}
+Na nivou sintaksne analize???
 
 -proveriti goto labela da li postoji - ovo se proverava u rantajmu vrv?
 - null?

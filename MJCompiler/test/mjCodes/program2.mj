@@ -183,6 +183,59 @@ class B{
 
 
 
+program test302
+
+{	
+	void main()
+	{
+	
+		if (false || true){
+			print(1);
+		}else{
+			print(2);
+		}
+		if (true || true){
+			print(1);
+		}else{
+			print(2);
+		}
+		if (true || false){
+			print(1);
+		}else{
+			print(2);
+		}
+		if (false || false){
+			print(1);
+		}else{
+			print(2);
+		}
+		
+		if (false && true){
+			print(1);
+		}else{
+			print(2);
+		}
+		if (true && true){
+			print(1);
+		}else{
+			print(2);
+		}
+		if (true && false){
+			print(1);
+		}else{
+			print(2);
+		}
+		if (false && false){
+			print(1);
+		}else{
+			print(2);
+		}
+	}
+}
+
+
+
+
 
 
 

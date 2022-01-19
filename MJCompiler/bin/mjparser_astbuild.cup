@@ -99,6 +99,7 @@ nonterminal VarItemListClass VarItemListClass;
 nonterminal VarClass VarClass;
 nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 nonterminal IfPart IfPart;
+nonterminal IfHeader IfHeader;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label;
@@ -342,8 +343,8 @@ ElseStatement ::= (ElseStatementStatement) ELSE Statement:S1 {: RESULT=new ElseS
                (NoElseStatement) {: RESULT=new NoElseStatement(); :} /* epsilon */
                ;
 
-IfPart ::= (IfPart) IF LPAREN Condition:C1 RPAREN Statement:S2 {: RESULT=new IfPart(C1, S2); RESULT.setLine(C1left); :};
-
+IfPart ::= (IfPart) IfHeader:I1 Statement:S2 {: RESULT=new IfPart(I1, S2); RESULT.setLine(I1left); :};
+IfHeader ::= (IfHeader) IF LPAREN Condition:C1 RPAREN {: RESULT=new IfHeader(C1); RESULT.setLine(C1left); :};
 /* Condition = CondTerm {ʺ||ʺ CondTerm}. */
 Condition ::= (ConditionList) Condition:C1 OR CondTerm:C2 {: RESULT=new ConditionList(C1, C2); RESULT.setLine(C1left); :}
 			|

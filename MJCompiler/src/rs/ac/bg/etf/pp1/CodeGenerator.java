@@ -11,6 +11,7 @@ import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.CharConst;
+import rs.ac.bg.etf.pp1.ast.ConditionList;
 import rs.ac.bg.etf.pp1.ast.ConditionTermList;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
@@ -62,6 +63,7 @@ import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
+import rs.ac.bg.etf.pp1.ast.IfHeader;
 
 public class CodeGenerator extends VisitorAdaptor {
 
@@ -75,8 +77,11 @@ public class CodeGenerator extends VisitorAdaptor {
 	private HashMap<String, Integer> labelPcMap = new HashMap<>();
 	private HashMap<String, LinkedList<Integer>> labelFixUpMap = new HashMap<>();
 	private boolean returnFound = false;
-	private List<Integer> conditionFixupListForTrue = new LinkedList<>();
+	private List<Integer> conditionFixupListForFalse = new LinkedList<>();
 	private List<Integer> conditionFixupListForElse = new LinkedList<>();
+	private List<Integer> conditionFixupListForTrue = new LinkedList<>();
+	private List<Integer> condtionFixupListForAnd = new LinkedList<>();
+	private List<Integer> conditionFixupForOr = new LinkedList<>();
 
 	public int getMainPc() {
 		return mainPc;
@@ -422,29 +427,90 @@ public class CodeGenerator extends VisitorAdaptor {
 	@Override
 	public void visit(SingleConditionTermList singleConditionTermList) {
 		Code.loadConst(0);
+		Code.put(Code.jcc + Code.ne);
+		Code.put2(9);
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		condtionFixupListForAnd.add(Code.pc - 2);
+		if (singleConditionTermList.getParent() instanceof SingleConditionList) {
+			Code.loadConst(1);
+		}
+	}
+
+	@Override
+	public void visit(ConditionTermList conditionTermList) {
+		for (Integer adr : condtionFixupListForAnd) {
+			Code.fixup(adr);
+		}
+		condtionFixupListForAnd.clear();
+		Code.loadConst(0);
+		Code.put(Code.jcc + Code.ne);
+		Code.put2(9);
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		conditionFixupForOr.add(Code.pc - 2);
+	}
+
+	@Override
+	public void visit(ConditionList conditionList) {
+//		Code.put(Code.add);
+//		Code.loadConst(0);
+//		Code.putFalseJump(Code.eq, 0);
+//		conditionFixupListForTrue.add(Code.pc - 2);
+//		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.loadConst(0);
 		Code.putFalseJump(Code.ne, 0);
 		conditionFixupListForTrue.add(Code.pc - 2);
 	}
 
 	@Override
-	public void visit(ConditionTermList conditionTermList) {
+	public void visit(IfHeader ifHeader) {
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		conditionFixupListForFalse.add(Code.pc - 2);
+		for (Integer adr : conditionFixupListForTrue) {
+			Code.fixup(adr);
+		}
+		conditionFixupListForTrue.clear();
+	}
+
+	public void visit(SingleConditionList singleConditionList) {
+		for (Integer adr : conditionFixupForOr) {
+			Code.fixup(adr);
+		}
+		conditionFixupForOr.clear();
+		for (Integer adr : condtionFixupListForAnd) {
+			Code.fixup(adr);
+		}
+		condtionFixupListForAnd.clear();
+		Code.loadConst(1);
+		Code.put(Code.jcc + Code.ne);
+		Code.put2(8);
+		Code.loadConst(0);
 		Code.loadConst(0);
 		Code.putFalseJump(Code.ne, 0);
 		conditionFixupListForTrue.add(Code.pc - 2);
 	}
+
 	private void putRelOp(int opCode) {
-			// test and jmp if yes
-			Code.put(Code.jcc + opCode);
-			Code.put2(7);
-						
-			// no: put 0, jmp next
-			Code.loadConst(0);
-			Code.put(Code.jmp);
-			Code.put2(4);
-						
-			// yes: put 1
-			Code.loadConst(1);
-		
+		// test and jmp if yes
+		Code.put(Code.jcc + opCode);
+		Code.put2(7);
+
+		// no: put 0, jmp next
+		Code.loadConst(0);
+		Code.put(Code.jmp);
+		Code.put2(4);
+
+		// yes: put 1
+		Code.loadConst(1);
+
 	}
 
 	@Override
@@ -484,10 +550,18 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.loadConst(0);
 		Code.putFalseJump(Code.ne, 0);
 		conditionFixupListForElse.add(Code.pc - 2);
-		for (Integer adr : conditionFixupListForTrue) {
+		for (Integer adr : conditionFixupListForFalse) {
 			Code.fixup(adr);
 		}
-		conditionFixupListForTrue.clear();
+		for (Integer adr : condtionFixupListForAnd) {
+			Code.fixup(adr);
+		}
+		for (Integer adr : conditionFixupForOr) {
+			Code.fixup(adr);
+		}
+		conditionFixupForOr.clear();
+		condtionFixupListForAnd.clear();
+		conditionFixupListForFalse.clear();
 	}
 
 	public void visit(ElseStatementStatement elseStatement) {

@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 19/0/2022 20:34:21
+// 20/0/2022 0:27:35
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,22 +9,22 @@ public class IfPart implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private Condition Condition;
+    private IfHeader IfHeader;
     private Statement Statement;
 
-    public IfPart (Condition Condition, Statement Statement) {
-        this.Condition=Condition;
-        if(Condition!=null) Condition.setParent(this);
+    public IfPart (IfHeader IfHeader, Statement Statement) {
+        this.IfHeader=IfHeader;
+        if(IfHeader!=null) IfHeader.setParent(this);
         this.Statement=Statement;
         if(Statement!=null) Statement.setParent(this);
     }
 
-    public Condition getCondition() {
-        return Condition;
+    public IfHeader getIfHeader() {
+        return IfHeader;
     }
 
-    public void setCondition(Condition Condition) {
-        this.Condition=Condition;
+    public void setIfHeader(IfHeader IfHeader) {
+        this.IfHeader=IfHeader;
     }
 
     public Statement getStatement() {
@@ -56,18 +56,18 @@ public class IfPart implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Condition!=null) Condition.accept(visitor);
+        if(IfHeader!=null) IfHeader.accept(visitor);
         if(Statement!=null) Statement.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Condition!=null) Condition.traverseTopDown(visitor);
+        if(IfHeader!=null) IfHeader.traverseTopDown(visitor);
         if(Statement!=null) Statement.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Condition!=null) Condition.traverseBottomUp(visitor);
+        if(IfHeader!=null) IfHeader.traverseBottomUp(visitor);
         if(Statement!=null) Statement.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -77,8 +77,8 @@ public class IfPart implements SyntaxNode {
         buffer.append(tab);
         buffer.append("IfPart(\n");
 
-        if(Condition!=null)
-            buffer.append(Condition.toString("  "+tab));
+        if(IfHeader!=null)
+            buffer.append(IfHeader.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
