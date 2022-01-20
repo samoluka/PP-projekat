@@ -105,7 +105,7 @@ nonterminal DoStart DoStart;
 nonterminal DoPart DoPart;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label, SuperStart;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -330,7 +330,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
                 |
                 (GotoStatement) GOTO Label:L1 SEMI {: RESULT=new GotoStatement(L1); RESULT.setLine(L1left); :}
                 |
-                (SuperStatement) SUPER LPAREN RPAREN SEMI {: RESULT=new SuperStatement(); :}
+                (SuperStatement) SuperStart:S1 LPAREN RPAREN SEMI {: RESULT=new SuperStatement(S1); RESULT.setLine(S1left); :}
                 |
 				(SingleMultiStatement) LBRACE StatementList:S1 RBRACE {: RESULT=new SingleMultiStatement(S1); RESULT.setLine(S1left); :}
 				|
@@ -340,7 +340,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
 				:} {: RESULT=new StatementError(); :}
 				/* ovo se moze prebaciti u designatorItem ako pravi probleme */
 				;
-
+SuperStart ::= (SuperStart) SUPER {: RESULT=new SuperStart(); :};
 DoStart ::= (DoStart) DO {: RESULT=new DoStart(); :};
 DoPart ::= (DoPart) DoStart:D1 StatementList:S2 {: RESULT=new DoPart(D1, S2); RESULT.setLine(D1left); :};
 

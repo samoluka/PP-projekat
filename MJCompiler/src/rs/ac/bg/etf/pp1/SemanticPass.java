@@ -846,10 +846,12 @@ public class SemanticPass extends VisitorAdaptor {
 			for (Obj o : cObj) {
 				if (o.getName().equals(currentMethod.getName())) {
 					report_info("Pronadjen poziv roditeljske metode: " + currentMethod.getName(), superStatement);
+					superStatement.getSuperStart().obj = o;
 					return;
 				}
 			}
 			report_error("Roditeljska klasa ne sadrzi metodu: " + currentMethod.getName(), superStatement);
+
 		}
 
 	}

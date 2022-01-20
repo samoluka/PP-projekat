@@ -1,13 +1,25 @@
 // generated with ast extension for cup
 // version 0.8
-// 20/0/2022 17:53:33
+// 20/0/2022 18:23:52
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class SuperStatement extends SingleStatement {
 
-    public SuperStatement () {
+    private SuperStart SuperStart;
+
+    public SuperStatement (SuperStart SuperStart) {
+        this.SuperStart=SuperStart;
+        if(SuperStart!=null) SuperStart.setParent(this);
+    }
+
+    public SuperStart getSuperStart() {
+        return SuperStart;
+    }
+
+    public void setSuperStart(SuperStart SuperStart) {
+        this.SuperStart=SuperStart;
     }
 
     public void accept(Visitor visitor) {
@@ -15,13 +27,16 @@ public class SuperStatement extends SingleStatement {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(SuperStart!=null) SuperStart.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(SuperStart!=null) SuperStart.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(SuperStart!=null) SuperStart.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -29,6 +44,12 @@ public class SuperStatement extends SingleStatement {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
         buffer.append("SuperStatement(\n");
+
+        if(SuperStart!=null)
+            buffer.append(SuperStart.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
 
         buffer.append(tab);
         buffer.append(") [SuperStatement]");

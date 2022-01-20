@@ -65,6 +65,7 @@ import rs.ac.bg.etf.pp1.ast.SingleConditionList;
 import rs.ac.bg.etf.pp1.ast.SingleConditionTermList;
 import rs.ac.bg.etf.pp1.ast.SingleDesignator;
 import rs.ac.bg.etf.pp1.ast.StatementLabel;
+import rs.ac.bg.etf.pp1.ast.SuperStatement;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.etf.pp1.mj.runtime.Code;
@@ -872,7 +873,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		classMethod = false;
 		classDeclarations.getClassName().obj.setAdr(virtualTableAddrForSave);
 		virtualTableAddrForSave = -1;
-		if (classDeclarations.getClassName().obj.getType().getElemType() != null)
+		if (classDeclarations.getClassName().obj.getType().getElemType() != null) {
 			for (Obj o : classDeclarations.getClassName().obj.getType().getMembers()) {
 				if (o.getKind() == Obj.Meth && o.getAdr() == 0) {
 					for (Obj oo : classDeclarations.getClassName().obj.getType().getElemType().getMembers()) {
@@ -882,6 +883,19 @@ public class CodeGenerator extends VisitorAdaptor {
 
 				}
 			}
+		}
+	}
+
+	public void visit(SuperStatement superStatement) {
+		for (int i = 0; i < superStatement.getSuperStart().obj.getLevel(); i++) {
+			Code.put(Code.load_n + i);
+		}
+		int offset = superStatement.getSuperStart().obj.getAdr() - Code.pc;
+		Code.put(Code.call);
+		Code.put2(offset);
+		if (superStatement.getSuperStart().obj.getType() != Tab.noType) {
+			Code.put(Code.pop);
+		}
 	}
 
 }

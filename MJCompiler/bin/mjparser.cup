@@ -69,7 +69,7 @@ nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
 nonterminal VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint, IfPart, IfHeader, IfStart, DoStart, DoPart;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label, SuperStart;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -294,7 +294,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
                 |
                 (GotoStatement) GOTO Label SEMI
                 |
-                (SuperStatement) SUPER LPAREN RPAREN SEMI
+                (SuperStatement) SuperStart LPAREN RPAREN SEMI
                 |
 				(SingleMultiStatement) LBRACE StatementList RBRACE
 				|
@@ -304,7 +304,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
 				:}
 				/* ovo se moze prebaciti u designatorItem ako pravi probleme */
 				;
-
+SuperStart ::= (SuperStart) SUPER;
 DoStart ::= (DoStart) DO;
 DoPart ::= (DoPart) DoStart StatementList;
 
