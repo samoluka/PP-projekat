@@ -22,4 +22,5 @@ Na nivou sintaksne analize???
 
 
 Generisanje koda:
---ugnjezdeni if
+-super poziv
+-poziv konstruktora

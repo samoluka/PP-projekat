@@ -211,6 +211,7 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 		className.obj = Tab.insert(Obj.Type, className.getClassName(), new Struct(Struct.Class));
 		Tab.openScope();
+		Tab.insert(Obj.Fld, "VTP", new Struct(Struct.Int));
 		report_info("Pronadjena deklaracija klase: " + className.getClassName(), className);
 		allClasses.add(className.obj);
 		currClass = className.obj;
@@ -253,7 +254,8 @@ public class SemanticPass extends VisitorAdaptor {
 		if (Tab.noObj != extendClassObj) {
 			Collection<Obj> listOfSimbols = extendClassObj.getType().getMembers();
 			for (Obj simbol : listOfSimbols) {
-				Tab.insert(simbol.getKind(), simbol.getName(), simbol.getType());
+				if (!simbol.getName().equals("VTP"))
+					Tab.insert(simbol.getKind(), simbol.getName(), simbol.getType());
 			}
 		}
 	}
@@ -284,7 +286,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(Program program) {
 		nVars = Tab.currentScope.getnVars();
-		//nVars += Code.dataSize;
+		// nVars += Code.dataSize;
 		Tab.chainLocalSymbols(program.getProgName().obj);
 		Tab.closeScope();
 		log.info("Zatvoren skoup programa");

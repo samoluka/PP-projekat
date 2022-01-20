@@ -3,20 +3,23 @@
 program test302
 
 
-int x,y;
 class A{
-
+	int x;
 	{
-		int f(){
-			return 1;
+		void f(){
+			x = 1;
+		}
+		void p(){
+			print(x);
 		}
 	}
 }
 class B extends A{
 	{
-		int f(){
-			return 2;
+		void f(){
+			x = 2;
 		}
+
 	}
 }
 {
@@ -27,10 +30,10 @@ class B extends A{
 	{
 		a = new A;
 		b = new B;
-		x = a.f();
-		y = b.f();
-		print(x);
-		print(y);
+		a.f();
+		b.f();
+		a.p();
+		b.p();
 	}
 }
 

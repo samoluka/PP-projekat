@@ -872,6 +872,16 @@ public class CodeGenerator extends VisitorAdaptor {
 		classMethod = false;
 		classDeclarations.getClassName().obj.setAdr(virtualTableAddrForSave);
 		virtualTableAddrForSave = -1;
+		if (classDeclarations.getClassName().obj.getType().getElemType() != null)
+			for (Obj o : classDeclarations.getClassName().obj.getType().getMembers()) {
+				if (o.getKind() == Obj.Meth && o.getAdr() == 0) {
+					for (Obj oo : classDeclarations.getClassName().obj.getType().getElemType().getMembers()) {
+						if (o.getName().equals(oo.getName()))
+							addFunctionEntry(o.getName(), oo.getAdr());
+					}
+
+				}
+			}
 	}
 
 }
