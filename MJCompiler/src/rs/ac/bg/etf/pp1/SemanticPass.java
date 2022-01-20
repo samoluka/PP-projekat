@@ -433,11 +433,12 @@ public class SemanticPass extends VisitorAdaptor {
 			report_error("Greska na liniji " + singleDesignator.getLine() + " : ime " + singleDesignator.getName()
 					+ " nije deklarisano! ", null);
 		}
-		if (obj.getType().getKind() == Struct.Class)
+		if (obj.getType().getKind() == Struct.Class) {
 			currClassInsideDesignatorStack.push(obj);
-		if (!(singleDesignator.getParent() instanceof Designator))
-			if (!currClassInsideDesignatorStack.empty())
-				currClassInsideDesignatorStack.pop();
+			if (!(singleDesignator.getParent() instanceof Designator))
+				if (!currClassInsideDesignatorStack.empty())
+					currClassInsideDesignatorStack.pop();
+		}
 		singleDesignator.obj = obj;
 	}
 

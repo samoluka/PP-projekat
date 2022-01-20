@@ -9,6 +9,7 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 
+import rs.ac.bg.etf.pp1.ast.ActualParamSingleItem;
 import rs.ac.bg.etf.pp1.ast.AddExpr;
 import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
@@ -113,6 +114,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	private boolean classMethod = false;
 	private int virtualTableAddr = 0;
 	private int virtualTableAddrForSave = -1;
+	private Stack<Boolean> isMethod = new Stack<>();
+	private Stack<Integer> actualParamCnt = new Stack<>();
 
 	static List<Byte> MethodTable = new ArrayList<>();
 
@@ -463,13 +466,14 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.arraylength);
 			return;
 		}
-		if (methodCall.getDesignatorForMethodCall().getDesignator() instanceof DotDesignator || classMethod) {
+		if (isMethod.peek()) {
 //			Obj classCalled = ((DotDesignator) methodCall.getDesignatorForMethodCall().getDesignator())
 //					.getDesignator().obj;
 			String name = methodCall.getDesignatorForMethodCall().obj.getName();
 //			Code.put(Code.getstatic);
 //			Code.put2(0);
-			Code.put(Code.dup);
+			if (methodCall.getDesignatorForMethodCall().obj.getLevel() == 1)
+				Code.put(Code.dup);
 			Code.put(Code.getfield);
 			Code.put2(0);
 			Code.put(Code.invokevirtual);
@@ -481,6 +485,7 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.call);
 			Code.put2(offset);
 		}
+		isMethod.pop();
 //		if (functionObj.getType() != Tab.noType) {
 //			Code.put(Code.pop);
 //		}
@@ -495,12 +500,17 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(DesignatorItemFuncCallWithParam diFunCall) {
 		thisObj = lastClassObj;
 		Obj functionObj = diFunCall.getMethodNameDesignator().obj;
-		if (diFunCall.getMethodNameDesignator().getDesignator() instanceof DotDesignator || classMethod) {
+		if (isMethod.peek()) {
 //			Obj classCalled = ((DotDesignator) diFunCall.getMethodNameDesignator().getDesignator()).getDesignator().obj;
 			String name = diFunCall.getMethodNameDesignator().obj.getName();
 //			Code.put(Code.getstatic);
 //			Code.put2(0);
-			Code.put(Code.dup);
+//			for (int i = 0; i < diFunCall.getMethodNameDesignator().obj.getLevel() - 1; i++) {
+//				Code.put(Code.dup_x1);
+//				Code.put(Code.pop);
+//			}
+			if (diFunCall.getMethodNameDesignator().obj.getLevel() == 1)
+				Code.put(Code.dup);
 			Code.put(Code.getfield);
 			Code.put2(0);
 			Code.put(Code.invokevirtual);
@@ -512,6 +522,7 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.call);
 			Code.put2(offset);
 		}
+		isMethod.pop();
 		if (functionObj.getType() != Tab.noType) {
 			Code.put(Code.pop);
 		}
@@ -939,6 +950,39 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.return_);
 		}
 		returnFound = false;
+	}
+
+	@Override
+	public void visit(MethodNameDesignator mnDesignator) {
+		if (mnDesignator.getDesignator() instanceof DotDesignator || classMethod) {
+			isMethod.push(true);
+			actualParamCnt.push(0);
+		} else {
+			isMethod.push(false);
+			actualParamCnt.push(0);
+		}
+	}
+
+	@Override
+	public void visit(DesignatorForMethodCall mnDesignator) {
+		if (mnDesignator.getDesignator() instanceof DotDesignator || classMethod) {
+			isMethod.push(true);
+			actualParamCnt.push(0);
+		} else {
+			isMethod.push(false);
+			actualParamCnt.push(0);
+		}
+	}
+
+	@Override
+	public void visit(ActualParamSingleItem apSingle) {
+		actualParamCnt.push(actualParamCnt.pop() + 1);
+		if (isMethod.peek()) {
+			Code.put(Code.dup_x1);
+			Code.put(Code.pop);
+			if (actualParamCnt.peek() == 1)
+				Code.put(Code.dup_x1);
+		}
 	}
 
 }
