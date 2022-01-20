@@ -101,6 +101,7 @@ nonterminal VarClassErrorEndPoint VarClassErrorEndPoint;
 nonterminal IfPart IfPart;
 nonterminal IfHeader IfHeader;
 nonterminal IfStart IfStart;
+nonterminal DoStart DoStart;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label;
@@ -310,7 +311,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
 				|
 				(IfStatement) IfPart:I1 ElseStatement:E2 {: RESULT=new IfStatement(I1, E2); RESULT.setLine(I1left); :}
 				|
-				(DoStatement) DO StatementList:S1 WHILE LPAREN Condition:C2 RPAREN SEMI {: RESULT=new DoStatement(S1, C2); RESULT.setLine(S1left); :}
+				(DoStatement) DoStart:D1 StatementList:S2 WHILE LPAREN Condition:C3 RPAREN SEMI {: RESULT=new DoStatement(D1, S2, C3); RESULT.setLine(D1left); :}
 				|
 				(BreakStatement) BREAK SEMI {: RESULT=new BreakStatement(); :}
 				|
@@ -338,6 +339,8 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement:D1 SEMI {: R
 				:} {: RESULT=new StatementError(); :}
 				/* ovo se moze prebaciti u designatorItem ako pravi probleme */
 				;
+
+DoStart ::= (DoStart) DO {: RESULT=new DoStart(); :};
 
 ElseStatement ::= (ElseStatementStatement) ELSE Statement:S1 {: RESULT=new ElseStatementStatement(S1); RESULT.setLine(S1left); :}
                | 

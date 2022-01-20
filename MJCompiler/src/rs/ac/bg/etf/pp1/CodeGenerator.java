@@ -64,7 +64,10 @@ import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
+import rs.ac.bg.etf.pp1.ast.DoStart;
+import rs.ac.bg.etf.pp1.ast.DoStatement;
 import rs.ac.bg.etf.pp1.ast.IfStart;
+import rs.ac.bg.etf.pp1.ast.IfStatement;
 import rs.ac.bg.etf.pp1.ast.IfHeader;
 
 public class CodeGenerator extends VisitorAdaptor {
@@ -90,6 +93,9 @@ public class CodeGenerator extends VisitorAdaptor {
 	private Stack<List<Integer>> stackConditionFixupListForTrue = new Stack<>();
 	private Stack<List<Integer>> stackCondtionFixupListForAnd = new Stack<>();
 	private Stack<List<Integer>> stackConditionFixupForOr = new Stack<>();
+
+	private Stack<Integer> doStartAdr = new Stack<>();
+	private Stack<Boolean> doWhileIfStack = new Stack<>();
 
 	public int getMainPc() {
 		return mainPc;
@@ -128,9 +134,12 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(ReadStatement readStatement) {
 		if (readStatement.getDesignator().obj.getType() == Tab.intType) {
 			Code.put(Code.read);
-			Code.store(readStatement.getDesignator().obj);
 		} else {
 			Code.put(Code.bread);
+		}
+		if (readStatement.getDesignator() instanceof ArrayDesignator) {
+			Code.put(Code.astore);
+		} else {
 			Code.store(readStatement.getDesignator().obj);
 		}
 	}
@@ -302,9 +311,9 @@ public class CodeGenerator extends VisitorAdaptor {
 //		if (arrayDesignator.getParent() instanceof DesignatorForMethodCall) {
 //			return;
 //		}
-//		if (arrayDesignator.getParent() instanceof ReadStatement) {
-//			return;
-//		}
+		if (arrayDesignator.getParent() instanceof ReadStatement) {
+			return;
+		}
 		if ((arrayDesignator.getParent() instanceof DesignatorItemInc
 				|| arrayDesignator.getParent() instanceof DesignatorItemDec) && !forced) {
 			return;
@@ -470,10 +479,14 @@ public class CodeGenerator extends VisitorAdaptor {
 //		Code.putFalseJump(Code.eq, 0);
 //		conditionFixupListForTrue.add(Code.pc - 2);
 //		Code.loadConst(0);
-		Code.loadConst(0);
-		Code.loadConst(0);
-		Code.putFalseJump(Code.ne, 0);
-		conditionFixupListForTrue.add(Code.pc - 2);
+		if (doWhileIfStack.peek()) {
+			Code.putJump(doStartAdr.peek());
+		} else {
+			Code.loadConst(0);
+			Code.loadConst(0);
+			Code.putFalseJump(Code.ne, 0);
+			conditionFixupListForTrue.add(Code.pc - 2);
+		}
 	}
 
 	@Override
@@ -499,11 +512,16 @@ public class CodeGenerator extends VisitorAdaptor {
 		condtionFixupListForAnd.clear();
 		Code.loadConst(1);
 		Code.put(Code.jcc + Code.ne);
-		Code.put2(8);
-		Code.loadConst(0);
-		Code.loadConst(0);
-		Code.putFalseJump(Code.ne, 0);
-		conditionFixupListForTrue.add(Code.pc - 2);
+		if (doWhileIfStack.peek()) {
+			Code.put2(6);
+			Code.putJump(doStartAdr.peek());
+		} else {
+			Code.put2(8);
+			Code.loadConst(0);
+			Code.loadConst(0);
+			Code.putFalseJump(Code.ne, 0);
+			conditionFixupListForTrue.add(Code.pc - 2);
+		}
 	}
 
 	private void putRelOp(int opCode) {
@@ -586,14 +604,28 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		if (!stackConditionFixupListForFalse.empty())
 			conditionFixupListForFalse = stackConditionFixupListForFalse.peek();
+		else
+			conditionFixupListForFalse = new LinkedList<>();
+
 		if (!stackConditionFixupListForTrue.empty())
 			conditionFixupListForTrue = stackConditionFixupListForTrue.peek();
+		else
+			conditionFixupListForTrue = new LinkedList<>();
+
 		if (!stackConditionFixupForOr.empty())
 			conditionFixupForOr = stackConditionFixupForOr.peek();
+		else
+			conditionFixupForOr = new LinkedList<>();
+
 		if (!stackCondtionFixupListForAnd.empty())
 			condtionFixupListForAnd = stackCondtionFixupListForAnd.peek();
+		else
+			condtionFixupListForAnd = new LinkedList<>();
+
 		if (!stackConditionFixupListForElse.empty())
 			conditionFixupListForElse = stackConditionFixupListForElse.peek();
+		else
+			conditionFixupListForElse = new LinkedList<>();
 
 	}
 
@@ -602,7 +634,7 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.fixup(adr);
 		}
 		conditionFixupListForElse.clear();
-		
+
 		stackConditionFixupListForFalse.pop();
 		stackConditionFixupListForTrue.pop();
 		stackConditionFixupForOr.pop();
@@ -611,16 +643,28 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		if (!stackConditionFixupListForFalse.empty())
 			conditionFixupListForFalse = stackConditionFixupListForFalse.peek();
+		else
+			conditionFixupListForFalse = new LinkedList<>();
+
 		if (!stackConditionFixupListForTrue.empty())
 			conditionFixupListForTrue = stackConditionFixupListForTrue.peek();
+		else
+			conditionFixupListForTrue = new LinkedList<>();
+
 		if (!stackConditionFixupForOr.empty())
 			conditionFixupForOr = stackConditionFixupForOr.peek();
+		else
+			conditionFixupForOr = new LinkedList<>();
+
 		if (!stackCondtionFixupListForAnd.empty())
 			condtionFixupListForAnd = stackCondtionFixupListForAnd.peek();
+		else
+			condtionFixupListForAnd = new LinkedList<>();
+
 		if (!stackConditionFixupListForElse.empty())
 			conditionFixupListForElse = stackConditionFixupListForElse.peek();
-		
-		
+		else
+			conditionFixupListForElse = new LinkedList<>();
 	}
 
 	public void visit(IfStart ifStart) {
@@ -635,6 +679,23 @@ public class CodeGenerator extends VisitorAdaptor {
 		conditionFixupForOr = stackConditionFixupForOr.peek();
 		condtionFixupListForAnd = stackCondtionFixupListForAnd.peek();
 		conditionFixupListForElse = stackConditionFixupListForElse.peek();
+
+		doWhileIfStack.push(false);
+
 	};
+
+	public void visit(DoStart doStart) {
+		doWhileIfStack.push(true);
+		doStartAdr.push(Code.pc);
+	}
+
+	public void visit(DoStatement doStatement) {
+		doWhileIfStack.pop();
+		doStartAdr.pop();
+	}
+
+	public void visit(IfStatement ifStatement) {
+		doWhileIfStack.pop();
+	}
 
 }

@@ -101,7 +101,7 @@ public class SemanticPass extends VisitorAdaptor {
 	private boolean foundClassMethodCall = false;
 	private Obj currClass = null;
 	private boolean constructorFound = false;
-	private Obj currClassInsideDesignator = null;
+	private Stack<Obj> currClassInsideDesignatorStack = new Stack<>();
 	private List<GotoStatement> allGotoStatements = new LinkedList<>();
 
 	public SemanticPass() {
@@ -333,7 +333,7 @@ public class SemanticPass extends VisitorAdaptor {
 		Tab.closeScope();
 
 		MethodDeclaration.obj = MethodDeclaration.getMethodTypeName().obj;
-		
+
 		returnFound = false;
 		currentMethod = null;
 	}
@@ -578,9 +578,9 @@ public class SemanticPass extends VisitorAdaptor {
 					+ " nije deklarisano! ", null);
 		}
 		if (obj.getType().getKind() == Struct.Class)
-			currClassInsideDesignator = obj;
-		if (!(singleDesignator.getParent() instanceof Designator))
-			currClassInsideDesignator = null;
+			currClassInsideDesignatorStack.push(obj);
+//		if (!(singleDesignator.getParent() instanceof Designator))
+//			currClassInsideDesignator = null;
 		singleDesignator.obj = obj;
 	}
 
@@ -588,6 +588,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(DotDesignator dotDesignator) {
 		dotDesignator.obj = Tab.noObj;
 		Collection<Obj> cObj = null;
+		Obj currClassInsideDesignator = currClassInsideDesignatorStack.peek();
 		if (currClassInsideDesignator.getName().equals("this")) {
 			cObj = Tab.currentScope().getOuter().getLocals().symbols();
 		} else {
@@ -596,10 +597,14 @@ public class SemanticPass extends VisitorAdaptor {
 		for (Obj o : cObj) {
 			if (o.getName().equals(dotDesignator.getName())) {
 				dotDesignator.obj = o;
-				if (dotDesignator.obj.getType().getKind() == Struct.Class)
-					currClassInsideDesignator = o;
+				if (dotDesignator.obj.getType().getKind() == Struct.Class) {
+					if (!currClassInsideDesignatorStack.empty())
+						currClassInsideDesignatorStack.pop();
+					currClassInsideDesignatorStack.push(dotDesignator.obj);
+				}
 				if (!(dotDesignator.getParent() instanceof Designator))
-					currClassInsideDesignator = null;
+					if (!currClassInsideDesignatorStack.empty())
+						currClassInsideDesignatorStack.pop();
 				break;
 			}
 		}
@@ -609,6 +614,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(ArrayDesignator arrayDesignator) {
 		arrayDesignator.obj = Tab.noObj;
 		String name = "";
+		Obj currClassInsideDesignator = currClassInsideDesignatorStack.peek();
 		if (arrayDesignator.getDesignator() instanceof DotDesignator) {
 			name = ((DotDesignator) arrayDesignator.getDesignator()).getName();
 		} else {
@@ -627,10 +633,14 @@ public class SemanticPass extends VisitorAdaptor {
 			arrayDesignator.obj = new Obj(arrayDesignator.obj.getType().getElemType().getKind(), "",
 					arrayDesignator.obj.getType().getElemType());
 		}
-		if (arrayDesignator.obj.getType().getKind() == Struct.Class)
-			currClassInsideDesignator = arrayDesignator.obj;
+		if (arrayDesignator.obj.getType().getKind() == Struct.Class) {
+			if (!currClassInsideDesignatorStack.empty())
+				currClassInsideDesignatorStack.pop();
+			currClassInsideDesignatorStack.push(arrayDesignator.obj);
+		}
 		if (!(arrayDesignator.getParent() instanceof Designator))
-			currClassInsideDesignator = null;
+			if (!currClassInsideDesignatorStack.empty())
+				currClassInsideDesignatorStack.pop();
 	}
 
 	@Override
