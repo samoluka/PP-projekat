@@ -2,6 +2,7 @@ package rs.ac.bg.etf.pp1;
 
 import java.awt.Component;
 import java.awt.Label;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,6 +73,7 @@ import rs.ac.bg.etf.pp1.ast.VarDeclarations;
 import rs.ac.bg.etf.pp1.ast.VarListClassNonEmpty;
 import rs.ac.bg.etf.pp1.ast.Variable;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
+import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
@@ -103,6 +105,39 @@ public class SemanticPass extends VisitorAdaptor {
 	private boolean constructorFound = false;
 	private Stack<Obj> currClassInsideDesignatorStack = new Stack<>();
 	private List<GotoStatement> allGotoStatements = new LinkedList<>();
+
+	static List<Byte> MethodTable = new ArrayList<>();
+
+	void addWordToStaticData(int value, int address) {
+		MethodTable.add(Byte.valueOf((byte) Code.const_));
+		MethodTable.add(Byte.valueOf((byte) ((value >> 16) >> 8)));
+		MethodTable.add(Byte.valueOf((byte) (value >> 16)));
+		MethodTable.add(Byte.valueOf((byte) (value >> 8)));
+		MethodTable.add(Byte.valueOf((byte) value));
+		MethodTable.add(Byte.valueOf((byte) Code.putstatic));
+		MethodTable.add(Byte.valueOf((byte) (address >> 8)));
+		MethodTable.add(Byte.valueOf((byte) address));
+	}
+
+	void addNameTerminator() {
+		addWordToStaticData(-1, Code.dataSize++);
+	}
+
+	void addTableTerminator() {
+		addWordToStaticData(-2, Code.dataSize++);
+	}
+
+	void addFunctionAddress(int functionAddress) {
+		addWordToStaticData(functionAddress, Code.dataSize++);
+	}
+
+	void addFunctionEntry(String name, int functionAddressInCodeBuffer) {
+		for (int j = 0; j < name.length(); j++) {
+			addWordToStaticData((int) (name.charAt(j)), Code.dataSize++);
+		}
+		addNameTerminator();
+		addFunctionAddress(functionAddressInCodeBuffer);
+	}
 
 	public SemanticPass() {
 		super();
@@ -193,6 +228,11 @@ public class SemanticPass extends VisitorAdaptor {
 			Tab.closeScope();
 		}
 		constructorFound = false;
+//		for (Obj o : Tab.currentScope.getLocals().symbols()) {
+//			if (o.getKind() == Obj.Meth) {
+//				addFunctionEntry(o.getName(), o.getAdr());
+//			}
+//		}
 		Tab.chainLocalSymbols(classDeclarations.getClassName().obj.getType());
 		Tab.closeScope();
 		if (extendClassType != null) {
@@ -244,6 +284,7 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(Program program) {
 		nVars = Tab.currentScope.getnVars();
+		//nVars += Code.dataSize;
 		Tab.chainLocalSymbols(program.getProgName().obj);
 		Tab.closeScope();
 		log.info("Zatvoren skoup programa");
@@ -372,193 +413,6 @@ public class SemanticPass extends VisitorAdaptor {
 
 		currDeclVar.clear();
 	}
-
-//	@Override
-//	public void visit(ParenDesignator parenDesignator) {
-//		if (parenDesignator.getExpr().struct != Tab.intType) {
-//			report_error("Izraz za dohvatanje elemnta niza mora da bude tipa int ", parenDesignator);
-//		}
-//		designatorQueue.add(parenDesignator);
-//	}
-
-//	@Override
-//	public void visit(DotDesignator dotDesignator) {
-//		designatorQueue.add(dotDesignator);
-//	}
-
-//	@Override
-//	public void visit(MultiDesignator multiDesignator) {
-//		multiDesignator.obj = Tab.find(multiDesignator.getName());
-//	}
-
-//	@Override
-//	public void visit(MultiDesign multiDesign) {
-//		Obj obj = Tab.find(((MultiDesignator) multiDesign.getParent()).getName());
-//		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
-//				&& obj.getLevel() != obj.getLocalSymbols().size()) {
-//			Collection<Obj> cObj = extendClassType.struct.getMembers();
-//			for (Obj o : cObj) {
-//				if (o.getName().equals(((MultiDesignator) multiDesign.getParent()).getName())) {
-//					obj = o;
-//					break;
-//				}
-//			}
-//		}
-//		if (obj == Tab.noObj) {
-//			report_error("Greska na liniji " + multiDesign.getLine() + " : ime "
-//					+ ((MultiDesignator) multiDesign.getParent()).getName() + " nije deklarisano! ", null);
-//		}
-//		multiDesign.obj = obj;
-//		if (!designatorQueue.isEmpty()) {
-//			Struct currStruct = Tab.noType;
-//			while (!designatorQueue.isEmpty()) {
-//				DesignatorMulti top = designatorQueue.poll();
-//				if (top instanceof ParenDesignator) {
-//					if (obj.getType().getKind() != Struct.Array) {
-//						report_error("Element: " + obj.getName() + " nije tipa niz", top);
-//						currStruct = Tab.noType;
-//					} else {
-//						currStruct = obj.getType().getElemType();
-//					}
-//					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
-//				} else {
-//					DotDesignator dTop = (DotDesignator) top;
-//					Collection<Obj> cObj;
-//					if (obj.getType().getKind() == Struct.Array) {
-//						if (currStruct.getKind() != Struct.Class) {
-//							report_error("Mora da bude []", dTop);
-//						}
-//						cObj = obj.getType().getElemType().getMembers();
-//					} else {
-//						if (obj.getName().equals("this")) {
-//							cObj = Tab.currentScope().getOuter().getLocals().symbols();
-//						} else {
-//							cObj = obj.getType().getMembers();
-//						}
-//					}
-//					boolean found = false;
-//					for (Obj o : cObj) {
-//						if (o.getName().equals(dTop.getI1())) {
-//							found = true;
-//							Obj lastObj = obj;
-//							obj = o;
-//							currStruct = o.getType();
-//							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
-//									&& lastObj.getType().getElemType() != null
-//									&& obj.getLevel() != obj.getLocalSymbols().size()) {
-//								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
-//								for (Obj oo : ccObj) {
-//									if (oo.getName().equals(o.getName())) {
-//										obj = oo;
-//										currStruct = oo.getType();
-//										break;
-//									}
-//								}
-//							}
-//							if (o.getKind() == Obj.Meth) {
-//								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
-//								foundClassMethodCall = true;
-//							}
-//							break;
-//						}
-//					}
-//					if (!found) {
-//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-//						break;
-//					}
-//				}
-//			}
-//			multiDesign.obj = obj;
-//		}
-//		designatorQueue.clear();
-//	}
-//
-//	@Override
-//	public void visit(SingleDesign singleDesign) {
-//		Obj obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
-////		if (singleDesign.getParent() instanceof MultiDesignator) {
-////			obj = Tab.find(((MultiDesignator) singleDesign.getParent()).getName());
-////		}else {
-////			obj = 
-////		}
-//		if (obj.getKind() == Obj.Meth && currClass != null && extendClassType != null
-//				&& obj.getLevel() != obj.getLocalSymbols().size()) {
-//			Collection<Obj> cObj = extendClassType.struct.getMembers();
-//			for (Obj o : cObj) {
-//				if (o.getName().equals(((MultiDesignator) singleDesign.getParent()).getName())) {
-//					obj = o;
-//					break;
-//				}
-//			}
-//		}
-//		if (obj == Tab.noObj) {
-//			report_error("Greska na liniji " + singleDesign.getLine() + " : ime "
-//					+ ((MultiDesignator) singleDesign.getParent()).getName() + " nije deklarisano! ", null);
-//		}
-//		singleDesign.obj = obj;
-//		if (!designatorQueue.isEmpty()) {
-//			Struct currStruct = Tab.noType;
-//			while (!designatorQueue.isEmpty()) {
-//				DesignatorMulti top = designatorQueue.poll();
-//				if (top instanceof ParenDesignator) {
-//					if (obj.getType().getKind() != Struct.Array) {
-//						report_error("Element: " + obj.getName() + " nije tipa niz", top);
-//						currStruct = Tab.noType;
-//					} else {
-//						currStruct = obj.getType().getElemType();
-//					}
-//					obj = new Obj(currStruct.getKind(), obj.getName(), currStruct);
-//				} else {
-//					DotDesignator dTop = (DotDesignator) top;
-//					Collection<Obj> cObj;
-//					if (obj.getType().getKind() == Struct.Array) {
-//						if (currStruct.getKind() != Struct.Class) {
-//							report_error("Mora da bude []", dTop);
-//						}
-//						cObj = obj.getType().getElemType().getMembers();
-//					} else {
-//						if (obj.getName().equals("this")) {
-//							cObj = Tab.currentScope().getOuter().getLocals().symbols();
-//						} else {
-//							cObj = obj.getType().getMembers();
-//						}
-//					}
-//					boolean found = false;
-//					for (Obj o : cObj) {
-//						if (o.getName().equals(dTop.getI1())) {
-//							found = true;
-//							Obj lastObj = obj;
-//							obj = o;
-//							currStruct = o.getType();
-//							if (obj.getKind() == Obj.Meth && lastObj.getType() != null
-//									&& lastObj.getType().getElemType() != null
-//									&& obj.getLevel() != obj.getLocalSymbols().size()) {
-//								Collection<Obj> ccObj = lastObj.getType().getElemType().getMembers();
-//								for (Obj oo : ccObj) {
-//									if (oo.getName().equals(o.getName())) {
-//										obj = oo;
-//										currStruct = oo.getType();
-//										break;
-//									}
-//								}
-//							}
-//							if (o.getKind() == Obj.Meth) {
-//								report_info("Pronadjen poziv metode clanice klase " + o.getName(), dTop);
-//								foundClassMethodCall = true;
-//							}
-//							break;
-//						}
-//					}
-//					if (!found) {
-//						report_error("Nepostojece polje " + dTop.getI1(), dTop);
-//						break;
-//					}
-//				}
-//			}
-//			singleDesign.obj = obj;
-//		}
-//		designatorQueue.clear();
-//	}
 
 	@Override
 	public void visit(SingleDesignator singleDesignator) {
@@ -769,12 +623,6 @@ public class SemanticPass extends VisitorAdaptor {
 		Struct paramType = acSingleItem.getExpr().struct;
 		Obj currentMethodCalled = methodCalledStack.peek();
 		int currentMethodParamNum = Math.abs(currentMethodParamNumStack.peek());
-//		if (currentMethodCalled.getName().equals("len") || currentMethodCalled.getName().equals("chr")
-//				|| currentMethodCalled.getName().equals("ord")) {
-//			currentMethodParamNum = 1;
-//		} else {
-//			currentMethodParamNum = Math.abs(currentMethodParamNumStack.peek());
-//		}
 		Object[] localSymbols = currentMethodCalled.getLocalSymbols().toArray();
 		int isClassMethod = 0;
 		if (currentMethodCalled.getLevel() > 0)
@@ -824,7 +672,8 @@ public class SemanticPass extends VisitorAdaptor {
 			report_error("Tip operatora new mora da bude klasa", factor);
 		}
 		// factor.struct = s;
-		factor.obj = new Obj(Obj.Var, "", factor.getType().struct);
+		// ovu liniju sam izmenio
+		factor.obj = Tab.find(factor.getType().getTypeName());
 	}
 
 	@Override

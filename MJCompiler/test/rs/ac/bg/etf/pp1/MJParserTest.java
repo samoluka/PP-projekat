@@ -65,7 +65,7 @@ public class MJParserTest {
 					objFile.delete();
 				CodeGenerator codeGenerator = new CodeGenerator();
 				prog.traverseBottomUp(codeGenerator);
-				Code.dataSize = v.nVars;
+				Code.dataSize += v.nVars;
 				Code.mainPc = codeGenerator.getMainPc();
 				Code.write(new FileOutputStream(objFile));
 				log.info("Generisanje koda uspesno zavrseno!");

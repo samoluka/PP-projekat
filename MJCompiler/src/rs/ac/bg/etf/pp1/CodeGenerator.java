@@ -1,5 +1,7 @@
 package rs.ac.bg.etf.pp1;
 
+import java.lang.instrument.ClassDefinition;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +15,8 @@ import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.BreakStatement;
 import rs.ac.bg.etf.pp1.ast.CharConst;
+import rs.ac.bg.etf.pp1.ast.ClassDeclarations;
+import rs.ac.bg.etf.pp1.ast.ClassName;
 import rs.ac.bg.etf.pp1.ast.ConditionList;
 import rs.ac.bg.etf.pp1.ast.ConditionTermList;
 import rs.ac.bg.etf.pp1.ast.ContinueStatement;
@@ -102,6 +106,42 @@ public class CodeGenerator extends VisitorAdaptor {
 	private Stack<Boolean> doWhileIfStack = new Stack<>();
 	private Stack<List<Integer>> continueStack = new Stack<>();
 	private Stack<List<Integer>> breakStack = new Stack<>();
+	private boolean classMethod = false;
+	private int virtualTableAddr = 0;
+	private int virtualTableAddrForSave = -1;
+
+	static List<Byte> MethodTable = new ArrayList<>();
+
+	void addWordToStaticData(int value, int address) {
+		MethodTable.add(Byte.valueOf((byte) Code.const_));
+		MethodTable.add(Byte.valueOf((byte) ((value >> 16) >> 8)));
+		MethodTable.add(Byte.valueOf((byte) (value >> 16)));
+		MethodTable.add(Byte.valueOf((byte) (value >> 8)));
+		MethodTable.add(Byte.valueOf((byte) value));
+		MethodTable.add(Byte.valueOf((byte) Code.putstatic));
+		MethodTable.add(Byte.valueOf((byte) (address >> 8)));
+		MethodTable.add(Byte.valueOf((byte) address));
+	}
+
+	void addNameTerminator() {
+		addWordToStaticData(-1, Code.dataSize++);
+	}
+
+	void addTableTerminator() {
+		addWordToStaticData(-2, Code.dataSize++);
+	}
+
+	void addFunctionAddress(int functionAddress) {
+		addWordToStaticData(functionAddress, Code.dataSize++);
+	}
+
+	void addFunctionEntry(String name, int functionAddressInCodeBuffer) {
+		for (int j = 0; j < name.length(); j++) {
+			addWordToStaticData((int) (name.charAt(j)), Code.dataSize++);
+		}
+		addNameTerminator();
+		addFunctionAddress(functionAddressInCodeBuffer);
+	}
 
 	public void report_error(String message, SyntaxNode info) {
 		errorDetected = true;
@@ -201,8 +241,19 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
 			mainPc = Code.pc;
+			// Store vft-creation byte code before the first instruction
+			// in main function.
+			Object ia[] = MethodTable.toArray();
+			for (int i = 0; i < ia.length; i++)
+				Code.buf[Code.pc++] = ((Byte) ia[i]).byteValue();
+			MethodTable.clear();
 		}
 		methodTypeName.obj.setAdr(Code.pc);
+		if (!"main".equalsIgnoreCase(methodTypeName.getMethodName()) && classMethod) {
+			if (virtualTableAddrForSave == -1)
+				virtualTableAddrForSave = Code.dataSize;
+			addFunctionEntry(methodTypeName.getMethodName(), methodTypeName.obj.getAdr());
+		}
 		// Collect arguments and local variables
 		SyntaxNode methodNode = methodTypeName.getParent();
 
@@ -221,8 +272,19 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
 			mainPc = Code.pc;
+			// Store vft-creation byte code before the first instruction
+			// in main function.
+			Object ia[] = MethodTable.toArray();
+			for (int i = 0; i < ia.length; i++)
+				Code.buf[Code.pc++] = ((Byte) ia[i]).byteValue();
+			MethodTable.clear();
 		}
 		methodTypeName.obj.setAdr(Code.pc);
+		if (!"main".equalsIgnoreCase(methodTypeName.getMethodName()) && classMethod) {
+			if (virtualTableAddrForSave == -1)
+				virtualTableAddrForSave = Code.dataSize;
+			addFunctionEntry(methodTypeName.getMethodName(), methodTypeName.obj.getAdr());
+		}
 		// Collect arguments and local variables
 		SyntaxNode methodNode = methodTypeName.getParent();
 
@@ -357,10 +419,11 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		Code.put(Code.new_);
 		Code.put2((nFactor.obj.getType().getNumberOfFields() + 1) * 4);
-		// Code.put(Code.dup);
-		// Code.loadConst(vTableAddress); // v_table value
-		// Code.put(Code.putfield);
-		// Code.put2(0);
+		Code.put(Code.dup);
+		Code.loadConst(vTableAddress); // v_table value
+		Code.put(Code.putfield);
+		Code.put2(0);
+
 	}
 
 	@Override
@@ -381,20 +444,55 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.arraylength);
 			return;
 		}
-		int offset = functionObj.getAdr() - Code.pc;
-		Code.put(Code.call);
-		Code.put2(offset);
+		if (methodCall.getDesignatorForMethodCall().getDesignator() instanceof DotDesignator) {
+			Obj classCalled = ((DotDesignator) methodCall.getDesignatorForMethodCall().getDesignator())
+					.getDesignator().obj;
+			String name = methodCall.getDesignatorForMethodCall().obj.getName();
+//			Code.put(Code.getstatic);
+//			Code.put2(0);
+			Code.put(Code.dup);
+			Code.put(Code.getfield);
+			Code.put2(0);
+			Code.put(Code.invokevirtual);
+			for (int i = 0; i < name.length(); i++)
+				Code.put4(name.charAt(i));
+			Code.put4(-1);
+		} else {
+			int offset = functionObj.getAdr() - Code.pc;
+			Code.put(Code.call);
+			Code.put2(offset);
+		}
 //		if (functionObj.getType() != Tab.noType) {
 //			Code.put(Code.pop);
 //		}
+//		int offset = functionObj.getAdr() - Code.pc;
+//		Code.put(Code.call);
+//		Code.put2(offset);
+////		if (functionObj.getType() != Tab.noType) {
+////			Code.put(Code.pop);
+////		}
 	}
 
 	public void visit(DesignatorItemFuncCallWithParam diFunCall) {
 		thisObj = lastClassObj;
 		Obj functionObj = diFunCall.getMethodNameDesignator().obj;
-		int offset = functionObj.getAdr() - Code.pc;
-		Code.put(Code.call);
-		Code.put2(offset);
+		if (diFunCall.getMethodNameDesignator().getDesignator() instanceof DotDesignator) {
+			Obj classCalled = ((DotDesignator) diFunCall.getMethodNameDesignator().getDesignator()).getDesignator().obj;
+			String name = diFunCall.getMethodNameDesignator().obj.getName();
+//			Code.put(Code.getstatic);
+//			Code.put2(0);
+			Code.put(Code.dup);
+			Code.put(Code.getfield);
+			Code.put2(0);
+			Code.put(Code.invokevirtual);
+			for (int i = 0; i < name.length(); i++)
+				Code.put4(name.charAt(i));
+			Code.put4(-1);
+		} else {
+			int offset = functionObj.getAdr() - Code.pc;
+			Code.put(Code.call);
+			Code.put2(offset);
+		}
 		if (functionObj.getType() != Tab.noType) {
 			Code.put(Code.pop);
 		}
@@ -764,6 +862,16 @@ public class CodeGenerator extends VisitorAdaptor {
 		for (Integer adr : fixupList) {
 			Code.fixup(adr);
 		}
+	}
+
+	public void visit(ClassName className) {
+		classMethod = true;
+	}
+
+	public void visit(ClassDeclarations classDeclarations) {
+		classMethod = false;
+		classDeclarations.getClassName().obj.setAdr(virtualTableAddrForSave);
+		virtualTableAddrForSave = -1;
 	}
 
 }
