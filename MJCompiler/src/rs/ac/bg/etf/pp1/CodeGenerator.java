@@ -11,9 +11,11 @@ import rs.ac.bg.etf.pp1.ast.AddExpr;
 import rs.ac.bg.etf.pp1.ast.AddPlus;
 import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
+import rs.ac.bg.etf.pp1.ast.BreakStatement;
 import rs.ac.bg.etf.pp1.ast.CharConst;
 import rs.ac.bg.etf.pp1.ast.ConditionList;
 import rs.ac.bg.etf.pp1.ast.ConditionTermList;
+import rs.ac.bg.etf.pp1.ast.ContinueStatement;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
 import rs.ac.bg.etf.pp1.ast.DesignatorForAssign;
@@ -21,6 +23,7 @@ import rs.ac.bg.etf.pp1.ast.DesignatorForMethodCall;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemDec;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemFuncCallWithParam;
 import rs.ac.bg.etf.pp1.ast.DesignatorItemInc;
+import rs.ac.bg.etf.pp1.ast.DoPart;
 import rs.ac.bg.etf.pp1.ast.DotDesignator;
 import rs.ac.bg.etf.pp1.ast.ElseStatementStatement;
 import rs.ac.bg.etf.pp1.ast.GotoStatement;
@@ -74,6 +77,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	private int mainPc;
 	Logger log = Logger.getLogger(getClass());
+	boolean errorDetected = false;
 	private boolean forced = false;
 	private Obj lastClassObj;
 	private Obj thisObj;
@@ -96,6 +100,25 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	private Stack<Integer> doStartAdr = new Stack<>();
 	private Stack<Boolean> doWhileIfStack = new Stack<>();
+	private Stack<List<Integer>> continueStack = new Stack<>();
+	private Stack<List<Integer>> breakStack = new Stack<>();
+
+	public void report_error(String message, SyntaxNode info) {
+		errorDetected = true;
+		StringBuilder msg = new StringBuilder(message);
+		int line = (info == null) ? 0 : info.getLine();
+		if (line != 0)
+			msg.append(" na liniji ").append(line);
+		log.error(msg.toString());
+	}
+
+	public void report_info(String message, SyntaxNode info) {
+		StringBuilder msg = new StringBuilder(message);
+		int line = (info == null) ? 0 : info.getLine();
+		if (line != 0)
+			msg.append(" na liniji ").append(line);
+		log.info(msg.toString());
+	}
 
 	public int getMainPc() {
 		return mainPc;
@@ -684,18 +707,53 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	};
 
+	public void visit(ContinueStatement continueStatement) {
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		if (!continueStack.empty()) {
+			continueStack.peek().add(Code.pc - 2);
+		} else {
+			report_error("Continue iskaz mora biti uparen sa doWhile naredbom", continueStatement);
+		}
+	}
+
+	public void visit(BreakStatement breakStatement) {
+		Code.loadConst(0);
+		Code.loadConst(0);
+		Code.putFalseJump(Code.ne, 0);
+		if (!breakStack.empty()) {
+			breakStack.peek().add(Code.pc - 2);
+		} else {
+			report_error("Break iskaz mora biti uparen sa doWhile naredbom", breakStatement);
+		}
+	}
+
 	public void visit(DoStart doStart) {
 		doWhileIfStack.push(true);
 		doStartAdr.push(Code.pc);
+		continueStack.push(new LinkedList<>());
+		breakStack.push(new LinkedList<>());
 	}
 
 	public void visit(DoStatement doStatement) {
 		doWhileIfStack.pop();
 		doStartAdr.pop();
+		List<Integer> fixupList = breakStack.pop();
+		for (Integer adr : fixupList) {
+			Code.fixup(adr);
+		}
 	}
 
 	public void visit(IfStatement ifStatement) {
 		doWhileIfStack.pop();
+	}
+
+	public void visit(DoPart doPart) {
+		List<Integer> fixupList = continueStack.pop();
+		for (Integer adr : fixupList) {
+			Code.fixup(adr);
+		}
 	}
 
 }

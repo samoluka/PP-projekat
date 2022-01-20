@@ -62,18 +62,16 @@ Test t1, t2;
 		else print(ord('a'));
 		
 		print(eol);
-//		i = 0;
-//		do{
-//			if(i == 3)
-//			{
-//				i++;
-//				continue;
-//			}
-//			if(i == 4) break;
-//			i = inkrement(i, 1);
-//		}while(i < 10);
-		
-		i = 4;
+		i = 0;
+		do{
+			if(i == 3)
+			{
+				i++;
+				continue;
+			}
+			if(i == 4) break;
+			i = inkrement(i, 1);
+		}while(i < 10);
 		
 		if(i == 3 && verify()) print(-4);
 		else print(4);  

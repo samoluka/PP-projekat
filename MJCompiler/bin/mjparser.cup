@@ -66,7 +66,7 @@ nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, M
 nonterminal StatementList, SingleStatement, Statement, StatementLabel, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, FormalParamListItem;
 nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
-nonterminal VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint, IfPart, IfHeader, IfStart, DoStart;
+nonterminal VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint, IfPart, IfHeader, IfStart, DoStart, DoPart;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label;
@@ -276,7 +276,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
 				|
 				(IfStatement) IfPart ElseStatement
 				|
-				(DoStatement) DoStart StatementList WHILE LPAREN Condition RPAREN SEMI
+				(DoStatement) DoPart WHILE LPAREN Condition RPAREN SEMI
 				|
 				(BreakStatement) BREAK SEMI
 				|
@@ -306,6 +306,7 @@ SingleStatement ::= (DesignatorSingleStatement) DesignatorStatement SEMI
 				;
 
 DoStart ::= (DoStart) DO;
+DoPart ::= (DoPart) DoStart StatementList;
 
 ElseStatement ::= (ElseStatementStatement) ELSE Statement
                | 

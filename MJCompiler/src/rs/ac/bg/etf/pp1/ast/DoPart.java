@@ -5,16 +5,26 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ListOfStatements extends StatementList {
+public class DoPart implements SyntaxNode {
 
+    private SyntaxNode parent;
+    private int line;
+    private DoStart DoStart;
     private StatementList StatementList;
-    private Statement Statement;
 
-    public ListOfStatements (StatementList StatementList, Statement Statement) {
+    public DoPart (DoStart DoStart, StatementList StatementList) {
+        this.DoStart=DoStart;
+        if(DoStart!=null) DoStart.setParent(this);
         this.StatementList=StatementList;
         if(StatementList!=null) StatementList.setParent(this);
-        this.Statement=Statement;
-        if(Statement!=null) Statement.setParent(this);
+    }
+
+    public DoStart getDoStart() {
+        return DoStart;
+    }
+
+    public void setDoStart(DoStart DoStart) {
+        this.DoStart=DoStart;
     }
 
     public StatementList getStatementList() {
@@ -25,12 +35,20 @@ public class ListOfStatements extends StatementList {
         this.StatementList=StatementList;
     }
 
-    public Statement getStatement() {
-        return Statement;
+    public SyntaxNode getParent() {
+        return parent;
     }
 
-    public void setStatement(Statement Statement) {
-        this.Statement=Statement;
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -38,26 +56,32 @@ public class ListOfStatements extends StatementList {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(DoStart!=null) DoStart.accept(visitor);
         if(StatementList!=null) StatementList.accept(visitor);
-        if(Statement!=null) Statement.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(DoStart!=null) DoStart.traverseTopDown(visitor);
         if(StatementList!=null) StatementList.traverseTopDown(visitor);
-        if(Statement!=null) Statement.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(DoStart!=null) DoStart.traverseBottomUp(visitor);
         if(StatementList!=null) StatementList.traverseBottomUp(visitor);
-        if(Statement!=null) Statement.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ListOfStatements(\n");
+        buffer.append("DoPart(\n");
+
+        if(DoStart!=null)
+            buffer.append(DoStart.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
 
         if(StatementList!=null)
             buffer.append(StatementList.toString("  "+tab));
@@ -65,14 +89,8 @@ public class ListOfStatements extends StatementList {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(Statement!=null)
-            buffer.append(Statement.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
-
         buffer.append(tab);
-        buffer.append(") [ListOfStatements]");
+        buffer.append(") [DoPart]");
         return buffer.toString();
     }
 }
