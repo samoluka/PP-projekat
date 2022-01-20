@@ -65,7 +65,7 @@ public class MJParserTest {
 					objFile.delete();
 				CodeGenerator codeGenerator = new CodeGenerator();
 				prog.traverseBottomUp(codeGenerator);
-				Code.dataSize += v.nVars;
+				Code.dataSize += SemanticPass.nVars;
 				Code.mainPc = codeGenerator.getMainPc();
 				Code.write(new FileOutputStream(objFile));
 				log.info("Generisanje koda uspesno zavrseno!");
@@ -78,7 +78,7 @@ public class MJParserTest {
 					br.close();
 				} catch (IOException e1) {
 					log.error(e1.getMessage(), e1);
-				}
+				} 
 		}
 
 	}

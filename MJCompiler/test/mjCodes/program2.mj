@@ -236,7 +236,50 @@ program test302
 
 
 
+//Test 302
 
+program test302
+
+
+class A{
+	int x;
+	{
+		A(){
+			print('a');
+		}
+		void f(){
+			x = 1;
+		}
+		void p(){
+			print(x);
+		}
+	}
+}
+class B extends A{
+	{
+		B(){
+			super();
+			print('b');
+		}
+		void f(){
+			x = 2;
+		}
+		void p(){
+			super();
+			print(x);
+		}
+	}
+}
+{
+	
+	void main()
+	A a;
+	A b;
+	{
+		a = new A;
+		b = new B;
+	}
+}
 
 
 //<arg value="-dump_states" />

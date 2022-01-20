@@ -90,7 +90,7 @@ public class SemanticPass extends VisitorAdaptor {
 	boolean errorDetected = false;
 	Type currentType;
 	Stack<Integer> currentMethodParamNumStack = new Stack<>();
-	int nVars;
+	static int nVars;
 
 	Logger log = Logger.getLogger(getClass());
 	private List<Definition> currDeclVar = new LinkedList<>();
@@ -232,6 +232,7 @@ public class SemanticPass extends VisitorAdaptor {
 //		for (Obj o : Tab.currentScope.getLocals().symbols()) {
 //			if (o.getKind() == Obj.Meth) {
 //				addFunctionEntry(o.getName(), o.getAdr());
+//				Tab.insert(Obj.Meth, o.getName(), o.getType());
 //			}
 //		}
 		Tab.chainLocalSymbols(classDeclarations.getClassName().obj.getType());
@@ -286,7 +287,6 @@ public class SemanticPass extends VisitorAdaptor {
 
 	public void visit(Program program) {
 		nVars = Tab.currentScope.getnVars();
-		// nVars += Code.dataSize;
 		Tab.chainLocalSymbols(program.getProgName().obj);
 		Tab.closeScope();
 		log.info("Zatvoren skoup programa");
@@ -435,8 +435,9 @@ public class SemanticPass extends VisitorAdaptor {
 		}
 		if (obj.getType().getKind() == Struct.Class)
 			currClassInsideDesignatorStack.push(obj);
-//		if (!(singleDesignator.getParent() instanceof Designator))
-//			currClassInsideDesignator = null;
+		if (!(singleDesignator.getParent() instanceof Designator))
+			if (!currClassInsideDesignatorStack.empty())
+				currClassInsideDesignatorStack.pop();
 		singleDesignator.obj = obj;
 	}
 
@@ -840,6 +841,12 @@ public class SemanticPass extends VisitorAdaptor {
 			if (currentMethod.getName().equals(currClass.getName())) {
 				report_info("Pronadjen poziv konstustruktora roditeljske klase: " + extendClassType.getTypeName(),
 						superStatement);
+				for (Obj o : extendClassType.struct.getMembers()) {
+					if (o.getName().equals(extendClassType.getTypeName())) {
+						superStatement.getSuperStart().obj = o;
+						return;
+					}
+				}
 				return;
 			}
 			Collection<Obj> cObj = extendClassType.struct.getMembers();

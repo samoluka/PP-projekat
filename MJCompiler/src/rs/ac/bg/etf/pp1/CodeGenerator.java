@@ -15,10 +15,12 @@ import rs.ac.bg.etf.pp1.ast.ArrayDesignator;
 import rs.ac.bg.etf.pp1.ast.BoolConst;
 import rs.ac.bg.etf.pp1.ast.BreakStatement;
 import rs.ac.bg.etf.pp1.ast.CharConst;
+import rs.ac.bg.etf.pp1.ast.ClassConstructorDeclaration;
 import rs.ac.bg.etf.pp1.ast.ClassDeclarations;
 import rs.ac.bg.etf.pp1.ast.ClassName;
 import rs.ac.bg.etf.pp1.ast.ConditionList;
 import rs.ac.bg.etf.pp1.ast.ConditionTermList;
+import rs.ac.bg.etf.pp1.ast.ConstructorHeader;
 import rs.ac.bg.etf.pp1.ast.ContinueStatement;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignmentStatement;
@@ -51,6 +53,7 @@ import rs.ac.bg.etf.pp1.ast.NoElseStatement;
 import rs.ac.bg.etf.pp1.ast.NumberConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithNumConst;
 import rs.ac.bg.etf.pp1.ast.PrintStatementWithoutNumConst;
+import rs.ac.bg.etf.pp1.ast.ProgName;
 import rs.ac.bg.etf.pp1.ast.ReadStatement;
 import rs.ac.bg.etf.pp1.ast.RelEqual;
 import rs.ac.bg.etf.pp1.ast.RelGEqual;
@@ -165,6 +168,10 @@ public class CodeGenerator extends VisitorAdaptor {
 		return mainPc;
 	}
 
+	public void visit(ProgName progName) {
+		Code.dataSize += SemanticPass.nVars;
+	}
+
 	@Override
 	public void visit(PrintStatementWithNumConst printStmt) {
 		switch (printStmt.getExpr().struct.getKind()) {
@@ -239,7 +246,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 
 	public void visit(MethodTypeNameVoid methodTypeName) {
-
+		int addOn = 0;
 		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
 			mainPc = Code.pc;
 			// Store vft-creation byte code before the first instruction
@@ -259,9 +266,10 @@ public class CodeGenerator extends VisitorAdaptor {
 		SyntaxNode methodNode = methodTypeName.getParent();
 
 		int varCnt = methodTypeName.obj.getLocalSymbols().size();
-
 		int fpCnt = methodTypeName.obj.getLevel();
-
+//		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
+//			varCnt = Code.dataSize + fpCnt;
+//		}
 		// Generate the entry
 		Code.put(Code.enter);
 		Code.put(fpCnt);
@@ -350,6 +358,9 @@ public class CodeGenerator extends VisitorAdaptor {
 		if (singleDesignator.obj.getKind() == Obj.Fld) {
 			Code.put(Code.load_n + 0);
 		}
+		if (singleDesignator.obj.getKind() == Obj.Meth) {
+			Code.put(Code.load_n + 0);
+		}
 		if (singleDesignator.getParent() instanceof ReadStatement) {
 			return;
 		}
@@ -424,7 +435,14 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.loadConst(vTableAddress); // v_table value
 		Code.put(Code.putfield);
 		Code.put2(0);
-
+		Code.put(Code.dup);
+		for (Obj o : nFactor.obj.getType().getMembers()) {
+			if (o.getName().equals(className)) {
+				int offset = o.getAdr() - Code.pc;
+				Code.put(Code.call);
+				Code.put2(offset);
+			}
+		}
 	}
 
 	@Override
@@ -445,9 +463,9 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.arraylength);
 			return;
 		}
-		if (methodCall.getDesignatorForMethodCall().getDesignator() instanceof DotDesignator) {
-			Obj classCalled = ((DotDesignator) methodCall.getDesignatorForMethodCall().getDesignator())
-					.getDesignator().obj;
+		if (methodCall.getDesignatorForMethodCall().getDesignator() instanceof DotDesignator || classMethod) {
+//			Obj classCalled = ((DotDesignator) methodCall.getDesignatorForMethodCall().getDesignator())
+//					.getDesignator().obj;
 			String name = methodCall.getDesignatorForMethodCall().obj.getName();
 //			Code.put(Code.getstatic);
 //			Code.put2(0);
@@ -477,8 +495,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(DesignatorItemFuncCallWithParam diFunCall) {
 		thisObj = lastClassObj;
 		Obj functionObj = diFunCall.getMethodNameDesignator().obj;
-		if (diFunCall.getMethodNameDesignator().getDesignator() instanceof DotDesignator) {
-			Obj classCalled = ((DotDesignator) diFunCall.getMethodNameDesignator().getDesignator()).getDesignator().obj;
+		if (diFunCall.getMethodNameDesignator().getDesignator() instanceof DotDesignator || classMethod) {
+//			Obj classCalled = ((DotDesignator) diFunCall.getMethodNameDesignator().getDesignator()).getDesignator().obj;
 			String name = diFunCall.getMethodNameDesignator().obj.getName();
 //			Code.put(Code.getstatic);
 //			Code.put2(0);
@@ -896,6 +914,31 @@ public class CodeGenerator extends VisitorAdaptor {
 		if (superStatement.getSuperStart().obj.getType() != Tab.noType) {
 			Code.put(Code.pop);
 		}
+	}
+
+	public void visit(ConstructorHeader cHeader) {
+		cHeader.obj.setAdr(Code.pc);
+		if (virtualTableAddrForSave == -1)
+			virtualTableAddrForSave = Code.dataSize;
+		addFunctionEntry(cHeader.obj.getName(), cHeader.obj.getAdr());
+		// Collect arguments and local variables
+		int varCnt = cHeader.obj.getLocalSymbols().size();
+
+		int fpCnt = cHeader.obj.getLevel();
+
+		// Generate the entry
+		Code.put(Code.enter);
+		Code.put(fpCnt);
+		Code.put(varCnt);
+		returnFound = false;
+	}
+
+	public void visit(ClassConstructorDeclaration ccDeclaration) {
+		if (returnFound == false) {
+			Code.put(Code.exit);
+			Code.put(Code.return_);
+		}
+		returnFound = false;
 	}
 
 }
