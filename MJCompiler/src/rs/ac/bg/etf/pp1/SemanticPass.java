@@ -588,7 +588,9 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(DotDesignator dotDesignator) {
 		dotDesignator.obj = Tab.noObj;
 		Collection<Obj> cObj = null;
-		Obj currClassInsideDesignator = currClassInsideDesignatorStack.peek();
+		Obj currClassInsideDesignator = null;
+		if (!currClassInsideDesignatorStack.empty())
+			currClassInsideDesignator = currClassInsideDesignatorStack.peek();
 		if (currClassInsideDesignator.getName().equals("this")) {
 			cObj = Tab.currentScope().getOuter().getLocals().symbols();
 		} else {
@@ -614,7 +616,9 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(ArrayDesignator arrayDesignator) {
 		arrayDesignator.obj = Tab.noObj;
 		String name = "";
-		Obj currClassInsideDesignator = currClassInsideDesignatorStack.peek();
+		Obj currClassInsideDesignator = null;
+		if (!currClassInsideDesignatorStack.empty())
+			currClassInsideDesignator = currClassInsideDesignatorStack.peek();
 		if (arrayDesignator.getDesignator() instanceof DotDesignator) {
 			name = ((DotDesignator) arrayDesignator.getDesignator()).getName();
 		} else {
@@ -765,6 +769,12 @@ public class SemanticPass extends VisitorAdaptor {
 		Struct paramType = acSingleItem.getExpr().struct;
 		Obj currentMethodCalled = methodCalledStack.peek();
 		int currentMethodParamNum = Math.abs(currentMethodParamNumStack.peek());
+//		if (currentMethodCalled.getName().equals("len") || currentMethodCalled.getName().equals("chr")
+//				|| currentMethodCalled.getName().equals("ord")) {
+//			currentMethodParamNum = 1;
+//		} else {
+//			currentMethodParamNum = Math.abs(currentMethodParamNumStack.peek());
+//		}
 		Object[] localSymbols = currentMethodCalled.getLocalSymbols().toArray();
 		int isClassMethod = 0;
 		if (currentMethodCalled.getLevel() > 0)
@@ -774,8 +784,14 @@ public class SemanticPass extends VisitorAdaptor {
 					+ acSingleItem.getLine(), null);
 		} else {
 			if (!((Obj) localSymbols[currentMethodParamNum + isClassMethod]).getType().equals(paramType))
-				report_error("Prosledjeni parametar broj " + currentMethodParamNum
-						+ " nije odgovarajuceg tipa na liniji " + acSingleItem.getLine(), null);
+				if (currentMethodCalled.getName().equals("len")) {
+					if (paramType.getKind() != Struct.Array) {
+						report_error("Prosledjeni parametar broj " + currentMethodParamNum
+								+ " nije odgovarajuceg tipa na liniji " + acSingleItem.getLine(), null);
+					}
+				} else
+					report_error("Prosledjeni parametar broj " + currentMethodParamNum
+							+ " nije odgovarajuceg tipa na liniji " + acSingleItem.getLine(), null);
 		}
 		currentMethodParamNumStack.push(currentMethodParamNumStack.pop() + 1);
 //		if (currentMethodCalled.getLevel() <= currentMethodParamNum) {

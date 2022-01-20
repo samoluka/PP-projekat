@@ -371,6 +371,16 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	public void visit(MethodCall methodCall) {
 		Obj functionObj = methodCall.getDesignatorForMethodCall().obj;
+		if (functionObj.getName().equals("ord")) {
+			return;
+		}
+		if (functionObj.getName().equals("chr")) {
+			return;
+		}
+		if (functionObj.getName().equals("len")) {
+			Code.put(Code.arraylength);
+			return;
+		}
 		int offset = functionObj.getAdr() - Code.pc;
 		Code.put(Code.call);
 		Code.put2(offset);
