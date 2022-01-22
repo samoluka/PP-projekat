@@ -17,7 +17,7 @@ Semanticka analiza:
 Na nivou sintaksne analize???
 
 -proveriti goto labela da li postoji - ovo se proverava u rantajmu vrv?
-- null?
+- null? - nekako radi
 
 
 
@@ -26,7 +26,6 @@ Generisanje koda:
 -poziv konstruktora - radi
 
 - dodati podrazumevani prazan konsturktor - radi
-
+- proveriti null pointere, radi nekako, ne razumem kako
 
 - postoji ostatak na steku prilikom if izraza ukoliko imam if(verify || nesto) i verify bude 0 ostane 0 na steku, popraviti mozdaa???
-- proveriti null pointere
