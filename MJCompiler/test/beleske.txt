@@ -22,5 +22,11 @@ Na nivou sintaksne analize???
 
 
 Generisanje koda:
--super poziv
--poziv konstruktora
+-super poziv - radi
+-poziv konstruktora - radi
+
+- dodati podrazumevani prazan konsturktor - radi
+
+
+- postoji ostatak na steku prilikom if izraza ukoliko imam if(verify || nesto) i verify bude 0 ostane 0 na steku, popraviti mozdaa???
+- proveriti null pointere

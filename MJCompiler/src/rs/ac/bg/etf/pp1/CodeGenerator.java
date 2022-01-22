@@ -116,6 +116,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	private int virtualTableAddrForSave = -1;
 	private Stack<Boolean> isMethod = new Stack<>();
 	private Stack<Integer> actualParamCnt = new Stack<>();
+	private LinkedList<String> allClasses = new LinkedList<>();
+	private boolean constructorFound = false;
 
 	static List<Byte> MethodTable = new ArrayList<>();
 
@@ -361,10 +363,14 @@ public class CodeGenerator extends VisitorAdaptor {
 		if (singleDesignator.obj.getKind() == Obj.Fld) {
 			Code.put(Code.load_n + 0);
 		}
-		if (singleDesignator.obj.getKind() == Obj.Meth) {
+		if (singleDesignator.obj.getKind() == Obj.Meth && singleDesignator.obj.getLevel() > 0
+				&& ((Obj) singleDesignator.obj.getLocalSymbols().toArray()[0]).getName().equals("this")) {
 			Code.put(Code.load_n + 0);
+
 		}
-		if (singleDesignator.getParent() instanceof ReadStatement) {
+		if (singleDesignator.getParent() instanceof ReadStatement)
+
+		{
 			return;
 		}
 		if (singleDesignator.getParent() instanceof MethodNameDesignator) {
@@ -438,12 +444,14 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.loadConst(vTableAddress); // v_table value
 		Code.put(Code.putfield);
 		Code.put2(0);
-		Code.put(Code.dup);
-		for (Obj o : nFactor.obj.getType().getMembers()) {
-			if (o.getName().equals(className)) {
-				int offset = o.getAdr() - Code.pc;
-				Code.put(Code.call);
-				Code.put2(offset);
+		if (allClasses.contains(className)) {
+			Code.put(Code.dup);
+			for (Obj o : nFactor.obj.getType().getMembers()) {
+				if (o.getName().equals(className)) {
+					int offset = o.getAdr() - Code.pc;
+					Code.put(Code.call);
+					Code.put2(offset);
+				}
 			}
 		}
 	}
@@ -896,6 +904,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	public void visit(ClassName className) {
 		classMethod = true;
+		constructorFound = false;
 	}
 
 	public void visit(ClassDeclarations classDeclarations) {
@@ -909,10 +918,32 @@ public class CodeGenerator extends VisitorAdaptor {
 						if (o.getName().equals(oo.getName()))
 							addFunctionEntry(o.getName(), oo.getAdr());
 					}
-
 				}
 			}
 		}
+		// ukoliko ne postoji konstuktor dodaj prazan
+		if (!constructorFound) {
+			Obj constructorObj = Tab.noObj;
+			for (Obj o : classDeclarations.getClassName().obj.getType().getMembers()) {
+				if (o.getKind() == Obj.Meth && o.getName() == classDeclarations.getClassName().getClassName()) {
+					constructorObj = o;
+					break;
+				}
+			}
+			constructorObj.setAdr(Code.pc);
+			int fpCnt = 1;
+			int varCnt = 1;
+			if (virtualTableAddrForSave == -1)
+				virtualTableAddrForSave = Code.dataSize;
+			addFunctionEntry(constructorObj.getName(), constructorObj.getAdr());
+			Code.put(Code.enter);
+			Code.put(fpCnt);
+			Code.put(varCnt);
+			Code.put(Code.exit);
+			Code.put(Code.return_);
+		}
+		constructorFound = false;
+		allClasses.add(classDeclarations.getClassName().getClassName());
 	}
 
 	public void visit(SuperStatement superStatement) {
@@ -949,6 +980,7 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.exit);
 			Code.put(Code.return_);
 		}
+		constructorFound = true;
 		returnFound = false;
 	}
 
