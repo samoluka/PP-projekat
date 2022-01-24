@@ -19,7 +19,7 @@ parser code {:
       errorDetected = true;
     }
   
-    public void syntax_error(Symbol cur_token) {
+    public void syntax_error(Symbol cur_token) {   	
         report_error("\nSintaksna greska", cur_token);
         errorDetected = true;
     }
@@ -170,6 +170,7 @@ VarItemListClass ::= (VarMultiItemListClass) VarItemListClass COMMA VarDeclDefin
 
 ClassDecl ::= (ClassDeclarations) ClassName ClassExtends LBRACE VarListClass ClassMethodDeclItemList RBRACE;
 ClassName ::= (ClassName) CLASS IDENT:className;
+			
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type
 			|
 			(ClassExtendsError) EXTENDS error:e
@@ -179,8 +180,8 @@ ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type
 			|
 			(ClassNoExtedsError) IDENT error:e
 			{:
-				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
-			:}
+				parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
+			:}					
 			|
 			(NoClassExtends) /* epsilon */
 			;

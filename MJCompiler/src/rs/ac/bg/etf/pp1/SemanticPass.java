@@ -1,7 +1,5 @@
 package rs.ac.bg.etf.pp1;
 
-import java.awt.Component;
-import java.awt.Label;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -312,7 +310,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(MethodTypeNameWithType methodTypeNameWithType) {
 		Obj foundMethod = Tab.find(methodTypeNameWithType.getMethodName());
 		if (foundMethod != Tab.noObj) {
-			Collection<Obj> cObj = null;
+			Collection<Obj> cObj = new LinkedList<>();
 			if (extendClassType != null)
 				cObj = extendClassType.struct.getMembers();
 			boolean found = false;
@@ -340,7 +338,7 @@ public class SemanticPass extends VisitorAdaptor {
 	public void visit(MethodTypeNameVoid MethodTypeNameVoid) {
 		Obj foundMethod = Tab.find(MethodTypeNameVoid.getMethodName());
 		if (foundMethod != Tab.noObj) {
-			Collection<Obj> cObj = null;
+			Collection<Obj> cObj = new LinkedList<>();
 			if (extendClassType != null)
 				cObj = extendClassType.struct.getMembers();
 			boolean found = false;
@@ -351,7 +349,6 @@ public class SemanticPass extends VisitorAdaptor {
 				}
 			}
 			if (!found || foundMethod.getLevel() == foundMethod.getLocalSymbols().size())
-//			if (!found)
 				report_error("Greska na liniji " + MethodTypeNameVoid.getLine() + ". Metoda "
 						+ MethodTypeNameVoid.getMethodName() + " je vec definisana", null);
 		}

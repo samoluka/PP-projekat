@@ -19,7 +19,7 @@ parser code {:
       errorDetected = true;
     }
   
-    public void syntax_error(Symbol cur_token) {
+    public void syntax_error(Symbol cur_token) {   	
         report_error("\nSintaksna greska", cur_token);
         errorDetected = true;
     }
@@ -206,6 +206,7 @@ VarItemListClass ::= (VarMultiItemListClass) VarItemListClass:V1 COMMA VarDeclDe
 
 ClassDecl ::= (ClassDeclarations) ClassName:C1 ClassExtends:C2 LBRACE VarListClass:V3 ClassMethodDeclItemList:C4 RBRACE {: RESULT=new ClassDeclarations(C1, C2, V3, C4); RESULT.setLine(C1left); :};
 ClassName ::= (ClassName) CLASS IDENT:className {: RESULT=new ClassName(className); RESULT.setLine(classNameleft); :};
+			
 ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassDeclarationsExtends(T1); RESULT.setLine(T1left); :}
 			|
 			(ClassExtendsError) EXTENDS error:e
@@ -215,8 +216,8 @@ ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassD
 			|
 			(ClassNoExtedsError) IDENT:I1 error:e
 			{:
-				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
-			:} {: RESULT=new ClassNoExtedsError(I1); RESULT.setLine(I1left); :}
+				parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
+			:} {: RESULT=new ClassNoExtedsError(I1); RESULT.setLine(I1left); :}					
 			|
 			(NoClassExtends) {: RESULT=new NoClassExtends(); :} /* epsilon */
 			;

@@ -31,8 +31,9 @@ public class MJParserTest {
 
 		Reader br = null;
 		try {
-			String fileName = "program";
-			File sourceCode = new File("test/mjCodes/" + fileName + ".mj");
+			String fileNameInput = args[0];
+			String fileNameOutput = args[1];
+			File sourceCode = new File("test/mjCodes/" + fileNameInput);
 			log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 
 			br = new BufferedReader(new FileReader(sourceCode));
@@ -40,7 +41,6 @@ public class MJParserTest {
 
 			MJParser p = new MJParser(lexer);
 			Symbol s = p.parse(); // pocetak parsiranja
-
 			Program prog = (Program) (s.value);
 			Tab.init();
 			// ispis sintaksnog stabla
@@ -60,7 +60,7 @@ public class MJParserTest {
 
 			if (!p.errorDetected && v.passed()) {
 				log.info("Parsiranje uspesno zavrseno!");
-				File objFile = new File("test/objOutput/" + fileName + ".obj");
+				File objFile = new File("test/objOutput/" + fileNameOutput);
 				if (objFile.exists())
 					objFile.delete();
 				CodeGenerator codeGenerator = new CodeGenerator();
@@ -70,7 +70,7 @@ public class MJParserTest {
 				Code.write(new FileOutputStream(objFile));
 				log.info("Generisanje koda uspesno zavrseno!");
 			} else {
-				log.error("Parsiranje NIJE uspesno zavrseno!");
+				log.error("Generisanje koda NIJE uspesno zavrseno!");
 			}
 		} finally {
 			if (br != null)
@@ -78,50 +78,9 @@ public class MJParserTest {
 					br.close();
 				} catch (IOException e1) {
 					log.error(e1.getMessage(), e1);
-				} 
+				}
 		}
 
 	}
 
 }
-
-//
-//VarDeclForClass ::= (VarDeclForClassarations) Type VarDeclForClassItemList SEMI
-//		|  
-//		(VarDeclForClassError) error:e SEMI
-//        {:
-//        	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do ;", null);
-//        :}
-//        |
-//        (VarDeclForClassLbraceError) Type IDENT error:e LBRACE
-//        {:
-//        	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do ;", null);
-//        :}
-//        ;
-//VarDeclForClassItemList ::= (VarDeclForClassMultiItemList) VarDeclForClassItemList COMMA VarDeclDefinition
-//                    |    
-//                    (VarDeclForClassSinglItemList) VarDeclDefinition
-//                    |    
-//                    (VarDeclForClassItemListLBRACEError) Type error:e LBRACE
-//                    {:
-//                    	parser.report_error("Uspesan oporavak od greske na liniji " + eleft + " pri definisanju globalne promenljive do { ili ;", null);
-//                    :}
-//                    ;
-//
-//VarDeclForClassList ::= (VarDeclForClassarationsList) VarDeclForClassList VarDeclForClassListItem
-//                    |    
-//                    (NoVarDeclForClassList) /* epsilon */
-//                    ;
-//VarDeclForClassListItem ::= (VarDeclForClassListItem) VarDeclForClass;
-//
-/*
- * Unmatched ::= (UnmatchedIf) IF Expr Statement | (UnmatchedIfElse) IF Expr
- * Matched ELSE Unmatched ;
- * 
- * 
- * Matched ::= (Assignment) Designator:dest EQUAL Expr:e SEMI | (ErrorStmt)
- * error SEMI:l {: parser.report_error("Izvrsen oporavak do ; u liniji " +
- * lleft, null); :} | (PrintStmt) PRINT LPAREN Expr RPAREN SEMI | (ReturnExpr)
- * RETURN Expr:t SEMI | (ReturnNoExpr) RETURN SEMI | (MatchedStatement) IF Expr
- * Matched ELSE Matched ;
- */

@@ -8,14 +8,9 @@ class A{
 
 
 	void main()
-	A a;
+	int x[][];
 	{	
-		a = null;
-		if (a == null){
-			print('n');
-		}else{
-			print('g');
-		}
+		x = new int[10];
 
 	}
 }

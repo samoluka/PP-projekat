@@ -1,0 +1,56 @@
+program Oporavak
+	int x y;
+	
+	int d;
+	int 123d;
+	
+	int 123a, y;
+	
+	class A{
+	}
+	class B extends 12eD{
+	}
+	class B extends{
+	}
+	class B extends A{
+		int a, ;
+		int a,b;
+		int x y;
+		int c;
+		int x
+		{
+			B(){
+				if (x> y && ){
+					a = 10;
+				}
+			}
+		}
+	}
+{
+	void formalParamErrorFunc(int , int y){}
+	void formalParamErrorFunc(int 2e1){}
+	void ff(int x, int y){}
+	int main(){
+		//x = 123x;
+		
+		if (x > y &&){
+			a = 10;
+		}
+		if (x y){
+			a = 10;
+		}
+		if (x > y || y x){
+			a = 10;
+		}
+		if (x y || x)
+			a = 10;
+		x = ;
+		x = 123x),;
+		ff('c',1);
+		ff();
+		ff(1,'c');
+		ff('c',false,3);
+	}
+
+
+}

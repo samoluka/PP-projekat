@@ -272,9 +272,6 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		int varCnt = methodTypeName.obj.getLocalSymbols().size();
 		int fpCnt = methodTypeName.obj.getLevel();
-//		if ("main".equalsIgnoreCase(methodTypeName.getMethodName())) {
-//			varCnt = Code.dataSize + fpCnt;
-//		}
 		// Generate the entry
 		Code.put(Code.enter);
 		Code.put(fpCnt);
@@ -431,17 +428,13 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(NewFactor nFactor) {
-		log.debug("new called with level = " + nFactor.obj.getType().getNumberOfFields());
-		log.debug("class is " + nFactor.obj.getType().getKind());
-
 		String className = nFactor.getType().getTypeName();
-		log.debug("class name is " + nFactor.getType().getTypeName());
-		int vTableAddress = nFactor.obj.getAdr();
+		int vtpAdress = nFactor.obj.getAdr();
 
 		Code.put(Code.new_);
 		Code.put2((nFactor.obj.getType().getNumberOfFields() + 1) * 4);
 		Code.put(Code.dup);
-		Code.loadConst(vTableAddress); // v_table value
+		Code.loadConst(vtpAdress);
 		Code.put(Code.putfield);
 		Code.put2(0);
 		if (allClasses.contains(className)) {
@@ -694,18 +687,14 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 
 	private void putRelOp(int opCode) {
-		// test and jmp if yes
 		Code.put(Code.jcc + opCode);
 		Code.put2(7);
-
-		// no: put 0, jmp next
+		// ucitaj 0 ako je false
 		Code.loadConst(0);
 		Code.put(Code.jmp);
 		Code.put2(4);
-
-		// yes: put 1
+		// ucitaj 1 ako je true
 		Code.loadConst(1);
-
 	}
 
 	@Override
