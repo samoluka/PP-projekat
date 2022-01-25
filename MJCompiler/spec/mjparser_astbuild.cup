@@ -83,7 +83,6 @@ nonterminal Statement Statement;
 nonterminal StatementLabel StatementLabel;
 nonterminal ElseStatement ElseStatement;
 nonterminal DesignatorStatement DesignatorStatement;
-nonterminal DesignatorItem DesignatorItem;
 nonterminal Assignop Assignop;
 nonterminal FormalParams FormalParams;
 nonterminal FormalParamList FormalParamList;
@@ -92,7 +91,6 @@ nonterminal FormalParamListItem FormalParamListItem;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
 nonterminal ActualPars ActualPars;
-nonterminal DesignatorMulti DesignatorMulti;
 nonterminal ActualParamSingleItem ActualParamSingleItem;
 nonterminal VarListClass VarListClass;
 nonterminal VarItemListClass VarItemListClass;
@@ -105,7 +103,7 @@ nonterminal DoStart DoStart;
 nonterminal DoPart DoPart;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label, SuperStart;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst, Condition, CondTerm, CondFact, ConstructorHeader, Factor, Label, SuperStart;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -214,10 +212,10 @@ ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type:T1 {: RESULT=new ClassD
 				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
 			:} {: RESULT=new ClassExtendsError(); :}
 			|
-			(ClassNoExtedsError) IDENT:I1 error:e
+			(ClassNoExtedsError) IDENT:i1 error:e
 			{:
 				parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
-			:} {: RESULT=new ClassNoExtedsError(I1); RESULT.setLine(I1left); :}					
+			:} {: RESULT=new ClassNoExtedsError(i1); RESULT.setLine(i1left); :}					
 			|
 			(NoClassExtends) {: RESULT=new NoClassExtends(); :} /* epsilon */
 			;

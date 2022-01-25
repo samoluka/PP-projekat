@@ -63,13 +63,13 @@ terminal PLUS,MINUS,MULTIPLY, MOD, DEVIDE,EQUALEQUAL,NOTEQUAL,GREATEROREQUAL,LES
 
 nonterminal DeclList, DeclItem, ConstDeclItemList, AssignmentDecl, VarDecl, VarDeclItemList, RecordDecl, VarDeclList, VarDeclListItem;
 nonterminal ClassDecl, ClassExtends, ClassMethodDeclItemList, ConstructorDecl, MethodDeclList, MethodDeclItem, MethodDeclListNonEmpty;
-nonterminal StatementList, SingleStatement, Statement, StatementLabel, ElseStatement, DesignatorStatement, DesignatorItem, Assignop;
+nonterminal StatementList, SingleStatement, Statement, StatementLabel, ElseStatement, DesignatorStatement, Assignop;
 nonterminal FormalParams, FormalParamList, Relop, FormalParamListItem;
-nonterminal Addop, Mulop, ActualPars, DesignatorMulti, ActualParamSingleItem;
+nonterminal Addop, Mulop, ActualPars, ActualParamSingleItem;
 nonterminal VarListClass, VarItemListClass, VarClass, VarClassErrorEndPoint, IfPart, IfHeader, IfStart, DoStart, DoPart;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName, ClassName, RecordName, Program, MethodDecl, MethodTypeName, Designator, DesignatorForMethodCall, MethodNameDesignator;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst,  Condition, CondTerm, CondFact, ConstructorHeader, Factor, DesignatorMultiList,Label, SuperStart;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclHeader,ConstDecl,FactorForConst, Condition, CondTerm, CondFact, ConstructorHeader, Factor, Label, SuperStart;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, VarDeclDefinition, DesignatorForAssign;
 
 
@@ -178,7 +178,7 @@ ClassExtends ::= (ClassDeclarationsExtends) EXTENDS Type
 				 parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
 			:}
 			|
-			(ClassNoExtedsError) IDENT error:e
+			(ClassNoExtedsError) IDENT:i1 error:e
 			{:
 				parser.report_error("Uspesan oporavak od greske na liniji " + eleft +" za deklaraciju prosirenja natklase, ignorisani znakovi do prvog znaka {", null);
 			:}					

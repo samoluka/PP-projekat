@@ -34,7 +34,7 @@ public class Log4JUtils {
 		
 		if (logFile.exists()) {
 			if (!logFile.renameTo(renamedFile))
-				System.err.println("Could not rename log file!");
+				System.err.println("Could not rename log file!"); 
 		}
 		
 		fAppender.setFile(logFile.getAbsolutePath());

@@ -1,24 +1,24 @@
 // generated with ast extension for cup
 // version 0.8
-// 24/0/2022 22:49:29
+// 25/0/2022 16:20:46
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ClassNoExtedsError extends ClassExtends {
 
-    private String I1;
+    private String i1;
 
-    public ClassNoExtedsError (String I1) {
-        this.I1=I1;
+    public ClassNoExtedsError (String i1) {
+        this.i1=i1;
     }
 
     public String getI1() {
-        return I1;
+        return i1;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setI1(String i1) {
+        this.i1=i1;
     }
 
     public void accept(Visitor visitor) {
@@ -41,7 +41,7 @@ public class ClassNoExtedsError extends ClassExtends {
         buffer.append(tab);
         buffer.append("ClassNoExtedsError(\n");
 
-        buffer.append(" "+tab+I1);
+        buffer.append(" "+tab+i1);
         buffer.append("\n");
 
         buffer.append(tab);
